@@ -1,4 +1,5 @@
 import Route from './route.js';
+import Router from './router.js';
 import utils from './utils.js';
 
 const AlpineRouter = {
@@ -8,11 +9,13 @@ const AlpineRouter = {
 	// array of trings that hold routers name which must be unique.
 	routers: [],
 
-	// TODO: not used yet, if the need
-	// settings: [],
+	// These can be used to control Alpine Router externally
+	settings: {
+		interceptLinks: true, // detect if links are of the same origin and let Alpine Router handle them
+	},
 
 	// this will be set to true after all routers are
-	// initialized and the first page loaded 
+	// initialized and the first page loaded
 	loaded: false,
 
 	// The handler for 404 pages, can be overwritten by a custom route
@@ -63,10 +66,25 @@ const AlpineRouter = {
 
 				// A router must have a unique name
 				// each route will have the name of its router (see this.processRoute() in next lines)
-				if (this.routers.includes(routerName)) {
+				if (this.routers.findIndex((r) => r.name == routerName)) {
 					throw new Error(
 						`Alpine Router: A router with the name ${routerName} already exist. Use a different name by setting the attribute x-router to another value`
 					);
+				}
+
+				// Detect other router settings
+				let routerSettting = {};
+				// The router basepath which will be added at the begining
+				// of
+				if (component.$el.hasAttribute('x-base')) {
+					routerSettting.base = component.$el.getAttribute('x-base');
+				}
+
+				if (typeof routerName != 'string') {
+					console.warn(
+						'Alpine Router: x-router attribute should be a string of the router name or empty for default'
+					);
+					routerName = 'default';
 				}
 
 				// Loop through child elements of this router
@@ -78,7 +96,7 @@ const AlpineRouter = {
 				});
 
 				// Add the router name to the routers array to check for its existance
-				this.routers.push(routerName);
+				this.routers.push(new Router(routerName, routerSettings));
 
 				currentRouterCount++;
 
@@ -93,19 +111,33 @@ const AlpineRouter = {
 		});
 
 		// Intercept click event in links
-		document.querySelectorAll('a').forEach((el) => {
-			// check if the link should watched for click events.
-			if (utils.validLink(el) == false) return;
+		if (this.settings.interceptLinks) {
+			document.querySelectorAll('a').forEach((el) => {
+				// check if the link should watched for click events.
+				if (utils.validLink(el) == false) return;
 
-			el.addEventListener(
-				'click',
-				(e) => {
-					e.preventDefault();
-					this.navigate(e.target.getAttribute('href'));
-				},
-				false
-			);
-		});
+				el.addEventListener(
+					'click',
+					(e) => {
+						e.preventDefault();
+						this.navigate(e.target.getAttribute('href'));
+					},
+					false
+				);
+			});
+		} else {
+			// If we're not intercepting all links, only watch ones with x-link attribute
+			document.querySelectorAll('a[x-link]').forEach((el) => {
+				el.addEventListener(
+					'click',
+					(e) => {
+						e.preventDefault();
+						this.navigate(e.target.getAttribute('x-link'));
+					},
+					false
+				);
+			});
+		}
 
 		// handle navigation events not emitted by links, for exmaple, back button.
 		window.addEventListener('popstate', (e) => this.navigate(e.detail));
