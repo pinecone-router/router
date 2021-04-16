@@ -66,18 +66,18 @@ const AlpineRouter = {
 
 				// A router must have a unique name
 				// each route will have the name of its router (see this.processRoute() in next lines)
-				if (this.routers.findIndex((r) => r.name == routerName)) {
+				if (this.routers.findIndex((r) => r.name == routerName) > -1) {
 					throw new Error(
 						`Alpine Router: A router with the name ${routerName} already exist. Use a different name by setting the attribute x-router to another value`
 					);
 				}
 
 				// Detect other router settings
-				let routerSettting = {};
+				let routerSettings = {};
 				// The router basepath which will be added at the begining
 				// of
 				if (component.$el.hasAttribute('x-base')) {
-					routerSettting.base = component.$el.getAttribute('x-base');
+					routerSettings.base = component.$el.getAttribute('x-base');
 				}
 
 				if (typeof routerName != 'string') {
