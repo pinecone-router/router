@@ -1,16 +1,16 @@
 {
-    "name": "alpine-plugin-template",
-    "description": "A simple template for Alpine.js plugins.",
+    "name": "alpine-alpine",
+    "description": "A simple router for Alpine.js.",
     "license": "MIT",
-    "author": "Ryan Chandler <support@ryangjchandler.co.uk>",
+    "author": "Rafik El Hadi Houari <rehhouari@gmail.com>",
     "repository": {
         "type": "git",
-        "url": "https://github.com/ryangjchandler/alpine-plugin-template"
+        "url": "https://github.com/rehhouari/alpine-router"
     },
     "source": "src/index.js",
-    "main": "dist/alpine-plugin.js",
-    "umd:main": "dist/alpine-plugin.umd.js",
-    "module": "dist/alpine-plugin.module.js",
+    "main": "dist/alpine-router.js",
+    "umd:main": "dist/alpine-router.umd.js",
+    "module": "dist/alpine-router.module.js",
     "scripts": {
         "build": "microbundle",
         "watch": "microbundle watch",
