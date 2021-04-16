@@ -6,7 +6,7 @@ const AlpineRouter = {
 	settings: [],
 	loading: false,
 	notfound: function () {
-		console.log('Alpine Router: not found');
+		console.error('Alpine Router: not found');
 	},
 
 	start() {
@@ -54,7 +54,6 @@ const AlpineRouter = {
 				// this will run when all routers are set up
 				// in order to handle the current page
 				if (currentRouterCount == routerCount) {
-					console.log({ routerCount });
 					// navigate to the current page to handle it
 					this.navigate(location.pathname + location.hash);
 				}
@@ -113,7 +112,7 @@ const AlpineRouter = {
 				.forEach((e) => {
 					if (e.routerName == routerName) return true;
 				});
-			if (routeExist) {
+			if (routeExist == true) {
 				throw new Error(
 					'Alpine Router: Route `${path}` is already registered on router `${routerName}`.'
 				);
