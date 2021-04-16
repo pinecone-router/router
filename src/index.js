@@ -2,33 +2,47 @@ import Route from './route.js';
 import utils from './utils.js';
 
 const AlpineRouter = {
+	// routes are instantiated from the Routes classs
 	routes: [],
-	settings: [],
-	loading: false,
+
+	// array of trings that hold routers name which must be unique.
+	routers: [],
+
+	// TODO: not used yet, if the need
+	// settings: [],
+
+	// this will be set to true after all routers are
+	// initialized and the first page loaded 
+	loaded: false,
+
+	// The handler for 404 pages, can be overwritten by a custom route
 	notfound: function () {
 		console.error('Alpine Router: not found');
 	},
 
+	// Entry point of the plugin
 	start() {
 		if (!window.Alpine) {
 			throw new Error('Alpine is require for `Alpine Router` to work.');
 		}
-		const loadstarted = new Event('loadstarted');
-		const loadended = new Event('loadended');
-		const pagechanged = new Event('pagechanged');
+
+		// will be dispatched before the handler on the responsible router only
+		this.loadstart = new Event('loadstart');
+		// will be dispatched after the handler is done on the responsible router only
+		this.loadend = new Event('loadend');
+		// will be dispatched to all routers after any page change
+		this.pagechange = new Event('pagechange');
 
 		// Get the amout of routers in the page at load.
-		// However routers may be added dynamically and they will also be setup.
-		// This is only to detect all routers currently loaded are initialized
-		// in order to process the current page.
+		// However routers may be added dynamically and they will also be initialized.
 		let routerCount = document.querySelectorAll('[x-data][x-router]')
 			.length;
 
-		// Routers that are already set up
+		// Routers that are already initialized
 		let currentRouterCount = 0;
 
 		// Whenever a component is initialized, check if it is a router
-		// and run test the children if they're valid routes
+		// and check if the children are valid routes
 		Alpine.onComponentInitialized((component) => {
 			if (component.$el.hasAttribute('x-router')) {
 				// take the router name if specified
@@ -39,23 +53,41 @@ const AlpineRouter = {
 					);
 					routerName = 'default';
 				}
+
+				// empty x-router will turn to default,
+				// to easily querySelector() the router later on in this.navigate
 				if (routerName == '') {
 					routerName = 'default';
+					component.$el.setAttribute('x-router', routerName);
 				}
 
-				// Loop through routes of this router
+				// A router must have a unique name
+				// each route will have the name of its router (see this.processRoute() in next lines)
+				if (this.routers.includes(routerName)) {
+					throw new Error(
+						`Alpine Router: A router with the name ${routerName} already exist. Use a different name by setting the attribute x-router to another value`
+					);
+				}
+
+				// Loop through child elements of this router
 				Array.from(component.$el.children).forEach((el) => {
+					// if the element is a route process it
 					if (el.hasAttribute('x-route')) {
 						this.processRoute(el, component, routerName);
 					}
 				});
 
+				// Add the router name to the routers array to check for its existance
+				this.routers.push(routerName);
+
 				currentRouterCount++;
+
 				// this will run when all routers are set up
 				// in order to handle the current page
 				if (currentRouterCount == routerCount) {
 					// navigate to the current page to handle it
 					this.navigate(location.pathname + location.hash);
+					this.loaded = true;
 				}
 			}
 		});
@@ -96,12 +128,31 @@ const AlpineRouter = {
 			);
 		}
 
+		// The path will be on x-route and handler on x-handler
+		// The path must be a string and the handler a function callback
 		let path = el.getAttribute('x-route');
+		if (typeof path != 'string') {
+			throw new Error(
+				`Alpine Router: x-route must be a string, ${typeof path} given.`
+			);
+		}
 		let handlerName = el.getAttribute('x-handler');
-		let handler = component.getUnobservedData()[handlerName];
+
+		let handler;
+		try {
+			handler = component.getUnobservedData()[handlerName];
+		} catch (error) {
+			throw new Error('Alpine Router: ' + error);
+		}
+
+		if (typeof handler != 'function') {
+			throw new Error(
+				`Alpine Router: handler must be a callback function, ${typeof handler} given.`
+			);
+		}
 
 		if (path == 'notfound') {
-			// register the route as a 404 handlerconsole.warn(
+			// register the route as a 404 handler
 			this.notfound = handler;
 		} else {
 			// check if the route was registered on the same router.
@@ -110,7 +161,7 @@ const AlpineRouter = {
 			let routeExist = this.routes
 				.filter((route) => utils.match(route, path))
 				.forEach((e) => {
-					if (e.routerName == routerName) return true;
+					if (e.router == routerName) return true;
 				});
 			if (routeExist == true) {
 				throw new Error(
@@ -134,8 +185,17 @@ const AlpineRouter = {
 			// handle many routes for different routers
 			// but only push the route once to history
 			history.pushState({}, '', path);
-			routes.forEach((route) => route.handle());
+			routes.forEach((route) => {
+				let routerEl = document.querySelector(
+					`[x-router="${route.router}"]`
+				);
+				routerEl.dispatchEvent(this.loadstart);
+				route.handle();
+				routerEl.dispatchEvent(this.loadend);
+			});
 		}
+		let routers = Array.from(document.querySelectorAll(['x-router']));
+		routers.forEach((r) => r.dispatchEvent(this.pagechange));
 	},
 };
 
