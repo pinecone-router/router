@@ -31,7 +31,6 @@ const AlpineRouter = {
 		// and run test the children if they're valid routes
 		Alpine.onComponentInitialized((component) => {
 			if (component.$el.hasAttribute('x-router')) {
-
 				// take the router name if specified
 				let routerName = component.$el.getAttribute('x-router');
 				if (typeof routerName != 'string') {
@@ -39,7 +38,8 @@ const AlpineRouter = {
 						'Alpine Router: x-router attribute should be a string of the router name or empty for default'
 					);
 					routerName = 'default';
-				} if (routerName == '') {
+				}
+				if (routerName == '') {
 					routerName = 'default';
 				}
 
@@ -108,11 +108,11 @@ const AlpineRouter = {
 			// check if the route was registered on the same router.
 			// this allow having multiple routers with the same route
 			// for example a router for navigation and router for content
-			let routeExist = this.routes.filter((route) =>
-				utils.match(route, path)
-			).forEach((e) => {
-				if (e.routerName == routerName) return true
-			});
+			let routeExist = this.routes
+				.filter((route) => utils.match(route, path))
+				.forEach((e) => {
+					if (e.routerName == routerName) return true;
+				});
 			if (routeExist) {
 				throw new Error(
 					'Alpine Router: Route `${path}` is already registered on router `${routerName}`.'
