@@ -109,7 +109,7 @@ const AlpineRouter = {
 			// this allow having multiple routers with the same route
 			// for example a router for navigation and router for content
 			let routeExist = this.routes.filter((route) =>
-				this.match(route, path)
+				utils.match(route, path)
 			).forEach((e) => {
 				if (e.routerName == routerName) return true
 			});
@@ -129,7 +129,7 @@ const AlpineRouter = {
 	 * Based on https://github.com/vijitail/simple-javascript-router/blob/master/src/router/Router.js#L37
 	 */
 	navigate(path) {
-		const routes = this.routes.filter((route) => this.match(route, path));
+		const routes = this.routes.filter((route) => utils.match(route, path));
 		if (!routes) this.notfound();
 		else {
 			// handle many routes for different routers
