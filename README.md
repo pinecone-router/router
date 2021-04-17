@@ -81,7 +81,6 @@ Copyright (c) 2021 Rafik El Hadi Houari and contributors
 Licensed under the MIT license, see [LICENSE.md](LICENSE.md) for details.
 
 >Code from [Page.js](https://github.com/visionmedia/page.js#license) is licenced under the MIT License.
->
 >Copyright (c) 2012 TJ Holowaychuk <tj@vision-media.ca>
 
 >Code from [Simple-javascript-router tutorial](https://github.com/vijitail/simple-javascript-router/) is written by [Vijit Ail](https://github.com/vijitail).
