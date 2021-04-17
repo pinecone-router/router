@@ -12,6 +12,7 @@ const AlpineRouter = {
 	// These can be used to control Alpine Router externally
 	settings: {
 		interceptLinks: true, // detect if links are of the same origin and let Alpine Router handle them
+		hashbang: false, // use #! for routes
 	},
 
 	// this will be set to true after all routers are
@@ -19,8 +20,8 @@ const AlpineRouter = {
 	loaded: false,
 
 	// The handler for 404 pages, can be overwritten by a custom route
-	notfound: function () {
-		console.error('Alpine Router: not found');
+	notfound: function (path) {
+		console.error(`Alpine Router: requested path ${path} was not found`);
 	},
 
 	// Entry point of the plugin
@@ -29,12 +30,13 @@ const AlpineRouter = {
 			throw new Error('Alpine is require for `Alpine Router` to work.');
 		}
 
-		// will be dispatched before the handler on the responsible router only
+		// will be dispatched to window when all routers are
+		// initialized and the first page loaded
+		this.routerloaded = new Event('routerloaded');
+		// will be dispatched before the handler on the responsible router only and the window
 		this.loadstart = new Event('loadstart');
-		// will be dispatched after the handler is done on the responsible router only
+		// will be dispatched after the handler is done on the responsible router only and the window
 		this.loadend = new Event('loadend');
-		// will be dispatched to all routers after any page change
-		this.pagechange = new Event('pagechange');
 
 		// Get the amout of routers in the page at load.
 		// However routers may be added dynamically and they will also be initialized.
@@ -75,7 +77,7 @@ const AlpineRouter = {
 				// Detect other router settings
 				let routerSettings = {};
 				// The router basepath which will be added at the begining
-				// of
+				// of every route in this router
 				if (component.$el.hasAttribute('x-base')) {
 					routerSettings.base = component.$el.getAttribute('x-base');
 				}
@@ -91,7 +93,12 @@ const AlpineRouter = {
 				Array.from(component.$el.children).forEach((el) => {
 					// if the element is a route process it
 					if (el.hasAttribute('x-route')) {
-						this.processRoute(el, component, routerName);
+						this.processRoute(
+							el,
+							component,
+							routerName,
+							routerSettings
+						);
 					}
 				});
 
@@ -106,6 +113,7 @@ const AlpineRouter = {
 					// navigate to the current page to handle it
 					this.navigate(location.pathname + location.hash);
 					this.loaded = true;
+					window.dispatchEvent(this.routerloaded);
 				}
 			}
 		});
@@ -140,14 +148,17 @@ const AlpineRouter = {
 		}
 
 		// handle navigation events not emitted by links, for exmaple, back button.
-		window.addEventListener('popstate', (e) => this.navigate(e.detail));
+		window.addEventListener('popstate', (e) => {
+			if (e.state != null) this.navigate(e.state.path);
+			else this.navigate(location.pathname + location.hash);
+		});
 	},
 
 	/**
 	 * Take the template element of a route and the router component
 	 * and test if it can be added or not
 	 */
-	processRoute(el, component, routerName) {
+	processRoute(el, component, routerName, routerSettings) {
 		if (el.tagName.toLowerCase() !== 'template') {
 			throw new Error(
 				'Alpine Router: x-route must be used on a template tag.'
@@ -190,6 +201,9 @@ const AlpineRouter = {
 			// check if the route was registered on the same router.
 			// this allow having multiple routers with the same route
 			// for example a router for navigation and router for content
+			if (routerSettings.base != null) {
+				path = routerSettings.base + path;
+			}
 			let routeExist = this.routes
 				.filter((route) => utils.match(route, path))
 				.forEach((e) => {
@@ -211,12 +225,13 @@ const AlpineRouter = {
 	 * Based on https://github.com/vijitail/simple-javascript-router/blob/master/src/router/Router.js#L37
 	 */
 	navigate(path) {
+		window.dispatchEvent(this.loadstart);
 		const routes = this.routes.filter((route) => utils.match(route, path));
-		if (!routes) this.notfound();
+		if (routes.length == 0) this.notfound(path);
 		else {
 			// handle many routes for different routers
 			// but only push the route once to history
-			history.pushState({}, '', path);
+			history.pushState({ path: path }, '', path);
 			routes.forEach((route) => {
 				let routerEl = document.querySelector(
 					`[x-router="${route.router}"]`
@@ -226,8 +241,7 @@ const AlpineRouter = {
 				routerEl.dispatchEvent(this.loadend);
 			});
 		}
-		let routers = Array.from(document.querySelectorAll(['x-router']));
-		routers.forEach((r) => r.dispatchEvent(this.pagechange));
+		window.dispatchEvent(this.loadend);
 	},
 };
 

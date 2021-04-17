@@ -10,7 +10,7 @@ class Route {
 	}
 
 	handle() {
-		return this.handler(this.props);
+		return this.handler({props: this.props, path: this.path});
 	}
 }
 
