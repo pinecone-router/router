@@ -10,22 +10,22 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [12.x]
+        node-version: [15.x]
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v1
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v1
 
-      - name: Setup Node (${{ matrix.node-version }})
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
+#       - name: Setup Node (${{ matrix.node-version }})
+#         uses: actions/setup-node@v1
+#         with:
+#           node-version: ${{ matrix.node-version }}
 
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+#       - name: Install dependencies
+#         run: yarn install --frozen-lockfile
 
-      - name: Build files
-        run: yarn build
+#       - name: Build files
+#         run: yarn build
 
-      - name: Run test suite
-        run: yarn test
+#       - name: Run test suite
+#         run: yarn test
