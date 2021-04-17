@@ -3,7 +3,7 @@ name: Run tests
 on:
   pull_request:
 
-jobs:
+# jobs:
 #   tests:
 
 #     runs-on: ubuntu-latest
