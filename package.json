@@ -12,7 +12,7 @@
     "umd:main": "dist/alpine-router.umd.js",
     "module": "dist/alpine-router.module.js",
     "scripts": {
-        "build": "microbundle",
+        "build": "microbundle -f es",
         "watch": "microbundle watch",
         "test": "jest"
     },

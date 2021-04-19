@@ -12,10 +12,11 @@ const AlpineRouter = {
 	// These can be used to control Alpine Router externally
 	settings: {
 		interceptLinks: true, // detect if links are of the same origin and let Alpine Router handle them
-		hashbang: false, // use #! for routes
+		basepath: '#/',
+		hash: true,
 	},
 
-	// this will be set to true after all routers are
+	// This will be set to true after all routers are
 	// initialized and the first page loaded
 	loaded: false,
 
@@ -37,6 +38,8 @@ const AlpineRouter = {
 		this.loadstart = new Event('loadstart');
 		// will be dispatched after the handler is done on the responsible router only and the window
 		this.loadend = new Event('loadend');
+		// will be dispatched after the hash change is done on the responsible router only and the window
+		this.hashchanged = new Event('hashchanged');
 
 		// Get the amout of routers in the page at load.
 		// However routers may be added dynamically and they will also be initialized.
@@ -66,6 +69,13 @@ const AlpineRouter = {
 					component.$el.setAttribute('x-router', routerName);
 				}
 
+				if (typeof routerName != 'string') {
+					console.warn(
+						'Alpine Router: x-router attribute should be a string of the router name or empty for default'
+					);
+					routerName = 'default';
+				}
+
 				// A router must have a unique name
 				// each route will have the name of its router (see this.processRoute() in next lines)
 				if (this.routers.findIndex((r) => r.name == routerName) > -1) {
@@ -75,18 +85,13 @@ const AlpineRouter = {
 				}
 
 				// Detect other router settings
-				let routerSettings = {};
-				// The router basepath which will be added at the begining
-				// of every route in this router
-				if (component.$el.hasAttribute('x-base')) {
-					routerSettings.base = component.$el.getAttribute('x-base');
-				}
-
-				if (typeof routerName != 'string') {
-					console.warn(
-						'Alpine Router: x-router attribute should be a string of the router name or empty for default'
-					);
-					routerName = 'default';
+				let routerSettings = utils.detectRouterSettings(component.$el);
+				// If using hash routing tell Alpine Router to check for hash everytime it changes
+				if (this.settings.hash) {
+					// window.onhashchange = () => {
+					// 	// navigate to the hash route
+					// 	this.navigate(window.location.hash.substring(1), true);
+					// };
 				}
 
 				// Loop through child elements of this router
@@ -110,8 +115,23 @@ const AlpineRouter = {
 				// this will run when all routers are set up
 				// in order to handle the current page
 				if (currentRouterCount == routerCount) {
-					// navigate to the current page to handle it
-					this.navigate(location.pathname + location.hash);
+					if (!this.settings.hash) {
+						// navigate to the current page to handle it
+						// ONLY if we not using hash routing for the default router
+						this.navigate(window.location.pathname);
+					} else {
+						if (window.location.hash == '') {
+							document.location.href =
+								window.location.pathname + '#/';
+							return;
+						} else {
+							this.navigate(
+								window.location.hash.substring(1),
+								true
+							);
+						}
+					}
+
 					this.loaded = true;
 					window.dispatchEvent(this.routerloaded);
 				}
@@ -128,7 +148,13 @@ const AlpineRouter = {
 					'click',
 					(e) => {
 						e.preventDefault();
-						this.navigate(e.target.getAttribute('href'));
+						let link = e.target.getAttribute('href');
+						if (this.settings.hash) {
+							window.location.hash = '#' + link;
+						} else {
+							this.navigate(link);
+						}
+						
 					},
 					false
 				);
@@ -140,7 +166,8 @@ const AlpineRouter = {
 					'click',
 					(e) => {
 						e.preventDefault();
-						this.navigate(e.target.getAttribute('x-link'));
+						let link = e.target.getAttribute('href');
+						this.navigate(link);
 					},
 					false
 				);
@@ -148,9 +175,14 @@ const AlpineRouter = {
 		}
 
 		// handle navigation events not emitted by links, for exmaple, back button.
-		window.addEventListener('popstate', (e) => {
-			if (e.state != null) this.navigate(e.state.path);
-			else this.navigate(location.pathname + location.hash);
+		window.addEventListener('popstate', () => {
+			if (this.settings.hash) {
+				if (window.location.hash != '') {
+					this.navigate(window.location.hash.substring(1), true);
+				}
+			} else {
+				this.navigate(window.location.pathname, true);
+			}
 		});
 	},
 
@@ -179,8 +211,16 @@ const AlpineRouter = {
 				`Alpine Router: x-route must be a string, ${typeof path} given.`
 			);
 		}
-		let handlerName = el.getAttribute('x-handler');
 
+		if (path.indexOf('#') > -1) {
+			throw new Error(
+				"Alpine Router: A route's path may not have a hash, setting AlpineRouter.settings.hash to true is sufficiant."
+			);
+		}
+
+		// Get the hanlder which is a string because it's an attribute value
+		// Use that string as an index to the component method which is meant to handle the route
+		let handlerName = el.getAttribute('x-handler');
 		let handler;
 		try {
 			handler = component.getUnobservedData()[handlerName];
@@ -188,6 +228,7 @@ const AlpineRouter = {
 			throw new Error('Alpine Router: ' + error);
 		}
 
+		// Check if the hanlder is a function
 		if (typeof handler != 'function') {
 			throw new Error(
 				`Alpine Router: handler must be a callback function, ${typeof handler} given.`
@@ -198,14 +239,23 @@ const AlpineRouter = {
 			// register the route as a 404 handler
 			this.notfound = handler;
 		} else {
-			// check if the route was registered on the same router.
-			// this allow having multiple routers with the same route
-			// for example a router for navigation and router for content
+			// add basepath of the entire page/site
+			if (['/', '#/'].includes(this.settings.basepath) == false) {
+				path = this.settings.basepath + path;
+			}
+
+			// add basepath of the router
 			if (routerSettings.base != null) {
 				path = routerSettings.base + path;
 			}
+
+			// check if the route was registered on the same router.
+			// this allow having multiple routers with the same route
+			// for example a router for navigation and router for content
 			let routeExist = this.routes
-				.filter((route) => utils.match(route, path))
+				.filter((route) => {
+					return utils.match(route, path);
+				})
 				.forEach((e) => {
 					if (e.router == routerName) return true;
 				});
@@ -224,23 +274,42 @@ const AlpineRouter = {
 	 * Go to the specified path without reloading
 	 * Based on https://github.com/vijitail/simple-javascript-router/blob/master/src/router/Router.js#L37
 	 */
-	navigate(path) {
+	navigate(path, frompopstate = false) {
+		// process hash route individually
 		window.dispatchEvent(this.loadstart);
-		const routes = this.routes.filter((route) => utils.match(route, path));
+		const routes = this.routes.filter((route) => {
+			return utils.match(route, path);
+		});
+
 		if (routes.length == 0) this.notfound(path);
-		else {
+		// do not call pushstate from popstate event https://stackoverflow.com/a/50830905
+		if (!frompopstate) {
+			let fullpath;
+			if (window.location.pathname != '/') {
+				if (this.settings.hash) {
+					fullpath =
+						window.location.pathname +
+						window.location.search +
+						path;
+				} else {
+					fullpath =
+						path + window.location.search + window.location.hash;
+				}
+			}
+			console.log({ fullpath });
 			// handle many routes for different routers
 			// but only push the route once to history
-			history.pushState({ path: path }, '', path);
-			routes.forEach((route) => {
-				let routerEl = document.querySelector(
-					`[x-router="${route.router}"]`
-				);
-				routerEl.dispatchEvent(this.loadstart);
-				route.handle();
-				routerEl.dispatchEvent(this.loadend);
-			});
+			history.pushState({ path: fullpath }, '', fullpath);
 		}
+
+		routes.forEach((route) => {
+			// let routerEl = document.querySelector(
+			// 	`[x-router="${route.router}"]`
+			// );
+			// routerEl.dispatchEvent(this.loadstart);
+			route.handle();
+			// routerEl.dispatchEvent(this.loadend);
+		});
 		window.dispatchEvent(this.loadend);
 	},
 };

@@ -1,5 +1,6 @@
 const utils = {
 	isLocation: !!(window.history.location || window.location),
+
 	validLink(el) {
 		// The checks in this block are taken from page.js https://github.com/visionmedia/page.js/blob/master/index.js#L370
 		// el.nodeName for svg links are 'a' instead of 'A'
@@ -38,14 +39,17 @@ const utils = {
 
 		return true;
 	},
+
 	/**
 	 * Match the path with specified routes
-	 * https://github.com/vijitail/simple-javascript-router/blob/master/src/router/Router.js#L14
+	 * Taken from https://github.com/vijitail/simple-javascript-router/blob/master/src/router/Router.js#L14
+	 * with some modifications to fix bad behavior 
 	 */
 	match(route, requestPath) {
 		let paramNames = [];
+		let path = route.path.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 		let regexPath =
-			route.path.replace(/([:*])(\w+)/g, (_full, _colon, name) => {
+			path.replace(/([:^\s])(\w+)/g, (_full, _colon, name) => {
 				paramNames.push(name);
 				return '([^/]+)';
 			}) + '(?:/|$)';
@@ -53,6 +57,8 @@ const utils = {
 		let params = {};
 		let routeMatch = requestPath.match(new RegExp(regexPath));
 		if (routeMatch !== null) {
+			if (routeMatch.index != 0) return null;
+			if (routeMatch.input != routeMatch[0]) return null;
 			params = routeMatch.slice(1).reduce((params, value, index) => {
 				if (params === null) params = {};
 				params[paramNames[index]] = value;
@@ -61,9 +67,9 @@ const utils = {
 		}
 
 		route.setProps(params);
-
 		return routeMatch;
 	},
+
 	/**
 	 * Convert to a URL object
 	 * https://github.com/visionmedia/page.js/blob/4f9991658f9b9e3de9b6059bade93693af24d6bd/page.js#L888
@@ -103,10 +109,24 @@ const utils = {
 				(loc.port === '' && (url.port == 80 || url.port == 443)))
 		); // jshint ignore:line
 	},
+
 	samePath(url) {
 		if (!this.isLocation) return false;
 		var loc = window.location;
 		return url.pathname === loc.pathname && url.search === loc.search;
+	},
+
+	/**
+	 * Take the router's element and check for settings attribute
+	 */
+	detectRouterSettings(el) {
+		let routerSettings = {};
+		// The router basepath which will be added at the begining
+		// of every route in this router
+		if (el.hasAttribute('x-base')) {
+			routerSettings.base = el.getAttribute('x-base');
+		}
+		return routerSettings;
 	},
 };
 
