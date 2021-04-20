@@ -1,6 +1,5 @@
 const utils = {
 	isLocation: !!(window.history.location || window.location),
-
 	validLink(el) {
 		// The checks in this block are taken from page.js https://github.com/visionmedia/page.js/blob/master/index.js#L370
 		// el.nodeName for svg links are 'a' instead of 'A'
@@ -38,6 +37,57 @@ const utils = {
 		if (!svg && !this.sameOrigin(el.href)) return false;
 
 		return true;
+	},
+
+	/**
+	 * This takes the document fetched, remove routers already initialized from it
+	 * @param {Document} doc
+	 * @param {array} routers
+	 * @param {array} routes
+	 * @param {boolean} removeRoutersNotInDoc when true, remove routers initialized but not found in the doc.
+	 * @returns {object} {doc, routers, routes}
+	 */
+	processRoutersInFetchedDoc(
+		doc,
+		routers,
+		routes,
+		removeRoutersNotInDoc = true
+	) {
+		// Name of all routers in the page we fetched
+		// TODO: in docs mention that routers are unique and their
+		// routes cant be changed from page to page when using x-render/x-views
+		// meaning if  'default' router in first page has 6 routes, and 5 in second page
+		// the routes of the second page wont be looked at or read.
+		// instead use a router with a different name, and dont include the default one.
+
+		let routersInDoc = [];
+		Array.from(doc.querySelectorAll('[x-router]')).forEach((el) => {
+			let name = el.getAttribute('x-router');
+			if (name == '') name = 'default';
+			routersInDoc.push(name);
+
+			if (routers.findIndex((r) => r.name == name) != -1) {
+				// if there is a router in the fetched page that is already registered
+				// remove its element
+				el.remove();
+			}
+		});
+
+		// the routes that are not in the page we fetched
+		// meaning they're from another page and are not needed anymore
+		let routersNotInDoc = routers.filter((r) => {
+			let routerIsInDoc = routersInDoc.findIndex((name) => name == r.name) != -1;
+			return !routerIsInDoc;
+		});
+
+		if (removeRoutersNotInDoc && routersNotInDoc.length > 0) {
+			// this will filter out the routers that are not included in the page we fetched
+			routes = routes.filter((r) => routersNotInDoc.includes(r.router));
+			// this will filter out the routes of the routers that are not included in the page we fetched
+			routers = routers.filter((r) => routersNotInDoc.includes(r.name));
+		}
+
+		return { doc, routers, routes };
 	},
 
 	/**
@@ -130,6 +180,14 @@ const utils = {
 			let selector = el.getAttribute('x-render');
 			routerSettings.render = selector == '' ? 'body' : selector;
 		}
+
+		if (el.hasAttribute('x-render')) {
+			routerSettings.render =
+				el.getAttribute('x-render') == ''
+					? 'body'
+					: el.getAttribute('x-render');
+		}
+
 		return routerSettings;
 	},
 };
