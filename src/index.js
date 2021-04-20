@@ -184,6 +184,7 @@ const AlpineRouter = {
 				el.addEventListener('mouseover', (e) => {
 					if (!this.preloadPages) return;
 					let path = e.target.getAttribute('href');
+					if (path == null) path = '/';
 					if (
 						this.fetchedContent.path != null &&
 						this.fetchedContent.path == path
@@ -359,8 +360,9 @@ const AlpineRouter = {
 
 		let rendered = false;
 		routes.forEach((route) => {
-			// if the user just (re)loaded the page, dont fetch the content.
+			// if the user just (re)loaded the page, dont fetch the content for rendering;
 			if (firstload != true) {
+				// If the route is not rendered
 				if (!rendered) {
 					let router = this.routers.find(
 						(e) => e.name == route.router
