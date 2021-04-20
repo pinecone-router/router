@@ -14,6 +14,7 @@ const AlpineRouter = {
 		interceptLinks: true, // detect if links are of the same origin and let Alpine Router handle them
 		basepath: '/',
 		hash: false,
+		preloadTime: 200, // time to wait after mouse over a link before preloading a page
 	},
 
 	// This will be set to true after all routers are
@@ -200,7 +201,7 @@ const AlpineRouter = {
 								window.AlpineRouter.fetchedContent.path = path;
 								window.AlpineRouter.fetchedContent.content = response;
 							});
-					}, this.settings.hoverFetchTime);
+					}, this.settings.preloadTime);
 				});
 				el.addEventListener(
 					'click',
@@ -364,38 +365,32 @@ const AlpineRouter = {
 		let rendered = false;
 		routes.forEach((route) => {
 			// if the user just (re)loaded the page, dont fetch the content for rendering;
-			if (firstload != true) {
+			if (firstload != true && !rendered) {
 				// If the route is not rendered
-				if (!rendered) {
-					var router = this.routers.find(
-						(e) => e.name == route.router
-					);
-					if (router.settings.render != null) {
-						let selector = router.settings.render;
-						if (
-							this.fetchedContent.path != null &&
-							this.fetchedContent.path == path
-						) {
-							console.log(
-								'Alpine Router: Using preloaded conteent'
-							);
-							this.renderEntirePage(
-								this.fetchedContent.content,
-								selector
-							);
-							this.fetchedContent.path = null;
-							this.fetchedContent.content = null;
-						} else {
-							fetch(path)
-								.then((response) => {
-									return response.text();
-								})
-								.then((response) => {
-									this.renderEntirePage(response, selector);
-								});
-						}
-						this.rendered = true;
+				var router = this.routers.find((e) => e.name == route.router);
+				if (router.settings.render != null) {
+					let selector = router.settings.render;
+					if (
+						this.fetchedContent.path != null &&
+						this.fetchedContent.path == path
+					) {
+						console.log('Alpine Router: Using preloaded conteent');
+						this.renderContent(
+							this.fetchedContent.content,
+							selector
+						);
+						this.fetchedContent.path = null;
+						this.fetchedContent.content = null;
+					} else {
+						fetch(path)
+							.then((response) => {
+								return response.text();
+							})
+							.then((response) => {
+								this.renderContent(response, selector);
+							});
 					}
+					this.rendered = true;
 				}
 			}
 
@@ -411,7 +406,7 @@ const AlpineRouter = {
 	 * @param {string} content the html content.
 	 * @param {string} selector the selector of where to put the content.
 	 */
-	renderEntirePage(content, selector) {
+	renderContent(content, selector) {
 		let doc = new DOMParser().parseFromString(content, 'text/html');
 
 		doc = doc.querySelector(selector);
