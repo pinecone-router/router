@@ -15,6 +15,7 @@ A simple router for use with Alpine.js.
 - Easy and familiar syntax well integrated with Alpine.js. 
 - Automatically dispatch relative links and handle them (optional).
 - Can have multiple routers in the same page that can share routes.
+- Hash routing!
 
 ## Installation
 WIP! documentation coming soon, not ready for production yet.
@@ -59,7 +60,7 @@ function handle() {
 			console.log('hello,', props.name);
 		},
 		notfound(props) {
-			console.log('not found');
+			console.error('not found');
 		},
 	};
 }
@@ -83,4 +84,5 @@ Licensed under the MIT license, see [LICENSE.md](LICENSE.md) for details.
 >Code from [Page.js](https://github.com/visionmedia/page.js#license) is licenced under the MIT License.
 >Copyright (c) 2012 TJ Holowaychuk <tj@vision-media.ca>
 
->Code from [Simple-javascript-router tutorial](https://github.com/vijitail/simple-javascript-router/) is written by [Vijit Ail](https://github.com/vijitail).
+>Code from [Simple-javascript-router tutorial](https://github.com/vijitail/simple-javascript-router/) is licenced under the MIT License.
+>Copyright (c) 2021 Vijit Ail (https://github.com/vijitail).
