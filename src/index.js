@@ -266,7 +266,7 @@ const AlpineRouter = {
 				"Alpine Router: A route's path may not have a hash, setting AlpineRouter.settings.hash to true is sufficiant."
 			);
 		}
-
+		let handler;
 		if (
 			el.hasAttribute('x-handler') == false &&
 			routerSettings.render == null
@@ -278,7 +278,6 @@ const AlpineRouter = {
 			// Get the hanlder which is a string because it's an attribute value
 			// Use that string as an index to the component method which is meant to handle the route
 			let handlerName = el.getAttribute('x-handler');
-			let handler;
 			try {
 				handler = component.getUnobservedData()[handlerName];
 			} catch (error) {
@@ -345,10 +344,6 @@ const AlpineRouter = {
 			return utils.match(route, path);
 		});
 
-		var router = this.routers.find(
-			(e) => e.name == route.router
-		);
-
 		if (routes.length == 0) this.notfound(path);
 
 		// do not call pushstate from popstate event https://stackoverflow.com/a/50830905
@@ -372,6 +367,9 @@ const AlpineRouter = {
 			if (firstload != true) {
 				// If the route is not rendered
 				if (!rendered) {
+					var router = this.routers.find(
+						(e) => e.name == route.router
+					);
 					if (router.settings.render != null) {
 						let selector = router.settings.render;
 						if (
