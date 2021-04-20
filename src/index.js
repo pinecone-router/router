@@ -12,8 +12,8 @@ const AlpineRouter = {
 	// These can be used to control Alpine Router externally
 	settings: {
 		interceptLinks: true, // detect if links are of the same origin and let Alpine Router handle them
-		basepath: '#/',
-		hash: true,
+		basepath: '/',
+		hash: false,
 	},
 
 	// This will be set to true after all routers are
@@ -38,8 +38,6 @@ const AlpineRouter = {
 		this.loadstart = new Event('loadstart');
 		// will be dispatched after the handler is done on the responsible router only and the window
 		this.loadend = new Event('loadend');
-		// will be dispatched after the hash change is done on the responsible router only and the window
-		this.hashchanged = new Event('hashchanged');
 
 		// Get the amout of routers in the page at load.
 		// However routers may be added dynamically and they will also be initialized.
@@ -154,7 +152,6 @@ const AlpineRouter = {
 						} else {
 							this.navigate(link);
 						}
-						
 					},
 					false
 				);
@@ -277,6 +274,9 @@ const AlpineRouter = {
 	navigate(path, frompopstate = false) {
 		// process hash route individually
 		window.dispatchEvent(this.loadstart);
+		if (path == null) {
+			path = '/';
+		}
 		const routes = this.routes.filter((route) => {
 			return utils.match(route, path);
 		});
@@ -285,18 +285,14 @@ const AlpineRouter = {
 		// do not call pushstate from popstate event https://stackoverflow.com/a/50830905
 		if (!frompopstate) {
 			let fullpath;
-			if (window.location.pathname != '/') {
-				if (this.settings.hash) {
-					fullpath =
-						window.location.pathname +
-						window.location.search +
-						path;
-				} else {
-					fullpath =
-						path + window.location.search + window.location.hash;
-				}
+
+			if (this.settings.hash) {
+				fullpath =
+					window.location.pathname + window.location.search + path;
+			} else {
+				fullpath = path + window.location.search + window.location.hash;
 			}
-			console.log({ fullpath });
+			console.log(fullpath);
 			// handle many routes for different routers
 			// but only push the route once to history
 			history.pushState({ path: fullpath }, '', fullpath);
