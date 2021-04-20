@@ -282,6 +282,7 @@ const AlpineRouter = {
 		});
 
 		if (routes.length == 0) this.notfound(path);
+
 		// do not call pushstate from popstate event https://stackoverflow.com/a/50830905
 		if (!frompopstate) {
 			let fullpath;
@@ -292,19 +293,33 @@ const AlpineRouter = {
 			} else {
 				fullpath = path + window.location.search + window.location.hash;
 			}
-			console.log(fullpath);
 			// handle many routes for different routers
 			// but only push the route once to history
 			history.pushState({ path: fullpath }, '', fullpath);
 		}
-
+		let doc;
 		routes.forEach((route) => {
-			// let routerEl = document.querySelector(
-			// 	`[x-router="${route.router}"]`
-			// );
-			// routerEl.dispatchEvent(this.loadstart);
+			let router = this.routers.find((e) => e.name == route.router);
+			if (router.settings.render != null) {
+				let selector = router.settings.render;
+				if (doc == null) {
+					fetch(path)
+						.then((response) => {
+							return response.text();
+						})
+						.then((response) => {
+							doc = new DOMParser().parseFromString(
+								response,
+								'text/html'
+							);
+							console.log(response);
+							document.querySelector(
+								selector
+							).innerHTML = doc.querySelector(selector).innerHTML;
+						});
+				}
+			}
 			route.handle();
-			// routerEl.dispatchEvent(this.loadend);
 		});
 		window.dispatchEvent(this.loadend);
 	},

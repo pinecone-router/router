@@ -43,7 +43,7 @@ const utils = {
 	/**
 	 * Match the path with specified routes
 	 * Taken from https://github.com/vijitail/simple-javascript-router/blob/master/src/router/Router.js#L14
-	 * with some modifications to fix bad behavior 
+	 * with some modifications to fix bad behavior
 	 */
 	match(route, requestPath) {
 		let paramNames = [];
@@ -125,6 +125,10 @@ const utils = {
 		// of every route in this router
 		if (el.hasAttribute('x-base')) {
 			routerSettings.base = el.getAttribute('x-base');
+		}
+		if (el.hasAttribute('x-render')) {
+			let selector = el.getAttribute('x-render');
+			routerSettings.render = selector == '' ? 'body' : selector;
 		}
 		return routerSettings;
 	},
