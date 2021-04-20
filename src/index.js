@@ -180,7 +180,7 @@ const AlpineRouter = {
 				// add an x-link attribute this will tell this function
 				// that the link already been handled.
 				el.setAttribute('x-link', '');
-				
+
 				el.addEventListener('mouseover', (e) => {
 					if (!this.preloadPages) return;
 					let path = e.target.getAttribute('href');
@@ -252,12 +252,6 @@ const AlpineRouter = {
 			);
 		}
 
-		if (el.hasAttribute('x-handler') == false) {
-			throw new Error(
-				'Alpine Router: x-route must have a handler (x-handler="handler")'
-			);
-		}
-
 		// The path will be on x-route and handler on x-handler
 		// The path must be a string and the handler a function callback
 		let path = el.getAttribute('x-route');
@@ -273,27 +267,37 @@ const AlpineRouter = {
 			);
 		}
 
-		// Get the hanlder which is a string because it's an attribute value
-		// Use that string as an index to the component method which is meant to handle the route
-		let handlerName = el.getAttribute('x-handler');
-		let handler;
-		try {
-			handler = component.getUnobservedData()[handlerName];
-		} catch (error) {
-			throw new Error('Alpine Router: ' + error);
-		}
-
-		// Check if the hanlder is a function
-		if (typeof handler != 'function') {
+		if (
+			el.hasAttribute('x-handler') == false &&
+			routerSettings.render == null
+		) {
 			throw new Error(
-				`Alpine Router: handler must be a callback function, ${typeof handler} given.`
+				'Alpine Router: x-route must have a handler (x-handler="handler") unless using x-render.'
 			);
+		} else if (el.hasAttribute('x-handler')) {
+			// Get the hanlder which is a string because it's an attribute value
+			// Use that string as an index to the component method which is meant to handle the route
+			let handlerName = el.getAttribute('x-handler');
+			let handler;
+			try {
+				handler = component.getUnobservedData()[handlerName];
+			} catch (error) {
+				throw new Error('Alpine Router: ' + error);
+			}
+
+			// Check if the hanlder is a function
+			if (typeof handler != 'function') {
+				throw new Error(
+					`Alpine Router: handler must be a callback function, ${typeof handler} given.`
+				);
+			}
+			if (path == 'notfound') {
+				// register the route as a 404 handler
+				this.notfound = handler;
+			}
 		}
 
-		if (path == 'notfound') {
-			// register the route as a 404 handler
-			this.notfound = handler;
-		} else {
+		if (path != 'notfound') {
 			// add basepath of the entire page/site
 			if (['/', '#/'].includes(this.settings.basepath) == false) {
 				path = this.settings.basepath + path;
@@ -341,6 +345,10 @@ const AlpineRouter = {
 			return utils.match(route, path);
 		});
 
+		var router = this.routers.find(
+			(e) => e.name == route.router
+		);
+
 		if (routes.length == 0) this.notfound(path);
 
 		// do not call pushstate from popstate event https://stackoverflow.com/a/50830905
@@ -364,9 +372,6 @@ const AlpineRouter = {
 			if (firstload != true) {
 				// If the route is not rendered
 				if (!rendered) {
-					let router = this.routers.find(
-						(e) => e.name == route.router
-					);
 					if (router.settings.render != null) {
 						let selector = router.settings.render;
 						if (
@@ -380,7 +385,7 @@ const AlpineRouter = {
 								this.fetchedContent.content,
 								selector
 							);
-							this.fetchedContent.path = null
+							this.fetchedContent.path = null;
 							this.fetchedContent.content = null;
 						} else {
 							fetch(path)
@@ -395,7 +400,9 @@ const AlpineRouter = {
 					}
 				}
 			}
-			route.handle();
+
+			// the handler can be null in case the router have x-render
+			if (route.handler != null) route.handle();
 		});
 		window.dispatchEvent(this.loadend);
 	},
@@ -426,7 +433,8 @@ const AlpineRouter = {
 		this.routes = r.routes;
 
 		// check if there is still a router that uses page rendering
-		this.preloadPages = this.routers.findIndex((e) => e.settings.render != null) != null;
+		this.preloadPages =
+			this.routers.findIndex((e) => e.settings.render != null) != null;
 
 		// replace the content of the selector with the fetched content
 		document.querySelector(selector).innerHTML = doc.innerHTML;
