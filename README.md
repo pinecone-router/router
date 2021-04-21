@@ -14,8 +14,8 @@ A simple router for use with Alpine.js.
 ## Features:
 - Easy and familiar syntax well integrated with Alpine.js. 
 - Automatically dispatch relative links and handle them (optional).
-- Can have multiple routers in the same page that can share routes.
 - Hash routing!
+- Render pages automatically with preloading (like turbolinks, optional)
 
 ## Installation
 WIP! documentation coming soon, not ready for production yet.
@@ -24,17 +24,17 @@ WIP! documentation coming soon, not ready for production yet.
 Include the following `<script>` tag in the `<head>` of your document:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@master/dist/alpine-router.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@main/dist/alpine-router.umd.js"></script>
 ```
 ##### or
  If you use ES6 Modules:
 ```javascript
-import 'https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@master/dist/alpine-router.module.js'
+import 'https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@main/dist/alpine-router.module.js'
 ```
 
 ## Usage
 
-Create an Alpine component with the `x-router` attribute specifying the name of the router, leave empty for "default" (names must be unique).
+Create an Alpine component with the `x-router` attribute.
 
 Declare routes by creating a template tag with `x-route` and `x-handler` attributes.
 
@@ -48,19 +48,21 @@ The `x-handler` must be a method of the router component.
 </div>
 ```
 
-The handler takes `props` as an argument which will have path variales.
+The handler takes `context` which consist of:
+- context.path
+- context.props
 
 ```js
 function handle() {
 	return {
-		main(props) {
+		main() {
 			console.log('main');
 		},
-		hello(props) {
-			console.log('hello,', props.name);
+		hello(context) {
+			console.log('hello,', context.props.name);
 		},
-		notfound(props) {
-			console.error('not found');
+		notfound(context) {
+			console.error(context.path + ' is not found');
 		},
 	};
 }
@@ -69,6 +71,7 @@ function handle() {
 > **Important**: This must be added **before** loading Alpine.js.
 
 ## Credits!
+
 Currenly this library uses chunks of code from [this tutorial](https://medium.com/swlh/lets-code-a-client-side-router-for-your-no-framework-spa-19da93105e10) & from [page.js](https://github.com/visionmedia/page.js). The parts used are speficied in [source comments](src/).
 
 ## Versioning
