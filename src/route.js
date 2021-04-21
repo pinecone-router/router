@@ -2,7 +2,6 @@ class Route {
 	constructor(path, handler, router) {
 		this.path = path;
 		this.handler = handler;
-		this.router = router;
 	}
 
 	setProps(newProps) {
