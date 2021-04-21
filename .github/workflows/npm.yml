@@ -28,6 +28,9 @@ jobs:
 
       - name: Build dist folder
         run: yarn build
+        
+      - name: Run test suite
+        run: yarn test
 
       - name: Commit dist folder if needed #it fails if nothing has changed so we allow an error
         run: git commit -am 'Rebuild dist'

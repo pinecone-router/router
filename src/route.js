@@ -1,5 +1,5 @@
 class Route {
-	constructor(path, handler, router) {
+	constructor(path, handler) {
 		this.path = path;
 		this.handler = handler;
 	}
@@ -8,8 +8,16 @@ class Route {
 		this.props = newProps;
 	}
 
-	handle() {
-		return this.handler({props: this.props, path: this.path});
+	handle(path) {
+		if (typeof this.handler == 'function') {
+			return this.handler({
+				props: this.props,
+				route: this.path,
+				path: path,
+				query: window.location.search.substring(1),
+				hash: window.location.hash.substring(1),
+			});
+		}
 	}
 }
 

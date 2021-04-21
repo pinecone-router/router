@@ -7,12 +7,17 @@
         "type": "git",
         "url": "https://github.com/rehhouari/alpine-router"
     },
+	"keywords": [
+        "alpinejs",
+        "magic properties",
+        "alpine"
+    ],
     "source": "src/index.js",
     "main": "dist/alpine-router.js",
     "umd:main": "dist/alpine-router.umd.js",
     "module": "dist/alpine-router.module.js",
     "scripts": {
-        "build": "microbundle -f es",
+        "build": "microbundle",
         "watch": "microbundle watch",
         "test": "jest"
     },

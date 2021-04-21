@@ -42,29 +42,42 @@ const utils = {
 	/**
 	 * This takes the document fetched, remove routers already initialized from it
 	 * @param {Document} doc
-	 * @param {array} routers
 	 * @param {array} routes
-	 * @param {boolean} removeRoutersNotInDoc when true, remove routers initialized but not found in the doc.
-	 * @returns {object} {doc, routers, routes}
+	 * @returns {object} {doc, routes}
 	 */
-	processRoutersInFetchedDoc(
-		doc,
-		routes,
-	) {
-		let routersInDoc = [];
+	processRoutersInFetchedDoc(doc, selector, routes) {
 		let routersInDoc = doc.querySelectorAll('[x-router]');
-		if (routersInDoc.length > 1) {
-			throw new Error('Alpine Router: there can only be one router in the same page');
-		} else if (routersInDoc.length = 1) {
-			// if there is no router in the fetched doc, remove the routes registered
-			routersInDoc[0].remove();
-		} else {
-			routes = [];
+		switch (routersInDoc.length) {
+			case 0:
+				// if there is no router in the fetched doc, remove the routes registered
+				// but only if the selector is body
+				if (selector == 'body') routes = [];
+				break;
+			case 1:
+				// the router currently loaded
+				let currentRouter = document.querySelector('[x-router]');
+				// if the router in the doc dont have x-router set to 'loaded'
+				// thus remove it from the current router element before checking if they're the same
+				currentRouter.setAttribute('x-router', '');
+				// check if the one in fetched doc is the same as the current one
+				if (routersInDoc[0].isEqualNode(document.querySelector('[x-router]'))) {
+					// if it is, mark the router as loaded, so routes wont be processed again
+					routersInDoc[0].setAttribute('x-router', 'loaded');
+					// remove the router element currently in the page, in case it is not within the selector.
+					document.querySelector('[x-router]').remove();
+				} else {
+					// if they're not the same remove the routes, the new ones will be added once this new router is added
+					routes = [];
+					document.querySelector('[x-router]').remove();
+				}
+				break;
+			default: // more than one
+				throw new Error(
+					'Alpine Router: there can only be one router in the same page'
+				);
 		}
 
-
-
-		return { doc };
+		return { doc, routes };
 	},
 
 	/**
@@ -141,31 +154,6 @@ const utils = {
 		if (!this.isLocation) return false;
 		var loc = window.location;
 		return url.pathname === loc.pathname && url.search === loc.search;
-	},
-
-	/**
-	 * Take the router's element and check for settings attribute
-	 */
-	detectRouterSettings(el) {
-		let routerSettings = {};
-		// The router basepath which will be added at the begining
-		// of every route in this router
-		if (el.hasAttribute('x-base')) {
-			routerSettings.base = el.getAttribute('x-base');
-		}
-		if (el.hasAttribute('x-render')) {
-			let selector = el.getAttribute('x-render');
-			routerSettings.render = selector == '' ? 'body' : selector;
-		}
-
-		if (el.hasAttribute('x-render')) {
-			routerSettings.render =
-				el.getAttribute('x-render') == ''
-					? 'body'
-					: el.getAttribute('x-render');
-		}
-
-		return routerSettings;
 	},
 };
 
