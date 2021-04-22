@@ -1,10 +1,9 @@
-import utils from './utils.js';
+import { buildContext } from './utils.js';
 
 class Route {
-	constructor(path, handler, view) {
+	constructor(path, settings) {
 		this.path = path;
-		this.handler = handler;
-		this.view = view;
+		this.settings = settings;
 	}
 
 	setProps(newProps) {
@@ -12,9 +11,9 @@ class Route {
 	}
 
 	handle(path) {
-		if (typeof this.handler == 'function') {
-			return this.handler(
-				utils.buildContext(this.route, path, this.props)
+		if (typeof this.settings.handler == 'function') {
+			return this.settings.handler(
+				buildContext(this.route, path, this.props)
 			);
 		}
 	}
