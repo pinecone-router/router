@@ -1,6 +1,7 @@
 ![Alpine Router logo with the text "A simple client-side router for Alpine.js"](logo/alpine-router-readme-card.png)
 
 # Alpine Router
+
 The simple client-side router for Alpine.js. (WIP)
 
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/rehhouari/alpine-router?label=version&style=flat-square)
@@ -12,33 +13,40 @@ The simple client-side router for Alpine.js. (WIP)
 A simple router for use with Alpine.js.
 
 ## Features:
-- Easy and familiar syntax well integrated with Alpine.js. 
-- Automatically dispatch relative links and handle them (optional).
-- Hash routing!
-- Render pages automatically with preloading (like turbolinks, optional)
+
+-   Easy and familiar syntax well integrated with Alpine.js.
+-   Automatically dispatch relative links and handle them (optional).
+-   Hash routing!
+-   [Render pages](#page-rendering) automatically with preloading (like turbolinks, optional)
+-   [Render views](#views-rendering) set the view for each route and have it rendered!
 
 ## Installation
+
 WIP! documentation coming soon, not ready for production yet.
 
 ### CDN
+
 Include the following `<script>` tag in the `<head>` of your document:
 
 ```html
 <script src="https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@main/dist/alpine-router.umd.js"></script>
 ```
-##### or
- If you use ES6 Modules:
+
+**ES6 Module:**
+
 ```javascript
-import 'https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@main/dist/alpine-router.module.js'
+import 'https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@main/dist/alpine-router.module.js';
 ```
+
+> **Important**: This must be added **before** loading Alpine.js.
 
 ## Usage
 
-Create an Alpine component with the `x-router` attribute.
+### Handle routes
 
-Declare routes by creating a template tag with `x-route` and `x-handler` attributes.
-
-The `x-handler` must be a method of the router component.
+-   Create an Alpine component with the `x-router` attribute.
+-   Declare routes by creating a template tag with `x-route` and `x-handler` attributes.
+-   The `x-handler` must be a method of the router component.
 
 ```html
 <div x-data="handle()" x-router>
@@ -48,9 +56,7 @@ The `x-handler` must be a method of the router component.
 </div>
 ```
 
-The handler takes `context` which consist of:
-- context.path
-- context.props
+> **Important**: There can only be one router in the page!
 
 ```js
 function handle() {
@@ -68,11 +74,128 @@ function handle() {
 }
 ```
 
-> **Important**: This must be added **before** loading Alpine.js.
+#### Context Object
 
-## Credits!
+The handler takes `context` which consist of:
 
-Currenly this library uses chunks of code from [this tutorial](https://medium.com/swlh/lets-code-a-client-side-router-for-your-no-framework-spa-19da93105e10) & from [page.js](https://github.com/visionmedia/page.js). The parts used are speficied in [source comments](src/).
+-   context.route (/path/:var)
+-   context.path (/path/something)
+-   context.props ({var: something})
+-   context.hash (hash fragment without the #)
+-   context.query (search query without the ?)
+
+### Hash routing
+
+You may use hash routing by simply adding `x-hash` attribute to the router component:
+
+```html
+<div x-data="handle()" x-router x-hash>...</div>
+```
+
+### Page rendering
+
+You can use Alpine Router to render server generated pages without reloads!
+
+```html
+<div x-data="handle()" x-router x-render></div>
+```
+
+By default this will fetch the whole page and replaces the `<body>` content.
+To use antoher element instead, set its selector: `x-render="#content"`.
+
+#### Handling routes while using x-render
+
+You can also handle routes while all pages render normally!
+
+```html
+<div x-data="handle()" x-router x-render>
+	<template x-route="/hello/:name" x-handler="hello"></template>
+</div>
+```
+
+> **Note**: The routes will be handled _after_ the page is rendered.
+
+#### Notfound and specifying routes
+
+By default, 404 pages are left to the server to handle. However, if you'd like to specify the routes allowed, you can do it like this:
+
+```html
+<div x-data="handle()" x-router x-render>
+	<template x-route="/"></template>
+	<template x-route="/hello/:name"></template>
+	<template x-route="notfound" x-handler="notfound"></template>
+</div>
+```
+
+As you see, the handler is optional on routes as the page will be rendered regardless, but you can add it if you need it.
+**Notes:\***
+By default routes not found _will_ be pushed to history.
+That can be prevented by setting `AlpineRouter.settings.pushNotfoundToHistory = false`.
+
+### Views rendering
+
+Unlike page rendering, you get to specify the view for each route.
+
+-   Routes can share views.
+-   View are simply html files.
+-   Can specify selector as well.
+
+```html
+<div x-data x-router x-views="#content">
+	<template x-route="/" x-view="/home.html"></template>
+	<template x-route="/hello/:name" x-view="/hello.html"></template>
+	<template x-route="notfound" x-view="/404.html"></template>
+</div>
+```
+
+> **Notes:** :
+
+-   A view is **required** for each route.
+-   You can _cache_ views if they're static and not dynamically generated by adding `x-static` to the router:
+-   -   `<div x-data x-router x-views x-static>`
+-   You can set the selector by specifying it `x-views`. leaving it empty will default to '#content'.
+
+> **Important**: Make sure the view don't have an Alpine Router component in it! Keep the router component outside of the specified selector.
+
+### Redirecting
+
+You can navigate to another page by calling `AlpineRouter.navigate(path)` with path being the path you want to navigate to.
+
+### Settings:
+
+There are a few settings you may tweak for your liking.
+
+To access or set them from javascript, use `AlpineRouter.settings.name = value`.<br>with name being the name of the settings as seen bellow:
+
+| name                      | default | description                                                         |
+| ------------------------- | ------- | ------------------------------------------------------------------- |
+| **interceptLink**         | _true_  | hether or not to intercept links                                    |
+| **basepath**              | _'/'_   | the basepath that will be added to all links                        |
+| **pushNotfoundToHistory** | _true_  | whether or not paths that are not found should be pushed to history |
+| **render.preload**        | _true_  | whether to preload pages on mouse over links                        |
+| **render.preloadtime**    | _200_   | time to wait to preload pages on mouse over links                   |
+
+### Events:
+
+Alpine Router dispatch these events:
+
+| name             | recipient        | description                                |
+| ---------------- | ---------------- | ------------------------------------------ |
+| **routerloaded** | router component | when the router and routes are initialized |
+| **loadstart**    | window           | when the page start loading                |
+| **loadend**      | window           | when the page loading ends                 |
+
+### Global Context
+
+You can access current path's [context](#context-object) from anywhere in your javascript by accessing `AlpineRouter.currentContext`.
+
+## Credits
+
+This library uses modified chunks of code from [this tutorial](https://medium.com/swlh/lets-code-a-client-side-router-for-your-no-framework-spa-19da93105e10) & from [page.js](https://github.com/visionmedia/page.js). The parts used are speficied in [source comments](src/).
+
+## Acknowledgment
+
+@KevinBatdorf for the page rendering idea and early feedback!
 
 ## Versioning
 
@@ -84,8 +207,8 @@ Copyright (c) 2021 Rafik El Hadi Houari and contributors
 
 Licensed under the MIT license, see [LICENSE.md](LICENSE.md) for details.
 
->Code from [Page.js](https://github.com/visionmedia/page.js#license) is licenced under the MIT License.
->Copyright (c) 2012 TJ Holowaychuk <tj@vision-media.ca>
+> Code from [Page.js](https://github.com/visionmedia/page.js#license) is licenced under the MIT License.
+> Copyright (c) 2012 TJ Holowaychuk <tj@vision-media.ca>
 
->Code from [Simple-javascript-router tutorial](https://github.com/vijitail/simple-javascript-router/) is licenced under the MIT License.
->Copyright (c) 2021 Vijit Ail (https://github.com/vijitail).
+> Code from [Simple-javascript-router tutorial](https://github.com/vijitail/simple-javascript-router/) is licenced under the MIT License.
+> Copyright (c) 2021 Vijit Ail (https://github.com/vijitail).

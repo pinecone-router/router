@@ -1,5 +1,11 @@
 const utils = {
 	isLocation: !!(window.history.location || window.location),
+	
+	/**
+	 * Check if the anchor element point to a navigation route.
+	 * @param {Element} el The anchor element 
+	 * @returns {bool} true if the link is valid for navigation, false otherwise
+	 */
 	validLink(el) {
 		// The checks in this block are taken from page.js https://github.com/visionmedia/page.js/blob/master/index.js#L370
 		// el.nodeName for svg links are 'a' instead of 'A'
@@ -39,6 +45,16 @@ const utils = {
 		return true;
 	},
 
+	buildContext(route, path, props) {
+		return {
+			route: route,
+			path: path,
+			props: props,
+			query: window.location.search.substring(1),
+			hash: window.location.hash.substring(1),
+		};
+	},
+
 	/**
 	 * This takes the document fetched, remove routers already initialized from it
 	 * @param {Document} doc
@@ -60,7 +76,11 @@ const utils = {
 				// thus remove it from the current router element before checking if they're the same
 				currentRouter.setAttribute('x-router', '');
 				// check if the one in fetched doc is the same as the current one
-				if (routersInDoc[0].isEqualNode(document.querySelector('[x-router]'))) {
+				if (
+					routersInDoc[0].isEqualNode(
+						document.querySelector('[x-router]')
+					)
+				) {
 					// if it is, mark the router as loaded, so routes wont be processed again
 					routersInDoc[0].setAttribute('x-router', 'loaded');
 					// remove the router element currently in the page, in case it is not within the selector.
@@ -71,7 +91,8 @@ const utils = {
 					document.querySelector('[x-router]').remove();
 				}
 				break;
-			default: // more than one
+			default:
+				// more than one
 				throw new Error(
 					'Alpine Router: there can only be one router in the same page'
 				);

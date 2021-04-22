@@ -2,52 +2,115 @@ import Route from './route.js';
 import utils from './utils.js';
 
 const AlpineRouter = {
-	// routes are instantiated from the Routes classs
+	/**
+	 * @type {array}
+	 * @summary array of routes instantiated from the Route class.
+	 */
 	routes: [],
 
-	// These can be used to control Alpine Router externally
 	settings: {
-		interceptLinks: true, // detect if links are of the same origin and let Alpine Router handle them
+		/**
+		 * @type {boolean}
+		 * @summary detect if links are of the same origin and let Alpine Router handle them
+		 */
+		interceptLinks: true,
 		basepath: '/',
 		hash: false,
+		/**
+		 * @type {boolean}
+		 * @summary whether or not to push unregistered paths to history.
+		 */
+		pushNotfoundToHistory: true,
 		render: {
 			enabled: false,
 			selector: 'body',
 			preload: true,
-			preloadtime: 200, // time to wait after mouse over a link before preloading a page
-			preloaded: { path: null, content: null }, // The content that has been preloaded on mouseover event.
+			/**
+			 * @type {number} miliseconds
+			 * @summary time to wait after mouse over a link before preloading a page
+			 */
+			preloadtime: 200,
+			/**
+			 * @type {object}
+			 * @summary The content that has been preloaded on mouseover event.
+			 */
+			preloaded: { path: null, content: null }, //
 		},
 		views: {
 			enabled: false,
 			basepath: '/',
+			selector: '#content',
+			/**
+			 * @type {string}
+			 * @summary the 404 view
+			 */
+			notfound: null,
+			/**
+			 * @type {bool}
+			 * @summary views are not dynamically generated, this will cache views for later use.
+			 */
+			static: false,
+			/**
+			 * @type {array}
+			 * @summary array of objects, will hold cached views if static is true
+			 */
+			cached: [],
 		},
 	},
 
-	// This will be set to true after all routers are
-	// initialized and the first page loaded
+	/**
+	 * @type {boolean}
+	 * @summary This will be set to true after all routers are
+	 * initialized and the first page loaded
+	 */
 	loaded: false,
 
-	// The handler for 404 pages, can be overwritten by a notfound route
-	// Note that when using x-render, it'll be set to null in order to let server generate the page
-	// however if setting routes in the router with x-render you must set notfound route as well
+	/**
+	 * @type {object}
+	 * @summary The context object for current path.
+	 */
+	currentContext: null,
+
+	/**
+	 * @event routerloaded
+	 * @summary will be dispatched to window when all routers are
+	 * initialized and the first page loaded
+	 */
+	routerloaded: new Event('routerloaded'),
+
+	/**
+	 * @event loadstart
+	 * @summary be dispatched to the window after before page start loading.
+	 */
+	loadstart: new Event('loadstart'),
+
+	/**
+	 * @event loadend
+	 * @summary will be dispatched to the window after the page is loaded.
+	 */
+	loadend: new Event('loadend'),
+
+	/**
+	 * @description The handler for 404 pages, can be overwritten by a notfound route
+	// Note that when using x-render or x-views, it'll be set to null in order to let server generate the page
+	// or user specify the view, respectively.
+	// Note: if setting routes in the router with x-render you must set notfound route as well
 	// for example this can be used to validate routes in browser.
-	notfound: function (path) {
-		console.error(`Alpine Router: requested path ${path} was not found`);
+	 * @param {object} context The context object.
+	 */
+	notfound: function (context) {
+		console.error(
+			`Alpine Router: requested path ${context.path} was not found`
+		);
 	},
 
-	// Entry point of the plugin
+	/**
+	 * Entry point of the plugin
+	 */
 	start() {
 		if (!window.Alpine) {
 			throw new Error('Alpine is require for `Alpine Router` to work.');
 		}
-
-		// will be dispatched to window when all routers are
-		// initialized and the first page loaded
-		this.routerloaded = new Event('routerloaded');
-		// will be dispatched before the handler on the responsible router only and the window
-		this.loadstart = new Event('loadstart');
-		// will be dispatched after the handler is done on the responsible router only and the window
-		this.loadend = new Event('loadend');
 
 		// Routers that are already initialized
 		let currentRouterCount = 0;
@@ -66,15 +129,6 @@ const AlpineRouter = {
 						'Alpine Router: Only one router can be in a page.'
 					);
 				}
-
-				// If using hash routing tell Alpine Router to check for hash everytime it changes
-				// No need for this as link clicks are handled and pushstate is
-				// if (this.settings.hash) {
-				// 	window.onhashchange = () => {
-				// 		// navigate to the hash route
-				// 		this.navigate(window.location.hash.substring(1), true);
-				// 	};
-				// }
 
 				// Detect router settings
 
@@ -100,18 +154,30 @@ const AlpineRouter = {
 					if (component.$el.hasAttribute('x-hash')) {
 						this.settings.hash = true;
 					}
-					// views rendering, unlike page rendering.
-					// they wont be loaded automatically using path
-					// instead the user decide the view using x-view for each route
-					if (component.$el.hasAttribute('x-views')) {
-						this.settings.views.enabled = true;
-						// check if a path for views was set
-						// this will be used as a base for all views
-						let path = component.$el.getAttribute('x-render');
-						if (path != '') {
-							this.settings.views.basepath = path;
-						}
+				}
+
+				// views rendering, unlike page rendering.
+				// they wont be loaded automatically using path
+				// instead the user decide the view using x-view for each route
+				if (component.$el.hasAttribute('x-views')) {
+					this.settings.views.enabled = true;
+					// check if the selector was set, else default to 'body'
+					let selector = component.$el.getAttribute('x-views');
+					if (selector == 'body') {
+						throw new Error(
+							'Alpine Router: Do not use body as the selector, it will cause the router component to be removed'
+						);
+					} else if (selector != '') {
+						this.settings.views.selector = selector;
 					}
+
+					if (component.$el.hasAttribute('x-static')) {
+						this.settings.views.static = true;
+					}
+
+					// this will disable notfound handling in favor of 404 view
+					// this can be ovewritten if needed by making a notfound route with a handler
+					this.notfound = null;
 				}
 
 				// Loop through child elements of this router
@@ -144,7 +210,7 @@ const AlpineRouter = {
 				}
 
 				this.loaded = true;
-				window.dispatchEvent(this.routerloaded);
+				component.$el.dispatchEvent(this.routerloaded);
 			}
 		});
 
@@ -184,16 +250,15 @@ const AlpineRouter = {
 					if (
 						!this.settings.render.enabled ||
 						!this.settings.render.preload
-					)
-						return;
-					let path = e.target.getAttribute('href');
-					if (path == null) path = '/';
-					if (
-						this.settings.render.preloaded.path != null &&
-						this.settings.render.preloaded.path == path
 					) {
 						return;
 					}
+					let path = e.target.getAttribute('href');
+					if (path == null) path = '/';
+					if (this.settings.render.preloaded.path == path) {
+						return;
+					}
+
 					window.setTimeout(function () {
 						fetch(path)
 							.then((response) => {
@@ -205,11 +270,12 @@ const AlpineRouter = {
 							});
 					}, this.settings.render.preloadtime);
 				});
+
 				el.addEventListener(
 					'click',
 					(e) => {
 						e.preventDefault();
-						let link = e.target.getAttribute('href');
+						let link = el.pathname;
 						if (this.settings.hash) {
 							window.location.hash = '#' + link;
 						} else {
@@ -249,14 +315,28 @@ const AlpineRouter = {
 			);
 		}
 
-		if (this.settings.views) {
-			// TODO
+		let view = null;
+		if (this.settings.views.enabled) {
+			if (el.hasAttribute('x-view') == false) {
+				throw new Error(
+					'Alpine Router: route must have an x-view attribute when using x-views.'
+				);
+			} else {
+				view = el.getAttribute('x-view');
+				if (this.settings.views.basepath != '/') {
+					view = this.settings.views.basepath + view;
+				}
+			}
+			if (path == 'notfound') {
+				this.settings.views.notfound = view;
+			}
 		}
 
 		let handler = null;
 		if (
 			el.hasAttribute('x-handler') == false &&
-			this.settings.views.enabled == false
+			this.settings.views.enabled == false &&
+			this.settings.render.enabled == false
 		) {
 			throw new Error(
 				'Alpine Router: x-route must have a handler (x-handler="handler") unless using x-render.'
@@ -290,7 +370,7 @@ const AlpineRouter = {
 			}
 
 			// register the new route if possible
-			this.addRoute(path, handler);
+			this.addRoute(path, handler, view);
 		}
 	},
 
@@ -303,8 +383,10 @@ const AlpineRouter = {
 	navigate(path, frompopstate = false, firstload = false) {
 		// process hash route individually
 		window.dispatchEvent(this.loadstart);
+
 		if (path == null) {
 			path = '/';
+			console.log({ path });
 		}
 
 		const route = this.routes.find((route) => {
@@ -316,11 +398,78 @@ const AlpineRouter = {
 			(!this.settings.render.enabled ||
 				(this.settings.render.enabled && this.notfound != null));
 
-		if (notfound)
-			this.notfound(path);
+		let context;
+		if (notfound) {
+			context = utils.buildContext('notfound', path, {});
+			if (this.notfound != null) {
+				this.notfound(context);
+			}
+		} else {
+			context = utils.buildContext(route.path, path, route.props);
+		}
+
+		// if using page rendering and the user just (re)loaded the page
+		// dont fetch the content as it is already loaded
+		if (this.settings.render.enabled && !firstload && !notfound) {
+			if (this.settings.render.preloaded.path == path) {
+				this.renderContent(
+					this.settings.render.preloaded.content,
+					this.settings.render.selector,
+					true
+				);
+				this.settings.render.preloaded.path = null;
+				this.settings.render.preloaded.content = null;
+			} else {
+				fetch(path)
+					.then((response) => {
+						return response.text();
+					})
+					.then((response) => {
+						this.renderContent(
+							response,
+							this.settings.render.selector,
+							false
+						);
+					});
+			}
+		}
+
+		let view = route != null ? route.view : this.settings.views.notfound;
+
+		if (this.settings.views.enabled && view != null) {
+			if (this.settings.views.static) {
+				// check if the view was already loaded
+				var cachedview = this.settings.views.cached.find(
+					(v) => v.view == view
+				);
+				if (cachedview != null) {
+					this.renderContent(
+						cachedview.content,
+						this.settings.views.selector
+					);
+				}
+			}
+			fetch(view)
+				.then((response) => {
+					return response.text();
+				})
+				.then((response) => {
+					this.renderContent(response, this.settings.views.selector);
+					if (this.settings.views.static && cachedview == null) {
+						this.settings.views.cached.push({
+							view: view,
+							content: response,
+						});
+					}
+				});
+		}
 
 		// do not call pushstate from popstate event https://stackoverflow.com/a/50830905
-		if (!frompopstate) {
+		// and if the route is not found only push when pushNotfoundToHistory is true
+		if (
+			!frompopstate &&
+			!(notfound && this.settings.pushNotfoundToHistory)
+		) {
 			let fullpath;
 
 			if (this.settings.hash) {
@@ -334,36 +483,10 @@ const AlpineRouter = {
 			history.pushState({ path: fullpath }, '', fullpath);
 		}
 
-		// if using page rendering and the user just (re)loaded the page
-		// dont fetch the content as it is already loaded
-		if (this.settings.render.enabled && !firstload && !this.notfound) {
-			if (
-				this.settings.render.preloaded.path != null &&
-				this.settings.render.preloaded.path == path
-			) {
-				console.log('Alpine Router: Using preloaded conteent');
-				this.renderContent(
-					this.settings.render.preloaded.content,
-					this.settings.render.selector
-				);
-				this.settings.render.preloaded.path = null;
-				this.settings.render.preloaded.content = null;
-			} else {
-				fetch(path)
-					.then((response) => {
-						return response.text();
-					})
-					.then((response) => {
-						this.renderContent(
-							response,
-							this.settings.render.selector
-						);
-					});
-			}
-		}
-
 		// the route can be null in case using page rendering with no routes
-		if (route != null) route.handle(path);
+		if (route != null && route.handler != null) route.handle(path);
+
+		this.currentContext = context;
 
 		window.dispatchEvent(this.loadend);
 	},
@@ -372,13 +495,15 @@ const AlpineRouter = {
 	 *
 	 * @param {string} path
 	 * @param {function} handler
+	 * @param {string} view
 	 */
-	addRoute(path, handler) {
+	addRoute(path, handler, view) {
 		// check if the route was registered on the same router.
 		if (this.routes.find((r) => r.path == path) != null) {
 			throw new Error('Alpine Router: route already exist');
 		}
-		this.routes.push(new Route(path, handler));
+
+		this.routes.push(new Route(path, handler, view));
 	},
 
 	/**
@@ -394,38 +519,34 @@ const AlpineRouter = {
 	 * to use this you need to add x-render to the router
 	 * @param {string} content the html content.
 	 * @param {string} selector the selector of where to put the content.
+	 * @param {boolean} isEntirePage if true, the content is assumend to be the entire HTML page.
+	 * 								true when used with x-render, false with x-views
 	 */
-	renderContent(content, selector) {
-		let doc = new DOMParser().parseFromString(content, 'text/html');
+	renderContent(content, selector, isEntirePage) {
+		// if called from x-render
+		if (isEntirePage) {
+			let doc = new DOMParser().parseFromString(content, 'text/html');
+			doc = doc.querySelector(selector);
+			// This takes the document fetched, remove routers already initialized from it
+			// and also remove routers initialized but not found in it
+			// that is for routers that are not needed in this page.
+			let r = utils.processRoutersInFetchedDoc(
+				doc,
+				selector,
+				this.routes
+			);
 
-		doc = doc.querySelector(selector);
+			doc = r.doc;
+			this.routes = r.routes;
 
-		// This takes the document fetched, remove routers already initialized from it
-		// and also remove routers initialized but not found in it
-		// that is for routers that are not needed in this page.
-		let r = utils.processRoutersInFetchedDoc(doc, selector, this.routes);
-
-		doc = r.doc;
-		this.routes = r.routes;
+			content = doc.innerHTML;
+		}
 
 		// replace the content of the selector with the fetched content
-		document.querySelector(selector).innerHTML = doc.innerHTML;
+		document.querySelector(selector).innerHTML = content;
 
 		this.interceptLinks();
 	},
-	/**
-	 * This will render content by fetching the path specfied in the routes `x-view`.
-	 * 
-	 * @summary To use this add `x-views` to the routers element.
-	 * 
-	 * NOTE: This will be called *per route*, not *per path*.
-	 * It means if there were two routers in the page with a route to `/a/path`, meaning two routes,
-	 * the content will be fetched from path in *each route's* `x-view` *two times* and replaces content of `x-selector`
-	 * 
-	 * This requires routes to have `x-view` for the *path* of content to fetch, and `x-selector` for *where* to put that content.
-
-	 */
-	renderChunks() {},
 };
 
 const alpine = window.deferLoadingAlpine || ((callback) => callback());

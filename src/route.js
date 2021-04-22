@@ -1,7 +1,10 @@
+import utils from './utils.js';
+
 class Route {
-	constructor(path, handler) {
+	constructor(path, handler, view) {
 		this.path = path;
 		this.handler = handler;
+		this.view = view;
 	}
 
 	setProps(newProps) {
@@ -10,13 +13,9 @@ class Route {
 
 	handle(path) {
 		if (typeof this.handler == 'function') {
-			return this.handler({
-				props: this.props,
-				route: this.path,
-				path: path,
-				query: window.location.search.substring(1),
-				hash: window.location.hash.substring(1),
-			});
+			return this.handler(
+				utils.buildContext(this.route, path, this.props)
+			);
 		}
 	}
 }
