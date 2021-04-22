@@ -397,7 +397,6 @@ const AlpineRouter = {
 			route == null &&
 			(!this.settings.render.enabled ||
 				(this.settings.render.enabled && this.notfound != null));
-
 		let context;
 		if (notfound) {
 			context = utils.buildContext('notfound', path, {});
@@ -428,7 +427,7 @@ const AlpineRouter = {
 						this.renderContent(
 							response,
 							this.settings.render.selector,
-							false
+							falsenotfound && this.settings.pushNotfoundToHistory
 						);
 					});
 			}
@@ -466,10 +465,7 @@ const AlpineRouter = {
 
 		// do not call pushstate from popstate event https://stackoverflow.com/a/50830905
 		// and if the route is not found only push when pushNotfoundToHistory is true
-		if (
-			!frompopstate &&
-			!(notfound && this.settings.pushNotfoundToHistory)
-		) {
+		if (!frompopstate && !(notfound && !this.settings.pushNotfoundToHistory)) {
 			let fullpath;
 
 			if (this.settings.hash) {
