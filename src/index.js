@@ -154,30 +154,31 @@ const AlpineRouter = {
 					if (component.$el.hasAttribute('x-hash')) {
 						this.settings.hash = true;
 					}
-				}
 
-				// views rendering, unlike page rendering.
-				// they wont be loaded automatically using path
-				// instead the user decide the view using x-view for each route
-				if (component.$el.hasAttribute('x-views')) {
-					this.settings.views.enabled = true;
-					// check if the selector was set, else default to 'body'
-					let selector = component.$el.getAttribute('x-views');
-					if (selector == 'body') {
-						throw new Error(
-							'Alpine Router: Do not use body as the selector, it will cause the router component to be removed'
-						);
-					} else if (selector != '') {
-						this.settings.views.selector = selector;
+					// views rendering, unlike page rendering.
+					// they wont be loaded automatically using path
+					// instead the user decide the view using x-view for each route
+					if (component.$el.hasAttribute('x-views')) {
+						if (this.settings.render.enabled)
+							this.settings.views.enabled = true;
+						// check if the selector was set, else default to 'body'
+						let selector = component.$el.getAttribute('x-views');
+						if (selector == 'body') {
+							throw new Error(
+								'Alpine Router: Do not use body as the selector, it will cause the router component to be removed'
+							);
+						} else if (selector != '') {
+							this.settings.views.selector = selector;
+						}
+
+						if (component.$el.hasAttribute('x-static')) {
+							this.settings.views.static = true;
+						}
+
+						// this will disable notfound handling in favor of 404 view
+						// this can be ovewritten if needed by making a notfound route with a handler
+						this.notfound = null;
 					}
-
-					if (component.$el.hasAttribute('x-static')) {
-						this.settings.views.static = true;
-					}
-
-					// this will disable notfound handling in favor of 404 view
-					// this can be ovewritten if needed by making a notfound route with a handler
-					this.notfound = null;
 				}
 
 				// Loop through child elements of this router
@@ -465,7 +466,10 @@ const AlpineRouter = {
 
 		// do not call pushstate from popstate event https://stackoverflow.com/a/50830905
 		// and if the route is not found only push when pushNotfoundToHistory is true
-		if (!frompopstate && !(notfound && !this.settings.pushNotfoundToHistory)) {
+		if (
+			!frompopstate &&
+			!(notfound && !this.settings.pushNotfoundToHistory)
+		) {
 			let fullpath;
 
 			if (this.settings.hash) {
