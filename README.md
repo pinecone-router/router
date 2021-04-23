@@ -215,6 +215,7 @@ Want to contribute to code? please do!
 -   make a simple middleware system to turn x-render and x-views into pluggable middlewares!
 -   -   in the source i added `//X-FEATURE ONLY` and `//X-FEATURE END` comments around blocks of code for a specific feature
         in order to show which parts can be removed for exmaplee to make smaller builds.
+- a magic helper `$router` to access current [global context](#global-context)
 -   add tests, I don't know where to start tbh and I'll appreciate it :)
 -   improve documentation.
 
