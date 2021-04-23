@@ -5,10 +5,11 @@
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/rehhouari/alpine-router?color=%2337C8AB&label=version&sort=semver)
 ![GitHub file size in bytes](https://img.shields.io/github/size/rehhouari/alpine-router/dist/complete.js?color=%2337C8AB)
 ![Downloads from Jsdelivr](https://img.shields.io/jsdelivr/gh/hm/rehhouari/alpine-router?color=%2337C8AB&logoColor=%2337C8AB)
+[![Changelog](https://img.shields.io/badge/change-log-%2337C8AB)](/CHANGELOG.md)
 
 # Alpine Router
 
-The simple client-side router for Alpine.js. (WIP)
+The simple client-side router for Alpine.js.
 
 ## About
 
@@ -33,13 +34,13 @@ It works but not ready for production yet, **[needs reviewing and more testing, 
 Include the following `<script>` tag in the `<head>` of your document:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@0.0.3/dist/complete.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@0.0.4/dist/complete.umd.js"></script>
 ```
 
 **ES6 Module:**
 
 ```javascript
-import 'https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@0.0.3/dist/complete.module.js';
+import 'https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@0.0.4/dist/complete.module.js';
 ```
 
 > **Important**: This must be added **before** loading Alpine.js.
@@ -119,7 +120,7 @@ You can also handle routes while all pages render normally!
 </div>
 ```
 
-> **Note**: The routes will be handled _after_ the page is rendered.
+> **Note**: The routes will be handled _before_ the page is rendered.
 
 #### Notfound and specifying routes
 
@@ -163,7 +164,7 @@ Unlike page rendering, you get to specify the view for each route.
 -   -   `<div x-data x-router x-views x-static>`
 -   You can set the selector by specifying it `x-views`. leaving it empty will default to '#content'.
 -   You can also handle routes while using views
--   -   **Note**: The routes will be handled _after_ the page is rendered.
+-   -   **Note**: The routes will be handled _before_ the page is rendered.
 
 > **Tip!** To access the current context (props etc) from within the views, use `AlpineRouter.currentContext`.
 

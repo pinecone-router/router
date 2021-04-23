@@ -1,5 +1,3 @@
-import { buildContext } from './utils.js';
-
 class Route {
 	constructor(path, settings) {
 		this.path = path;
@@ -10,11 +8,9 @@ class Route {
 		this.props = newProps;
 	}
 
-	handle(path) {
+	handle(context) {
 		if (typeof this.settings.handler == 'function') {
-			return this.settings.handler(
-				buildContext(this.route, path, this.props)
-			);
+			return this.settings.handler(context);
 		}
 	}
 }

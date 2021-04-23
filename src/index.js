@@ -400,7 +400,7 @@ const AlpineRouter = {
 		if (path != this.settings.basepath) {
 			// add or remove trailing slash based on settings
 			path = processTrailingSlash(path, this.settings.trailingSlash);
-		} else if(!path.endsWith('/')) {
+		} else if (!path.endsWith('/')) {
 			path += '/';
 		}
 
@@ -420,6 +420,12 @@ const AlpineRouter = {
 		}
 
 		this.currentContext = context;
+
+		// the route can be null in case using page or view rendering with no routes
+		// handle routes before rendering to allow checking for permissions etc
+		if (route != null && route.settings.handler != null) {
+			route.handle(context);
+		}
 
 		// X-RENDER ONLY
 
@@ -513,9 +519,6 @@ const AlpineRouter = {
 			// but only push the route once to history
 			history.pushState({ path: fullpath }, '', fullpath);
 		}
-
-		// the route can be null in case using page or view rendering with no routes
-		if (route != null && route.settings.handler != null) route.handle(path);
 
 		window.dispatchEvent(this.loadend);
 	},
