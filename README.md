@@ -2,8 +2,9 @@
   <img src="logo/alpine-router-readme.png" height="275" title="Alpine Router logo with the text "A simple client-side router for Alpine.js">
 </p>
 
-![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/rehhouari/alpine-router?label=version&style=flat-square)
-![GitHub file size in bytes](https://img.shields.io/github/size/rehhouari/alpine-router/dist/complete.js?label=Complete%20min%20%28no%20gzip%29&style=flat-square)
+![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/rehhouari/alpine-router?color=%2337C8AB&label=version&sort=semver)
+![GitHub file size in bytes](https://img.shields.io/github/size/rehhouari/alpine-router/dist/complete.js?color=%2337C8AB)
+![Downloads from Jsdelivr](https://img.shields.io/jsdelivr/gh/hm/rehhouari/alpine-router?color=%2337C8AB&logoColor=%2337C8AB)
 
 # Alpine Router
 
