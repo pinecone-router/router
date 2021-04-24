@@ -30,15 +30,13 @@
 		"watch": "microbundle watch",
 		"test": "jest"
 	},
-	"dependencies": {
-		"alpinejs": "^2.6.0",
-		"jest": "^26.6.3",
-		"microbundle": "^0.13.0"
-	},
 	"devDependencies": {
 		"@babel/preset-env": "^7.11.0",
 		"@testing-library/dom": "^7.2.2",
 		"@testing-library/jest-dom": "^5.5.0",
-		"jsdom-simulant": "^1.1.2"
+		"alpinejs": "^2.8.2",
+		"jest": "^26.6.3",
+		"jsdom-simulant": "^1.1.2",
+		"microbundle": "^0.13.0"
 	}
 }
