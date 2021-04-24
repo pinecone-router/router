@@ -34,13 +34,18 @@ It works but not ready for production yet, **[needs reviewing and more testing, 
 Include the following `<script>` tag in the `<head>` of your document:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@0.0.4/dist/complete.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@0.0.5/dist/complete.umd.js"></script>
 ```
 
 **ES6 Module:**
 
 ```javascript
-import 'https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@0.0.4/dist/complete.module.js';
+import 'https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@0.0.5/dist/complete.module.js';
+```
+### [NPM](https://npmjs.com/package/alpinejs-router)
+
+```
+npm install alpinejs-router
 ```
 
 > **Important**: This must be added **before** loading Alpine.js.
