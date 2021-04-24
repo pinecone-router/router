@@ -48,6 +48,11 @@ import 'https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@0.0.5/dist/complete.
 npm install alpinejs-router
 ```
 
+```javascript
+import 'alpinejs-router';
+import 'alpinejs';
+```
+
 > **Important**: This must be added **before** loading Alpine.js.
 
 > **Note**: [Smaller, feature-specific builds](#contributing) will be available soon ^^
