@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.0.6] - 2021-04-25
+## [0.0.8] - 2021-04-25
+
+### Changed
+
+-   No changes from 0.0.7, only to fix an NPM publish mistake.
+
+## [0.0.7] - 2021-04-25
 
 ### Added
 
@@ -15,9 +21,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
--	Removed magic helper module in favor of bundling with the main module
+-   Removed magic helper module in favor of bundling with the main module
 
-## [0.0.5] - 2021-04-24
+## [0.0.6] - 2021-04-24
 
 ### Added
 

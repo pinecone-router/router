@@ -9,7 +9,7 @@ import {
 } from './utils.js';
 
 const AlpineRouter = {
-	version: '0.0.7',
+	version: '0.0.8',
 	/**
 	 * @type {array}
 	 * @summary array of routes instantiated from the Route class.
