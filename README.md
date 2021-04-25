@@ -2,10 +2,11 @@
   <img src="logo/alpine-router-readme.png" height="275" title="Alpine Router logo with the text "A simple client-side router for Alpine.js">
 </p>
 
-![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/rehhouari/alpine-router?color=%2337C8AB&label=version&sort=semver)
-![GitHub file size in bytes](https://img.shields.io/github/size/rehhouari/alpine-router/dist/complete.js?color=%2337C8AB)
-![Downloads from Jsdelivr Github](https://img.shields.io/jsdelivr/gh/hm/rehhouari/alpine-router?color=%2337C8AB&logoColor=%2337C8AB)
-![npm](https://img.shields.io/npm/dm/alpinejs-router?color=37C8AB&label=npm&logo=npm&logoColor=37C8AB)
+[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/rehhouari/alpine-router?color=%2337C8AB&label=version&sort=semver)](https://github.com/rehhouari/alpine-router/tree/0.0.8)
+[![GitHub file size in bytes](https://img.shields.io/github/size/rehhouari/alpine-router/dist/complete.js?color=%2337C8AB)](https://github.com/rehhouari/alpine-router/blob/0.0.8/dist/complete.js)
+[![Downloads from Jsdelivr Github](https://img.shields.io/jsdelivr/gh/hm/rehhouari/alpine-router?color=%2337C8AB&logo=github&logoColor=%2337C8AB)](https://www.jsdelivr.com/package/gh/rehhouari/alpine-router)
+[![Downloads from Jsdelivr NPM](https://img.shields.io/jsdelivr/npm/hm/alpinejs-router?color=%2337C8AB&&logo=npm)](https://www.jsdelivr.com/package/npm/alpinejs-router)
+[![npm](https://img.shields.io/npm/dm/alpinejs-router?color=37C8AB&label=npm&logo=npm&logoColor=37C8AB)](https://npmjs.com/package/alpinejs-router)
 [![Changelog](https://img.shields.io/badge/change-log-%2337C8AB)](/CHANGELOG.md)
 
 # Alpine Router
@@ -36,13 +37,13 @@ It works but not ready for production yet, **[needs reviewing and more testing, 
 Include the following `<script>` tag in the `<head>` of your document:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@0.0.8/dist/complete.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/alpinejs-router@0.0.8/dist/complete.umd.js"></script>
 ```
 
 **ES6 Module:**
 
 ```javascript
-import 'https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@0.0.8/dist/complete.module.js';
+import 'https://cdn.jsdelivr.net/npm/alpinejs-router@0.0.8/dist/complete.umd.js';
 ```
 
 ### [NPM](https://npmjs.com/package/alpinejs-router)
@@ -103,8 +104,8 @@ The handler takes `context` which consist of:
 -   context.props ({var: something})
 -   context.hash (hash fragment without the #)
 -   context.query (search query without the ?)
--	**context.go(path: string)** function that allow you to redirect to another page.
--	- **Important** usage witihn x-handler: `return context.go('/path');`
+-   **context.go(path: string)** function that allow you to redirect to another page.
+-   -   **Important** usage witihn x-handler: `return context.go('/path');`
 
 ### Hash routing
 
@@ -225,7 +226,7 @@ You can access current path's [context](#context-object) from alpine components 
 
 To make it easier to access the [current context](#context-object) from anywhere, you can use the `$router` magic helper:
 
-**Usage**: 
+**Usage**:
 Refer to [global context](#global-context).
 `$router.props.name`, `$router.go(path)`, `$router.hash`, [etc](#context-object).
 
