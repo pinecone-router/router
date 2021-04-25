@@ -4,7 +4,8 @@
 
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/rehhouari/alpine-router?color=%2337C8AB&label=version&sort=semver)
 ![GitHub file size in bytes](https://img.shields.io/github/size/rehhouari/alpine-router/dist/complete.js?color=%2337C8AB)
-![Downloads from Jsdelivr](https://img.shields.io/jsdelivr/gh/hm/rehhouari/alpine-router?color=%2337C8AB&logoColor=%2337C8AB)
+![Downloads from Jsdelivr Github](https://img.shields.io/jsdelivr/gh/hm/rehhouari/alpine-router?color=%2337C8AB&logoColor=%2337C8AB)
+![npm](https://img.shields.io/npm/dm/alpinejs-router?color=37C8AB&label=npm&logo=npm&logoColor=37C8AB)
 [![Changelog](https://img.shields.io/badge/change-log-%2337C8AB)](/CHANGELOG.md)
 
 # Alpine Router
