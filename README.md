@@ -56,6 +56,7 @@ npm install alpinejs-router
 
 ```javascript
 import 'alpinejs-router';
+import 'alpinejs-router/dist/helper';
 import 'alpinejs';
 ```
 
