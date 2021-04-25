@@ -3,7 +3,7 @@
 	"description": "The client-side router for Alpine.js.",
 	"license": "MIT",
 	"author": "Rafik El Hadi Houari <rehhouari@gmail.com>",
-	"version": "0.0.5",
+	"version": "0.0.6",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/rehhouari/alpine-router"
@@ -20,7 +20,8 @@
 		"pushstate"
 	],
 	"source": [
-		"src/index.js"
+		"src/index.js",
+		"src/helper.js"
 	],
 	"main": "dist/complete.js",
 	"umd:main": "dist/complete.umd.js",

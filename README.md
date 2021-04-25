@@ -24,6 +24,7 @@ It can be used to handle routes manually, render specific views, and automatical
 -   [Render pages](#page-rendering): automatically load server-rendered pages with preloading (like turbolinks, optional)
 -   [Render views](#views-rendering): manually set the view for each route and have it rendered! (optional)
 -   Easily tweakable through many [Settings](#settings)!
+-   [Magic helper `$router`](#magic-helper) to access current route, props, ect.
 
 ## Installation
 
@@ -34,14 +35,19 @@ It works but not ready for production yet, **[needs reviewing and more testing, 
 Include the following `<script>` tag in the `<head>` of your document:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@0.0.5/dist/complete.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@0.0.6/dist/complete.umd.js"></script>
+<!-- OPTIONAL: $router Magic Helper (342 Bytes gzip) -->
+<script src="https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@0.0.6/dist/helper.umd.js"></script>
 ```
 
 **ES6 Module:**
 
 ```javascript
-import 'https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@0.0.5/dist/complete.module.js';
+import 'https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@0.0.6/dist/complete.module.js';
+// OPTIONAL: $router Magic Helper (250 Bytes gzip)
+import 'https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@0.0.6/dist/helper.module.js';
 ```
+
 ### [NPM](https://npmjs.com/package/alpinejs-router)
 
 ```
@@ -215,6 +221,26 @@ Alpine Router dispatch these events:
 ### Global Context
 
 You can access current path's [context](#context-object) from anywhere in your javascript by accessing `AlpineRouter.currentContext`.
+
+#### Magic Helper
+
+To make it easier to access the [current context](#context-object), you can use the `$router` magic helper:
+
+> Import it **AFTER** _Alpine Router_. but _before_ Alpine.
+
+```html
+<script src="https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@0.0.6/dist/helper.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@0.0.6/dist/complete.umd.js"></script>
+```
+
+**ES6 Module:**
+
+```javascript
+import 'https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@0.0.6/dist/helper.module.js';
+import 'https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@0.0.6/dist/complete.module.js';
+```
+
+**Usage**: `$router.props.name`, `$router.hash`, `$router.route`, [etc](#context-object).
 
 ## Contributing:
 
