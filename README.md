@@ -25,7 +25,7 @@ It can be used to handle routes manually, render specific views, and automatical
 -   [Render pages](#page-rendering): automatically load server-rendered pages with preloading (like turbolinks, optional)
 -   [Render views](#views-rendering): manually set the view for each route and have it rendered! (optional)
 -   Easily tweakable through many [Settings](#settings)!
--   [Magic helper `$router`](#magic-helper) to access current route, props, ect.
+-   [Magic helper `$router`](#magic-helper) to access current route, props, redirect, ect. from alpine components!
 
 ## Installation
 
@@ -36,17 +36,13 @@ It works but not ready for production yet, **[needs reviewing and more testing, 
 Include the following `<script>` tag in the `<head>` of your document:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@0.0.6/dist/complete.umd.js"></script>
-<!-- OPTIONAL: $router Magic Helper (342 Bytes gzip) -->
-<script src="https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@0.0.6/dist/helper.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@0.0.7/dist/complete.umd.js"></script>
 ```
 
 **ES6 Module:**
 
 ```javascript
-import 'https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@0.0.6/dist/complete.module.js';
-// OPTIONAL: $router Magic Helper (250 Bytes gzip)
-import 'https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@0.0.6/dist/helper.module.js';
+import 'https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@0.0.7/dist/complete.module.js';
 ```
 
 ### [NPM](https://npmjs.com/package/alpinejs-router)
@@ -57,7 +53,6 @@ npm install alpinejs-router
 
 ```javascript
 import 'alpinejs-router';
-import 'alpinejs-router/dist/helper';
 import 'alpinejs';
 ```
 
@@ -108,6 +103,8 @@ The handler takes `context` which consist of:
 -   context.props ({var: something})
 -   context.hash (hash fragment without the #)
 -   context.query (search query without the ?)
+-	**context.go(path: string)** function that allow you to redirect to another page.
+-	- **Important** usage witihn x-handler: `return context.go('/path');`
 
 ### Hash routing
 
@@ -184,7 +181,7 @@ Unlike page rendering, you get to specify the view for each route.
 -   You can also handle routes while using views
 -   -   **Note**: The routes will be handled _before_ the page is rendered.
 
-> **Tip!** To access the current context (props etc) from within the views, use `AlpineRouter.currentContext`.
+> **Tip!** To access the current context (props etc) from within the views, use the [$router Magic Helper](#magic-helper) or `window.AlpineRouter.currentContext`.
 
 > **Important**: Make sure the view don't have an Alpine Router component in it! Keep the router component outside of the specified selector.
 > Can't use 'body' as the selector to avoid that issue.
@@ -222,27 +219,15 @@ Alpine Router dispatch these events:
 
 ### Global Context
 
-You can access current path's [context](#context-object) from anywhere in your javascript by accessing `AlpineRouter.currentContext`.
+You can access current path's [context](#context-object) from alpine components use [$router magic helper](#magic-helper) or from anywhere in your javascript by accessing `window.AlpineRouter.currentContext`.
 
-#### Magic Helper
+### Magic Helper
 
-To make it easier to access the [current context](#context-object), you can use the `$router` magic helper:
+To make it easier to access the [current context](#context-object) from anywhere, you can use the `$router` magic helper:
 
-> Import it **AFTER** _Alpine Router_. but _before_ Alpine.
-
-```html
-<script src="https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@0.0.6/dist/helper.umd.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@0.0.6/dist/complete.umd.js"></script>
-```
-
-**ES6 Module:**
-
-```javascript
-import 'https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@0.0.6/dist/helper.module.js';
-import 'https://cdn.jsdelivr.net/gh/rehhouari/alpine-router@0.0.6/dist/complete.module.js';
-```
-
-**Usage**: `$router.props.name`, `$router.hash`, `$router.route`, [etc](#context-object).
+**Usage**: 
+Refer to [global context](#global-context).
+`$router.props.name`, `$router.go(path)`, `$router.hash`, [etc](#context-object).
 
 ## Contributing:
 

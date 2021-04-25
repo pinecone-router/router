@@ -9,7 +9,7 @@ import {
 } from './utils.js';
 
 const AlpineRouter = {
-	version: '0.0.6',
+	version: '0.0.7',
 	/**
 	 * @type {array}
 	 * @summary array of routes instantiated from the Route class.
@@ -276,6 +276,10 @@ const AlpineRouter = {
 				this.navigate(window.location.pathname, true);
 			}
 		});
+
+		Alpine.addMagicProperty('router', () => {
+			return window.AlpineRouter.currentContext;
+		});
 	},
 
 	/**
@@ -424,7 +428,10 @@ const AlpineRouter = {
 		// the route can be null in case using page or view rendering with no routes
 		// handle routes before rendering to allow checking for permissions etc
 		if (route != null && route.settings.handler != null) {
-			route.handle(context);
+			// will only be false when using context.go()
+			if (route.handle(context) == false) {
+				return; // so redirect without finishing
+			}
 		}
 
 		// X-RENDER ONLY

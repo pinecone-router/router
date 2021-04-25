@@ -167,8 +167,12 @@ export function buildContext(route, path, props) {
 		route: route,
 		path: path,
 		props: props,
-		query: window.location.search.substring(1),
-		hash: window.location.hash.substring(1),
+		query: window.location.search.substring(1), // query w/out leading '?'
+		hash: window.location.hash.substring(1), // hash without leading '#'
+		go: (path) => {
+			window.AlpineRouter.navigate(path);
+			return false; // returning false will stop the navigate function, before rendering any views etc.
+		},
 	};
 }
 
