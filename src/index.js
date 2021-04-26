@@ -9,7 +9,7 @@ import {
 } from './utils.js';
 
 const AlpineRouter = {
-	version: '0.0.8',
+	version: '0.0.9',
 	/**
 	 * @type {array}
 	 * @summary array of routes instantiated from the Route class.
@@ -198,7 +198,7 @@ const AlpineRouter = {
 				// X-RENDER END
 
 				// X-VIEWS ONLY
-				// views rendering, unlike page rendering.
+				// views rendering, unlike page rendering
 				// they wont be loaded automatically using path
 				// instead the user decide the view using x-view for each route
 				if (component.$el.hasAttribute('x-views')) {
@@ -434,76 +434,6 @@ const AlpineRouter = {
 			}
 		}
 
-		// X-RENDER ONLY
-
-		// if using page rendering and the user just (re)loaded the page
-		// dont fetch the content as it is already loaded
-		if (this.settings.render.enabled && !firstload && !notfound) {
-			if (this.settings.render.preloaded.path == path) {
-				this.routes = renderPage(
-					this.settings.render.preloaded.content,
-					this.settings.render.selector,
-					this.routes
-				);
-				interceptLinks(this.settings.hash, this.settings.render);
-				this.settings.render.preloaded.path = null;
-				this.settings.render.preloaded.content = null;
-			} else {
-				fetch(path)
-					.then((response) => {
-						return response.text();
-					})
-					.then((response) => {
-						this.routes = renderPage(
-							response,
-							this.settings.render.selector,
-							this.routes
-						);
-						interceptLinks(
-							this.settings.hash,
-							this.settings.render
-						);
-					});
-			}
-		}
-		// X-RENDER END
-
-		// X-VIEWS ONLY
-
-		let view =
-			route != null ? route.settings.view : this.settings.views.notfound;
-
-		if (this.settings.views.enabled && view != null) {
-			if (this.settings.views.static) {
-				// check if the view was already loaded
-				var cachedview = this.settings.views.cached.find(
-					(v) => v.view == view
-				);
-				if (cachedview != null) {
-					renderContent(
-						cachedview.content,
-						this.settings.views.selector
-					);
-					interceptLinks(this.settings.hash, this.settings.render);
-				}
-			}
-			fetch(view)
-				.then((response) => {
-					return response.text();
-				})
-				.then((response) => {
-					renderContent(response, this.settings.views.selector);
-					interceptLinks(this.settings.hash, this.settings.render);
-					if (this.settings.views.static && cachedview == null) {
-						this.settings.views.cached.push({
-							view: view,
-							content: response,
-						});
-					}
-				});
-		}
-		// X-VIEWS END
-
 		// do not call pushstate from popstate event https://stackoverflow.com/a/50830905
 		// and if the route is not found only push when pushNotfoundToHistory is true
 		if (
@@ -522,10 +452,88 @@ const AlpineRouter = {
 				fullpath = path + window.location.search + window.location.hash;
 			}
 
-			// handle many routes for different routers
-			// but only push the route once to history
 			history.pushState({ path: fullpath }, '', fullpath);
 		}
+
+		// X-RENDER ONLY
+
+		// if using page rendering and the user just (re)loaded the page
+		// dont fetch the content as it is already loaded
+		if (this.settings.render.enabled && !firstload && !notfound) {
+			if (this.settings.render.preloaded.path == path) {
+				this.routes = renderPage(
+					this.settings.render.preloaded.content,
+					this.settings.render.selector,
+					this.routes
+				);
+				interceptLinks(this.settings.hash, this.settings.render);
+				this.settings.render.preloaded.path = null;
+				this.settings.render.preloaded.content = null;
+				window.dispatchEvent(this.loadend);
+				return;
+			} else {
+				fetch(path)
+					.then((response) => {
+						return response.text();
+					})
+					.then((response) => {
+						this.routes = renderPage(
+							response,
+							this.settings.render.selector,
+							this.routes
+						);
+						interceptLinks(
+							this.settings.hash,
+							this.settings.render
+						);
+						window.dispatchEvent(this.loadend);
+						return;
+					});
+			}
+		}
+		// X-RENDER END
+
+		// X-VIEWS ONLY
+		if (this.settings.views.enabled) {
+			let view =
+				route != null
+					? route.settings.view
+					: this.settings.views.notfound;
+
+			if (view == null) return;
+
+			// if views are static, check if the view was already loaded
+			if (
+				this.settings.views.static &&
+				this.settings.views.cached[view] != null
+			) {
+				renderContent(
+					this.settings.views.cached[view],
+					this.settings.views.selector
+				);
+				interceptLinks(this.settings.hash, this.settings.render);
+				window.dispatchEvent(this.loadend);
+				return;
+			} else {
+				fetch(view)
+					.then((response) => {
+						return response.text();
+					})
+					.then((response) => {
+						renderContent(response, this.settings.views.selector);
+						interceptLinks(
+							this.settings.hash,
+							this.settings.render
+						);
+						if (this.settings.views.static) {
+							this.settings.views.cached[view] = response;
+						}
+						window.dispatchEvent(this.loadend);
+						return;
+					});
+			}
+		}
+		// X-VIEWS END
 
 		window.dispatchEvent(this.loadend);
 	},

@@ -2,8 +2,8 @@
   <img src="logo/alpine-router-readme.png" height="275" title="Alpine Router logo with the text "A simple client-side router for Alpine.js">
 </p>
 
-[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/rehhouari/alpine-router?color=%2337C8AB&label=version&sort=semver)](https://github.com/rehhouari/alpine-router/tree/0.0.8)
-[![GitHub file size in bytes](https://img.shields.io/github/size/rehhouari/alpine-router/dist/complete.js?color=%2337C8AB)](https://github.com/rehhouari/alpine-router/blob/0.0.8/dist/complete.js)
+[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/rehhouari/alpine-router?color=%2337C8AB&label=version&sort=semver)](https://github.com/rehhouari/alpine-router/tree/0.0.9)
+[![GitHub file size in bytes](https://img.shields.io/github/size/rehhouari/alpine-router/dist/complete.js?color=%2337C8AB)](https://github.com/rehhouari/alpine-router/blob/0.0.9/dist/complete.js)
 [![Downloads from Jsdelivr Github](https://img.shields.io/jsdelivr/gh/hm/rehhouari/alpine-router?color=%2337C8AB&logo=github&logoColor=%2337C8AB)](https://www.jsdelivr.com/package/gh/rehhouari/alpine-router)
 [![Downloads from Jsdelivr NPM](https://img.shields.io/jsdelivr/npm/hm/alpinejs-router?color=%2337C8AB&&logo=npm)](https://www.jsdelivr.com/package/npm/alpinejs-router)
 [![npm](https://img.shields.io/npm/dm/alpinejs-router?color=37C8AB&label=npm&logo=npm&logoColor=37C8AB)](https://npmjs.com/package/alpinejs-router)
@@ -23,7 +23,7 @@ It can be used to handle routes manually, render specific views, and automatical
 -   Easy and familiar syntax well integrated with Alpine.js.
 -   Automatically dispatch relative links and handle them ([optional](#settings)).
 -   [Hash routing](#hash-routing)!
--   [Render pages](#page-rendering): automatically load server-rendered pages with preloading (like turbolinks, optional)
+-   [Display server rendered pages](#page-rendering): automatically load server-rendered pages with preloading (like turbolinks, optional)
 -   [Render views](#views-rendering): manually set the view for each route and have it rendered! (optional)
 -   Easily tweakable through many [Settings](#settings)!
 -   [Magic helper `$router`](#magic-helper) to access current route, props, redirect, ect. from alpine components!
@@ -37,13 +37,13 @@ It works but not ready for production yet, **[needs reviewing and more testing, 
 Include the following `<script>` tag in the `<head>` of your document:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/alpinejs-router@0.0.8/dist/complete.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/alpinejs-router@0.0.9/dist/complete.umd.js"></script>
 ```
 
 **ES6 Module:**
 
 ```javascript
-import 'https://cdn.jsdelivr.net/npm/alpinejs-router@0.0.8/dist/complete.umd.js';
+import 'https://cdn.jsdelivr.net/npm/alpinejs-router@0.0.9/dist/complete.umd.js';
 ```
 
 ### [NPM](https://npmjs.com/package/alpinejs-router)
@@ -182,10 +182,46 @@ Unlike page rendering, you get to specify the view for each route.
 -   You can also handle routes while using views
 -   -   **Note**: The routes will be handled _before_ the page is rendered.
 
+#### Authorization
+
+If you'd like to make checks before actually displaying a view/page, using authentication/authorization etc, you can make your checks in the _handler_. Then within the handler, if you need to redirect the user to another page simply `return context.go('/another/page')` this way it'll prevent the views from rendering and go to the other page directly.
+
+**Example:**
+
+The route you'd like to authorize:
+In this example the user will only be allowed to edit their own profile
+
+```html
+<div x-data="router()" x-router x-views>
+...
+<template
+	x-route="/profile/:username/edit"
+	x-handler="editprofile"
+	x-view="/editprofile.html"
+></template>
+<template
+	x-route="/unauthorized"
+	x-view="/unauthorized.html"
+></template>
+...
+```
+
+The handler: (`auth` is a placeholder name, replace it with your own auth provider methods)
+
+```js
+editprofile(context) {
+	if (context.props.username != auth.username) {
+		return context.go('/unauthorized');
+	}
+}
+```
+> This works for when using both `x-views` or `x-render`
+
 > **Tip!** To access the current context (props etc) from within the views, use the [$router Magic Helper](#magic-helper) or `window.AlpineRouter.currentContext`.
 
-> **Important**: Make sure the view don't have an Alpine Router component in it! Keep the router component outside of the specified selector.
-> Can't use 'body' as the selector to avoid that issue.
+> **Important**: Make sure the view don't have an Alpine Router component in them! Keep the router component outside of the specified selector.
+>
+> Can't use `body` as the selector to avoid that issue.
 
 ### Redirecting
 

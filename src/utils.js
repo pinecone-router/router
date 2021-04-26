@@ -173,6 +173,12 @@ export function buildContext(route, path, props) {
 			window.AlpineRouter.navigate(path);
 			return false; // returning false will stop the navigate function, before rendering any views etc.
 		},
+		setHash(hash) {
+			window.location.hash = hash;
+		},
+		setQuery(q) {
+			window.location.search = q;
+		},
 	};
 }
 

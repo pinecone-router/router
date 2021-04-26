@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.9] - 2021-04-26
+
+### Fixed
+
+-   Views were possibly rendered two times.
+
+### Changed
+
+-   Better loadend event dispatching by waiting for views & page loads.
+
 ## [0.0.8] - 2021-04-25
 
 ### Changed
