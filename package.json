@@ -1,12 +1,12 @@
 {
-	"name": "alpinejs-router",
-	"description": "The client-side router for Alpine.js.",
+	"name": "pinecone-router",
+	"description": "The extendable client-side router for Alpine.js.",
 	"license": "MIT",
 	"author": "Rafik El Hadi Houari <rehhouari@gmail.com>",
-	"version": "0.0.9",
+	"version": "0.1.0",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/rehhouari/alpine-router"
+		"url": "https://github.com/pinecone-router/router"
 	},
 	"keywords": [
 		"alpinejs",
@@ -19,12 +19,10 @@
 		"hashbang",
 		"pushstate"
 	],
-	"source": [
-		"src/index.js"
-	],
-	"main": "dist/complete.js",
-	"umd:main": "dist/complete.umd.js",
-	"module": "dist/complete.module.js",
+	"source": "src/index.js",
+	"main": "dist/index.js",
+	"umd:main": "dist/index.umd.js",
+	"module": "dist/index.module.js",
 	"scripts": {
 		"build": "microbundle",
 		"watch": "microbundle watch",

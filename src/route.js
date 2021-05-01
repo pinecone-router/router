@@ -1,17 +1,12 @@
 class Route {
-	constructor(path, settings) {
+	props = {};
+	constructor(path, handlers) {
 		this.path = path;
-		this.settings = settings;
+		this.handlers = handlers;
 	}
 
 	setProps(newProps) {
 		this.props = newProps;
-	}
-
-	handle(context) {
-		if (typeof this.settings.handler == 'function') {
-			return this.settings.handler(context);
-		}
 	}
 }
 
