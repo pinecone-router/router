@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/pinecone-router/logo/blob/main/pinecone-router-social-card-alt.png?raw=true" title="Pinecone Router logo with the text: The extendable client-side router for Alpine.js">
+  <img src=".github/readme-logo.png" title="Pinecone Router logo with the text: The extendable client-side router for Alpine.js">
 </p>
 
 [![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?color=%2337C8AB&label=version&sort=semver)](https://github.com/pinecone-router/router/tree/0.1.0)
