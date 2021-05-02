@@ -22,13 +22,12 @@ It can be used to:
 
 -   Handle routes, process route variables.
 -   Use magic helper `$router` helper to display elements dynamically etc. inside Alpine.js Components.
--   Render specific views, or automatically display server-rendered pages with preloading.
--   many more using [middlewares](#middlewares).
+-   many more using [middlewares](#middlewares)!.
 
 ## Features:
 
 -   :smile: Easy and familiar syntax well integrated with Alpine.js.
--   :link: Automatically dispatch relative links and handle them ([optional](#settings)).
+-   :link: Automatically dispatch relative links and handle them!
 -   :hash: [Hash routing](#hash-routing).
 -   :heavy_plus_sign: Extendable using tiny [Middlewares! 🪜](#middlewares)
 -   :sparkles: [Magic **$router** helper](#magic-helper) to access current route, props, redirect, ect. from _all_ alpine components!
