@@ -9,7 +9,7 @@ import {
 } from './utils.js';
 
 const PineconeRouter = {
-	version: '0.1.0',
+	version: '0.1.1',
 	/**
 	 * @type {array}
 	 * @summary array of routes instantiated from the Route class.
@@ -137,7 +137,7 @@ const PineconeRouter = {
 					this.settings.trailingSlash = trail;
 				}
 
-				middleware('init', [component]);
+				middleware('init', component);
 
 				// Loop through child elements of this router
 				// filtering out everything that isn't a template tag
@@ -212,7 +212,7 @@ const PineconeRouter = {
 			);
 		}
 
-		middleware('onBeforeRouteProcessed', [el, component, path]);
+		middleware('onBeforeRouteProcessed', el, component, path);
 
 		// will hold handlers as functions
 		let handlers = [];
@@ -270,39 +270,47 @@ const PineconeRouter = {
 	},
 
 	/**
-	 * @description Add a handler to click events on all links currently in the page
-	 * if using page or views rendering this will be called everytime the page changes
-	 * this may also be called by the developer if they added other links dynamicly
+	 * @description Add a handler to click events on all valid links
 	 */
 	interceptLinks() {
-		document.querySelectorAll('a').forEach((el) => {
-			// check if we already intercepted this link
-			if (el.hasAttribute('x-link')) return;
-			// check if the link is a navigation/relative link
-			if (validLink(el, this.settings.hash) == false) return;
+		if (this.interceptLinks) {
 
-			middleware('onLinkIntercepted', [el]);
+			document.body.onclick = function (e) {
+				if (
+					e.metaKey ||
+					e.ctrlKey ||
+					e.shiftKey ||
+					e.detail != 1 ||
+					e.defaultPrevented
+				) {
+					return;
+				}
 
-			if (this.settings.interceptLinks) {
-				el.addEventListener(
-					'click',
-					(e) => {
-						e.preventDefault();
-						let link = el.pathname;
-						if (this.settings.hash) {
-							window.location.hash = '#' + link;
-						} else {
-							this.navigate(link);
-						}
-					},
-					false
-				);
-			}
+				// ensure link
+				// use shadow dom when available if not, fall back to composedPath()
+				// for browsers that only have shady
+				var el = e.target;
+				var eventPath =
+					e.path || (e.composedPath ? e.composedPath() : null);
 
-			// add an x-link attribute this will tell this function
-			// that the link already been handled.
-			el.setAttribute('x-link', '');
-		});
+				if (eventPath) {
+					for (var i = 0; i < eventPath.length; i++) {
+						if (!eventPath[i].nodeName) continue;
+						if (eventPath[i].nodeName.toUpperCase() !== 'A')
+							continue;
+						if (!eventPath[i].href) continue;
+
+						el = eventPath[i];
+						break;
+					}
+				}
+
+				e.preventDefault();
+				let link = validLink(el, window.PineconeRouter.settings.hash);
+				if (link == false) return;
+				window.PineconeRouter.navigate(link);
+			};
+		}
 	},
 
 	/**
@@ -346,7 +354,8 @@ const PineconeRouter = {
 		if (notfound) {
 			context = buildContext('notfound', path, {});
 			if (this.notfound != null) {
-				return handle(this.notfound, context);
+				let ret = handle(this.notfound, context);
+				if (ret == false) return;
 			}
 		} else {
 			context = buildContext(route.path, path, route.props);
@@ -355,12 +364,13 @@ const PineconeRouter = {
 		this.currentContext = context;
 
 		if (
-			middleware('onBeforeHandlersExecuted', [
+			middleware(
+				'onBeforeHandlersExecuted',
 				route,
 				path,
 				firstload,
-				notfound,
-			]) == false
+				notfound
+			) == false
 		) {
 			return;
 		}
@@ -396,12 +406,13 @@ const PineconeRouter = {
 		}
 
 		if (
-			middleware('onHandlersExecuted', [
+			middleware(
+				'onHandlersExecuted',
 				route,
 				path,
 				firstload,
-				notfound,
-			]) == false
+				notfound
+			) == false
 		) {
 			return;
 		}

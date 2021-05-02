@@ -7,17 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2021-05-02
+
+### Changed
+
+-   Internal change: use es6 rest parameter for middleware calling.
+-   Better link click handling taken from Page.js
+
+## Fixed
+
+-   Fix return on notfound; you weren't able to use $router on a notfound route.
+-   Fix dynamically added links not handled
+
+## Removed
+
+-   onLinkIntercepted middleware function.
+
 ## [0.1.0] - 2021-05-01
 
 ### Added
 
 -   Support for multiple comma-separated handler in `x-handler`.
--	Middleware support!
+-   Middleware support!
 
 ### Changed
--	Changed the name from Alpine Router to Pinecone Router!
--	Moved the repository to a new Github organization, pinecone-router.
--	Moved x-render & x-views into separate middlewares.
+
+-   Changed the name from Alpine Router to Pinecone Router!
+-   Moved the repository to a new Github organization, pinecone-router.
+-   Moved x-render & x-views into separate middlewares.
 -   Renamed `context.go()` to `context.redirect()`.
 
 ### Removed
@@ -74,11 +91,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Let go of multi-router support for simpler codebase.
 
-[unreleased]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.9...HEAD
-[0.0.4]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.2...v0.0.4
-[0.0.5]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.4...v0.0.5
-[0.0.6]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.5..v0.0.6
-[0.0.7]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.6..v0.0.7
-[0.0.8]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.7..v0.0.8
-[0.0.9]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.8..v0.0.9
-[0.1.0]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.0.9..v0.1.0
+[unreleased]: https://github.com/pinecone-router/router/compare/0.0.9...HEAD
+[0.0.4]: https://github.com/pinecone-router/router/compare/0.0.2...0.0.4
+[0.0.5]: https://github.com/pinecone-router/router/compare/0.0.4...0.0.5
+[0.0.6]: https://github.com/pinecone-router/router/compare/0.0.5..0.0.6
+[0.0.7]: https://github.com/pinecone-router/router/compare/0.0.6..0.0.7
+[0.0.8]: https://github.com/pinecone-router/router/compare/0.0.7..0.0.8
+[0.0.9]: https://github.com/pinecone-router/router/compare/0.0.8..0.0.9
+[0.1.0]: https://github.com/pinecone-router/router/compare/0.0.9..0.1.0
+[0.1.1]: https://github.com/pinecone-router/router/compare/0.1.0..0.1.1

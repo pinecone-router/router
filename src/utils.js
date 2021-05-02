@@ -4,7 +4,7 @@ var isLocation = !!(window.history.location || window.location);
  * Check if the anchor element point to a navigation route.
  * @param {Element} el The anchor element
  * @param {boolean} hash Set to true when using hash routing
- * @returns {bool} true if the link is valid for navigation, false otherwise
+ * @returns {boolean} true if the link is valid for navigation, false otherwise
  */
 export function validLink(el, hash) {
 	// The checks in this block are taken from page.js https://github.com/visionmedia/page.js/blob/master/index.js#L370
@@ -26,12 +26,10 @@ export function validLink(el, hash) {
 	}
 
 	// ensure non-hash for the same path
-	var link = el.getAttribute('href');
+	let link = el.getAttribute('href');
 	if (!hash && samePath(el) && (el.hash || '#' === link)) {
-		return;
+		return false;
 	}
-
-	var link = el.getAttribute('href');
 
 	// Check for mailto: in the href
 	if (link && link.indexOf('mailto:') > -1) return false;
@@ -45,7 +43,7 @@ export function validLink(el, hash) {
 	// consequently, all svg links tested inside page.js are relative and in the same origin
 	if (!svg && !sameOrigin(el.href)) return false;
 
-	return true;
+	return link;
 }
 
 /**
@@ -92,16 +90,20 @@ export function buildContext(route, path, props) {
 
 /**
  * Call a function on all middlewares loaded, if any.
- * @param {string} func middlware function to call.
- * @param {array} args arguments to pass to the function.
+ * @param {string} func middleware function to call.
+ * @param {any} args arguments to pass to the function.
  * @returns {boolean} false if the middleware function return false, i.e. it want to stop execution of the function and return.
  */
-export function middleware(func, args) {
+export function middleware(func, ...args) {
 	if (window.PineconeRouterMiddlewares == null) return;
-	window.PineconeRouterMiddlewares.forEach((plugin) => {
+	for (i in window.PineconeRouterMiddlewares) {
+		let plugin = window.PineconeRouterMiddlewares[i];
 		if (plugin[func] == null) return;
-		return plugin[func](...args);
-	});
+		let ret = plugin[func](...args);
+		// the return of the function will only be false
+		// if the middleware request stopping the navigate function.
+		if (ret == false) return false;
+	}
 }
 
 /**
