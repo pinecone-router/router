@@ -32,6 +32,10 @@ It can be used to:
 -   :heavy_plus_sign: Extendable using tiny [Middlewares! 🪜](#middlewares)
 -   :sparkles: [Magic **$router** helper](#magic-helper) to access current route, props, redirect, ect. from _all_ alpine components!
 
+**Demo**: [Pinecone example](https://pinecone-example.vercel.app/), [(source code)](https://github.com/rehhouari/pinecone-example).
+
+Better examples coming soon!
+
 ## Installation
 
 Not ready for production yet, **[needs reviewing and more testing, help welcome!](/CONTRIBUTING.md)**
