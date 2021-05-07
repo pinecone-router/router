@@ -11,6 +11,7 @@ Want to contribute to code? please do!
 -   improve documentation.
 -	bug fixes, improve code.
 -	fix typos!
+-	test for browser compatibility
 
 **things to keep in mind:**
 

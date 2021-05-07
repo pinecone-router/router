@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2021-05-05
+
+### Added
+
+-   support for inline handlers!
+-   ability to override settings through a parameter in router component data!
+
+### Changed
+
+-	switched to typescript.
+-   better route matching taken from preact-router.
+-   multiple handlers syntax, no longer comma separated but array instead.
+
+### Removed
+
+-   remove all events since loading ones cant be accurate and init one is useless until someone ask for it.
+-   remove option to turn off intercepting links since it don't work. may be back with javascript config.
+-   attribute settings like `x-hash`, `x-base`, `x-slash`.
+
 ## [0.1.1] - 2021-05-02
 
 ### Changed
@@ -100,3 +119,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.0.9]: https://github.com/pinecone-router/router/compare/0.0.8..0.0.9
 [0.1.0]: https://github.com/pinecone-router/router/compare/0.0.9..0.1.0
 [0.1.1]: https://github.com/pinecone-router/router/compare/0.1.0..0.1.1
+[0.121]: https://github.com/pinecone-router/router/compare/0.1.1..0.1.2
