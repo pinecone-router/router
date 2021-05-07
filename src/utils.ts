@@ -124,8 +124,7 @@ export function saferEval(
  * @param {object} context the current context to pass as argument.
  * @returns {boolean} false if the handler request a redirect.
  */
-export function handle(handlers: Array<any>, context: object): boolean {
-	if (handlers.length == 0) return true;
+export function handle(handlers: Array<Function>, context: object): boolean {
 	for (let i = 0; i < handlers.length; i++) {
 		if (typeof handlers[i] == 'function') {
 			let result = handlers[i](context);

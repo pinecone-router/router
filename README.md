@@ -203,7 +203,7 @@ function router() {
 			/**
 			 * @type {string}
 			 * @summary The base path of the site, for example /blog
-			 * Note: ignored when using hash routing.
+			 * Note: do not use with using hash routing!
 			 */
 			basePath: '/',
 		}
@@ -254,7 +254,7 @@ you can add routes & remove them anytime using Javascript.
 **Adding a route**:
 
 ```js
-window.PineconeRouter.addRoute(path, handlers);
+window.PineconeRouter.add(path, handlers);
 ```
 
 -   path: string, the route's path.
@@ -263,7 +263,7 @@ window.PineconeRouter.addRoute(path, handlers);
 **Removing a route**:
 
 ```js
-window.PineconeRouter.removeRoute(path);
+window.PineconeRouter.remove(path);
 ```
 
 -   path: string, the path of the route you want to remove.

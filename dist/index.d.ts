@@ -1,3 +1,4 @@
+import Route from './route';
 declare const PineconeRouter: {
     version: string;
     /**
@@ -14,7 +15,7 @@ declare const PineconeRouter: {
         /**
          * @type {string}
          * @summary The base path of the site, for example /blog
-         * Note: ignored when using hash routing.
+         * Note: do not use with using hash routing!
          */
         basePath: string;
         /**
@@ -24,11 +25,6 @@ declare const PineconeRouter: {
         allowNoHandler: boolean;
     };
     /**
-     * @type {string}
-     * @summary detect click event, do not set manually.
-     */
-    clickEvent: string;
-    /**
      * @type {object}
      * @summary The context object for current path.
      */
@@ -37,11 +33,17 @@ declare const PineconeRouter: {
      * @description The handler for 404 pages, can be overwritten by a notfound route
      * @param {object} context The context object.
      */
-    notfound: any[];
+    notfound: Route;
     /**
      * Entry point of the plugin
      */
     start(): void;
+    /**
+     * Take the template element of a route and the router component
+     * @param {HTMLTemplateElement} el the routes HTML element, must be a template tag.
+     * @param {any} component the router Alpine component
+     */
+    processRoute(el: HTMLTemplateElement, component: any): void;
     /**
      * Check if the anchor element point to a navigation route.
      * @param {any} el The anchor element or Event target
@@ -53,15 +55,9 @@ declare const PineconeRouter: {
         link: string;
     };
     /**
-     * Take the template element of a route and the router component
-     * @param {HTMLTemplateElement} el the routes HTML element, must be a template tag.
-     * @param {any} component the router Alpine component
-     */
-    processRoute(el: HTMLTemplateElement, component: any): void;
-    /**
      * @description Add a handler to click events on all valid links
      */
-    interceptLinks(): void;
+    interceptLinks(t: any): void;
     /**
      *  Go to the specified path without reloading
      * @param {string} path the path with no hash even if using hash routing
@@ -74,12 +70,12 @@ declare const PineconeRouter: {
      * @param {string} path
      * @param {array} handlers array of functions
      */
-    addRoute(path: string, handlers: Array<any>): void;
+    add(path: string, handlers: Array<Function>): void;
     /**
      * Remove a route
      * @param {string} path
      */
-    removeRoute(path: string): void;
+    remove(path: string): void;
 };
 declare global {
     interface Window {

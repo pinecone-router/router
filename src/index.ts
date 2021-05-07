@@ -26,7 +26,7 @@ const PineconeRouter = {
 		/**
 		 * @type {string}
 		 * @summary The base path of the site, for example /blog
-		 * Note: ignored when using hash routing.
+		 * Note: do not use with using hash routing!
 		 */
 		basePath: '/',
 
@@ -38,12 +38,6 @@ const PineconeRouter = {
 	},
 
 	/**
-	 * @type {string}
-	 * @summary detect click event, do not set manually.
-	 */
-	clickEvent: document.ontouchstart ? 'touchstart' : 'click',
-
-	/**
 	 * @type {object}
 	 * @summary The context object for current path.
 	 */
@@ -53,7 +47,7 @@ const PineconeRouter = {
 	 * @description The handler for 404 pages, can be overwritten by a notfound route
 	 * @param {object} context The context object.
 	 */
-	notfound: Array(),
+	notfound: new Route('notfound'),
 
 	/**
 	 * Entry point of the plugin
@@ -102,25 +96,15 @@ const PineconeRouter = {
 				if (!this.settings.hash) {
 					// navigate to the current page to handle it
 					// ONLY if we not using hash routing for the default router
-					this.navigate(window.location.pathname, false, true);
-				} else {
-					if (window.location.hash == '') {
-						document.location.href =
-							window.location.pathname + '#/';
-						return;
-					} else {
-						this.navigate(
-							window.location.hash.substring(1),
-							true,
-							true
-						);
-					}
+					return this.navigate(window.location.pathname, false, true);
 				}
+
+				this.navigate(window.location.hash.substring(1), true, true);
 			}
 		});
 
 		// Intercept click event in links
-		this.interceptLinks();
+		this.interceptLinks(this);
 
 		// handle navigation events not emitted by links, for example, back button.
 		window.addEventListener('popstate', () => {
@@ -139,6 +123,55 @@ const PineconeRouter = {
 			() => window.PineconeRouter.currentContext
 		);
 	},
+
+	/**
+	 * Take the template element of a route and the router component
+	 * @param {HTMLTemplateElement} el the routes HTML element, must be a template tag.
+	 * @param {any} component the router Alpine component
+	 */
+	processRoute(el: HTMLTemplateElement, component: any) {
+		// The path must be a string
+		let path = el.getAttribute('x-route') ?? '/';
+
+		if (path.indexOf('#') > -1) {
+			throw new Error(
+				"Pinecone Router: A route's path may not have a hash character."
+			);
+		}
+
+		middleware('onBeforeRouteProcessed', el, component, path);
+
+		// will hold handlers as functions
+		let handlers = [];
+		if (!el.hasAttribute('x-handler') && !this.settings.allowNoHandler) {
+			throw new Error('Pinecone Router: Routes must have a handler.');
+		} else if (el.hasAttribute('x-handler')) {
+			let result = saferEval(
+				el.getAttribute('x-handler'),
+				component.$data
+			);
+
+			if (typeof result == 'function') handlers = [result];
+			else if (typeof result == 'object') handlers = result;
+			else
+				throw new Error(
+					`Pinecone Router: Invalid handler type: ${typeof result}.`
+				);
+
+			if (path == 'notfound') this.notfound.handlers = handlers;
+		}
+
+		if (path != 'notfound') {
+			// if specified add the basePath
+			if (this.settings.basePath != '/') {
+				path = this.settings.basePath + path;
+			}
+
+			// register the new route if possible
+			this.add(path, handlers);
+		}
+	},
+
 	/**
 	 * Check if the anchor element point to a navigation route.
 	 * @param {any} el The anchor element or Event target
@@ -199,114 +232,53 @@ const PineconeRouter = {
 	},
 
 	/**
-	 * Take the template element of a route and the router component
-	 * @param {HTMLTemplateElement} el the routes HTML element, must be a template tag.
-	 * @param {any} component the router Alpine component
-	 */
-	processRoute(el: HTMLTemplateElement, component: any) {
-		// The path must be a string
-		let path = el.getAttribute('x-route') ?? '/';
-
-		if (path.indexOf('#') > -1) {
-			throw new Error(
-				"Pinecone Router: A route's path may not have a hash character."
-			);
-		}
-
-		middleware('onBeforeRouteProcessed', el, component, path);
-
-		// will hold handlers as functions
-		let handlers = [];
-		if (
-			el.hasAttribute('x-handler') == false &&
-			!this.settings.allowNoHandler
-		) {
-			throw new Error('Pinecone Router: Routes must have a handler.');
-		} else if (el.hasAttribute('x-handler')) {
-			let result = saferEval(
-				el.getAttribute('x-handler'),
-				component.$data
-			);
-
-			switch (typeof result) {
-				// a single function
-				case 'function':
-					handlers = [result];
-					break;
-
-				// and array of functions
-				case 'object':
-					handlers = result;
-					break;
-
-				default:
-					throw new Error(
-						`Pinecone Router: Invalid handler type: ${typeof result}.`
-					);
-			}
-
-			if (path == 'notfound') {
-				// register the handlers for the notfound route
-				this.notfound = handlers;
-			}
-		}
-
-		if (path != 'notfound') {
-			// if specified add the basePath but only if not using hash routing
-			if (this.settings.basePath != '/' && !this.settings.hash) {
-				path = this.settings.basePath + path;
-			}
-
-			// register the new route if possible
-			this.addRoute(path, handlers);
-		}
-	},
-
-	/**
 	 * @description Add a handler to click events on all valid links
 	 */
-	interceptLinks() {
-		var t = this;
-		window.document.body.onclick = function (e: any) {
-			if (
-				e.metaKey ||
-				e.ctrlKey ||
-				e.shiftKey ||
-				e.detail != 1 ||
-				e.defaultPrevented
-			) {
-				return;
-			}
-
-			// ensure link
-			// use shadow dom when available if not, fall back to composedPath()
-			// for browsers that only have shady
-			let el = e.target;
-
-			let eventPath =
-				e.path || (e.composedPath ? e.composedPath() : null);
-
-			if (eventPath) {
-				for (let i = 0; i < eventPath.length; i++) {
-					if (!eventPath[i].nodeName) continue;
-					if (eventPath[i].nodeName.toUpperCase() !== 'A') continue;
-					if (!eventPath[i].href) continue;
-
-					el = eventPath[i];
-					break;
+	interceptLinks(t: any) {
+		window.document.body.addEventListener(
+			document.ontouchstart ? 'touchstart' : 'click',
+			function (e: any) {
+				if (
+					e.metaKey ||
+					e.ctrlKey ||
+					e.shiftKey ||
+					e.detail != 1 ||
+					e.defaultPrevented
+				) {
+					return;
 				}
+
+				// ensure link
+				// use shadow dom when available if not, fall back to composedPath()
+				// for browsers that only have shady
+				let el = e.target;
+
+				let eventPath =
+					e.path || (e.composedPath ? e.composedPath() : null);
+
+				if (eventPath) {
+					for (let i = 0; i < eventPath.length; i++) {
+						if (!eventPath[i].nodeName) continue;
+						if (eventPath[i].nodeName.toUpperCase() !== 'A')
+							continue;
+						if (!eventPath[i].href) continue;
+
+						el = eventPath[i];
+						break;
+					}
+				}
+
+				// allow skipping handler
+				if (el.hasAttribute('native')) return;
+
+				let ret = t.validLink(el, t.settings.hash);
+				if (!ret.valid) return;
+				t.navigate(ret.link);
+
+				// prevent default behavior.
+				e.preventDefault();
 			}
-
-			// allow skipping handler
-			if (el.hasAttribute('native')) return;
-
-			let ret = t.validLink(el, t.settings.hash);
-			if (!ret.valid) return;
-			t.navigate(ret.link);
-
-			// prevent default behavior.
-			e.preventDefault();
-		};
+		);
 	},
 
 	/**
@@ -327,8 +299,7 @@ const PineconeRouter = {
 		// and if it wasn't added already
 		if (
 			this.settings.basePath != '/' &&
-			!this.settings.hash &&
-			path.indexOf(this.settings.basePath) != 0
+			!path.startsWith(this.settings.basePath)
 		) {
 			path = this.settings.basePath + path;
 		}
@@ -339,13 +310,10 @@ const PineconeRouter = {
 
 		const route: Route | undefined = this.routes.find((route: Route) => {
 			let m = match(path, route.path);
-			if (m) {
-				route.params = m;
-				return true;
-			}
+			route.params ||= m
+			return m;
 		});
 
-		let notfound = route == undefined;
 		let context =
 			typeof route == 'undefined'
 				? buildContext('notfound', path, [])
@@ -353,18 +321,12 @@ const PineconeRouter = {
 
 		this.currentContext = context;
 
-		// the middleware may return false to stop execution
+		// the middleware may return 'stop' to stop execution of this function
 		if (
-			middleware(
-				'onBeforeHandlersExecuted',
-				route,
-				path,
-				firstLoad,
-				notfound
-			) == 'stop'
-		) {
+			middleware('onBeforeHandlersExecuted', route, path, firstLoad) ==
+			'stop'
+		)
 			return;
-		}
 
 		// do not call pushstate from popstate event https://stackoverflow.com/a/50830905
 		if (!fromPopState) {
@@ -383,15 +345,9 @@ const PineconeRouter = {
 			history.pushState({ path: fullPath }, '', fullPath);
 		}
 
-		if (route && route.handlers != []) {
-			// will only be false when returning context.redirect().
-			// so redirect without finishing
-			if (!handle(route.handlers, context)) return; 
-		} else if (notfound && this.notfound != null) {
-			if (!handle(this.notfound, context)) return;
-		}
+		if (!handle(route?.handlers ?? this.notfound.handlers, context)) return;
 
-		middleware('onHandlersExecuted', route, path, firstLoad, notfound);
+		middleware('onHandlersExecuted', route, path, firstLoad);
 	},
 
 	/**
@@ -399,7 +355,7 @@ const PineconeRouter = {
 	 * @param {string} path
 	 * @param {array} handlers array of functions
 	 */
-	addRoute(path: string, handlers: Array<any>) {
+	add(path: string, handlers: Array<Function>) {
 		// check if the route was registered on the same router.
 		if (this.routes.find((r: Route) => r.path == path) != null) {
 			throw new Error('Pinecone Router: route already exist');
@@ -412,7 +368,7 @@ const PineconeRouter = {
 	 * Remove a route
 	 * @param {string} path
 	 */
-	removeRoute(path: string) {
+	remove(path: string) {
 		this.routes = this.routes.filter((r: Route) => r.path != path);
 	},
 };

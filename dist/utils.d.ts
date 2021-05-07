@@ -31,7 +31,7 @@ export declare function saferEval(expression: any, dataContext: object, addition
  * @param {object} context the current context to pass as argument.
  * @returns {boolean} false if the handler request a redirect.
  */
-export declare function handle(handlers: Array<any>, context: object): boolean;
+export declare function handle(handlers: Array<Function>, context: object): boolean;
 /**
  * Check if `href` is the same origin.
  * https://github.com/visionmedia/page.js/blob/4f9991658f9b9e3de9b6059bade93693af24d6bd/page.js#L888
