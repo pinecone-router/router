@@ -1,5 +1,6 @@
 import Route from './route';
 declare const PineconeRouter: {
+    name: string;
     version: string;
     /**
      * @type Array<Route>

@@ -10,6 +10,7 @@ import {
 } from './utils';
 
 const PineconeRouter = {
+	name: 'Pinecone-Router',
 	version: '0.3.0',
 	/**
 	 * @type Array<Route>
@@ -55,7 +56,7 @@ const PineconeRouter = {
 	start() {
 		if (!window.Alpine) {
 			throw new Error(
-				'Alpine is required for `Pinecone Router` to work.'
+				`Alpine is required for ${this.name} to work.`
 			);
 		}
 
@@ -68,7 +69,7 @@ const PineconeRouter = {
 			if (component.$el.hasAttribute('x-router')) {
 				if (routerCount > 1) {
 					throw new Error(
-						'Pinecone Router: Only one router can be in a page.'
+						`${this.name}: Only one router can be in a page.`
 					);
 				}
 
@@ -135,7 +136,7 @@ const PineconeRouter = {
 
 		if (path.indexOf('#') > -1) {
 			throw new Error(
-				"Pinecone Router: A route's path may not have a hash character."
+				`${this.name}: A route's path may not have a hash character.`
 			);
 		}
 
@@ -144,7 +145,7 @@ const PineconeRouter = {
 		// will hold handlers as functions
 		let handlers = [];
 		if (!el.hasAttribute('x-handler') && !this.settings.allowNoHandler) {
-			throw new Error('Pinecone Router: Routes must have a handler.');
+			throw new Error(`${this.name}: Routes must have a handler.`);
 		} else if (el.hasAttribute('x-handler')) {
 			let result = saferEval(
 				el.getAttribute('x-handler'),
@@ -155,7 +156,7 @@ const PineconeRouter = {
 			else if (typeof result == 'object') handlers = result;
 			else
 				throw new Error(
-					`Pinecone Router: Invalid handler type: ${typeof result}.`
+					`${this.name}: Invalid handler type: ${typeof result}.`
 				);
 
 			if (path == 'notfound') this.notfound.handlers = handlers;
@@ -310,7 +311,7 @@ const PineconeRouter = {
 
 		const route: Route | undefined = this.routes.find((route: Route) => {
 			let m = match(path, route.path);
-			route.params ||= m
+			route.params ||= m;
 			return m;
 		});
 
