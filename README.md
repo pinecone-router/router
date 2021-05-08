@@ -145,11 +145,11 @@ The handler takes a `context` argument which consists of:
 
 Parameters can be made optional by adding a ?, or turned into a wildcard match by adding \* (zero or more characters) or + (one or more characters):
 
-<template x-route="/" x-handler="..."></template>
-<template x-route="/a" x-handler="..."></template>
+```html
 <template x-route="/b/:id" x-handler="..."></template>
 <template x-route="/c/:remaining_path*" x-handler="..."></template>
 <template x-route="/d/:remaining_path+" x-handler="..."></template>
+```
 
 > Borrowed from [Preact Router](https://github.com/preactjs/preact-router)
 
