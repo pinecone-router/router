@@ -1,0 +1,4 @@
+theme: jekyll-theme-minimal
+title: Pinecone Router
+description: The exendable client-side router for Alpine.js
+logo: https://github.com/pinecone-router/router/blob/main/.github/pinecone-router-icon-dark.png?raw=true

@@ -1,10 +1,15 @@
 <p align="center">
-  <img src=".github/pinecone-router-social-card-alt-big.png" title="Pinecone Router logo with the text: The extendable client-side router for Alpine.js">
+  <img src="https://github.com/pinecone-router/router/blob/main/.github/pinecone-router-social-card-alt-big.png?raw=true" title="Pinecone Router logo with the text: The extendable client-side router for Alpine.js">
 </p>
 
+<<<<<<< HEAD
 [![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?color=%2337C8AB&label=version&sort=semver)](https://github.com/pinecone-router/router/tree/0.3.0)
 [![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router?color=37C8AB)](https://bundlephobia.com/result?p=pinecone-router@0.3.0)
 [![Downloads from Jsdelivr Github](https://img.shields.io/jsdelivr/gh/hm/pinecone-router/router?color=%2337C8AB&logo=github&logoColor=%2337C8AB)](https://www.jsdelivr.com/package/gh/pinecone-router/router)
+=======
+[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?color=%2337C8AB&label=version&sort=semver)](https://github.com/pinecone-router/router/tree/0.1.1)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router?color=37C8AB)](https://bundlephobia.com/result?p=pinecone-router@0.1.1)
+>>>>>>> 27fdd3ee0a7c63cad38f257dfed653bd2effa1f1
 [![Downloads from Jsdelivr NPM](https://img.shields.io/jsdelivr/npm/hm/pinecone-router?color=%2337C8AB&&logo=npm)](https://www.jsdelivr.com/package/npm/pinecone-router)
 [![npm](https://img.shields.io/npm/dm/pinecone-router?color=37C8AB&label=npm&logo=npm&logoColor=37C8AB)](https://npmjs.com/package/pinecone-router)
 ![David](https://img.shields.io/david/pinecone-router/router?color=37C8AB)
@@ -33,6 +38,10 @@ It can be used to:
 -   :heavy_plus_sign: Extendable using tiny [Middlewares! 🪜](#middlewares).
 -   :sparkles: [Magic **$router** helper](#magic-helper) to access current route, params, redirect, ect. from _all_ alpine components!
 -   :gear: Easily configurable through [settings](#settings)!
+
+**Demo**: [Pinecone example](https://pinecone-example.vercel.app/), [(source code)](https://github.com/rehhouari/pinecone-example).
+
+Better examples coming soon!
 
 ## Installation
 
