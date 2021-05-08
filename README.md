@@ -241,7 +241,9 @@ Refer to [global context](#global-context).
 
 You can easily use [nProgress](http://ricostacruz.com/nprogress).
 
-**Tip:** if you're going to `fetch` views, you can use [this middleware](https://github.com/pinecone-router/middleware-views) which provide [loading events](https://github.com/pinecone-router/middleware-views/#events)
+**Tip:** if you're going to `fetch` views, you can use [this middleware](https://github.com/pinecone-router/middleware-views) which provide [loading events](https://github.com/pinecone-router/middleware-views/#events) 
+
+[**Demo**](https://pinecone-example-views.vercel.app/)
 
 ### Advanced
 
