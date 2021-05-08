@@ -311,7 +311,7 @@ const PineconeRouter = {
 
 		const route: Route | undefined = this.routes.find((route: Route) => {
 			let m = match(path, route.path);
-			route.params ||= m;
+			route.params = m != false ? m : {};
 			return m;
 		});
 

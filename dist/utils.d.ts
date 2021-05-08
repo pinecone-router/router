@@ -8,7 +8,7 @@ export declare function buildContext(route: string, path: string, params: {}): o
  * https://github.com/preactjs/preact-router
  * @param path {string}
  * @param routePath {string}
- * @returns {boolean}
+ * @returns {false|object}
  */
 export declare function match(url: string, routePath: string): false | object;
 /**

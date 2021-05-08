@@ -35,7 +35,7 @@ function segmentize(url: string): string[] {
  * https://github.com/preactjs/preact-router
  * @param path {string}
  * @param routePath {string}
- * @returns {boolean}
+ * @returns {false|object}
  */
 export function match(url: string, routePath: string): false | object {
 	let reg = /(?:\?([^#]*))?(#.*)?$/,
@@ -51,16 +51,16 @@ export function match(url: string, routePath: string): false | object {
 			);
 		}
 	}
-	let urlSeg = segmentize(url.replace(reg, ''));
-	let route: string[] = segmentize(routePath || '');
-	let max = Math.max(urlSeg.length, route.length);
+	let urlSeg = segmentize(url.replace(reg, '')),
+		route: string[] = segmentize(routePath || ''),
+		max = Math.max(urlSeg.length, route.length);
 	for (let i = 0; i < max; i++) {
 		if (route[i] && route[i].charAt(0) === ':') {
-			let param: string = route[i].replace(/(^:|[+*?]+$)/g, '');
-			let flags: string = (route[i].match(/[+*?]+$/) || {}).toString()[0];
-			let plus = ~flags.indexOf('+');
-			let star = ~flags.indexOf('*');
-			let val = urlSeg[i] || '';
+			let param: string = route[i].replace(/(^:|[+*?]+$)/g, ''),
+				flags: string = (route[i].match(/[+*?]+$/) || {}).toString()[0],
+				plus = ~flags.indexOf('+'),
+				star = ~flags.indexOf('*'),
+				val = urlSeg[i] || '';
 			if (!val && !star && (flags.indexOf('?') < 0 || plus)) {
 				ret = false;
 				break;
@@ -88,7 +88,7 @@ export function match(url: string, routePath: string): false | object {
  * @returns {boolean} false if the middleware function return false, i.e. it want to stop execution of the function and return.
  */
 export function middleware(func: string, ...args: any): string | undefined {
-	if (window.PineconeRouterMiddlewares == null) return;
+	if (!window.PineconeRouterMiddlewares) return;
 	for (const i in window.PineconeRouterMiddlewares) {
 		let plugin: any = window.PineconeRouterMiddlewares[i];
 		if (plugin[func] == null) return;
