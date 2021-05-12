@@ -27,7 +27,7 @@ It can be used to:
 
 -   :smile: Easy and familiar syntax well integrated with Alpine.js.
 -   -   The router is an Alpine component, handlers and settings are set in its data.
--   :link: Automatically handle relative links and handle them.
+-   :link: Automatically dispatch relative links and handle them.
 -   :hash: [Hash routing](#settings).
 -   :heavy_plus_sign: Extendable using tiny [Middlewares! 🪜](#middlewares).
 -   :sparkles: [Magic **$router** helper](#magic-helper) to access current route, params, redirect, ect. from _all_ alpine components!
