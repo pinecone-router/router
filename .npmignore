@@ -3,3 +3,6 @@ logo
 .prettierrc
 CONTRIBUTING.md
 CODE_OF_CONDUCT.md
+assets
+.vscode
+_config.yml
