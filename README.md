@@ -40,7 +40,7 @@ Better examples coming soon!
 
 ## Installation
 
-Pretty much stable now, keep an eye on the [CHANGELOG](./CHANGELOG.md) if you're using this.
+Pretty much stable now, check the [CHANGELOG](./CHANGELOG.md) before updates.
 
 ### CDN
 
