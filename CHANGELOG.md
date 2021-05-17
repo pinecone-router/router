@@ -7,24 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 2021-05-17
+
+### Added
+
+-	Added type definition for the Context object.
+
+### Changed
+
+-	Internal change: Switched to PNPM for package mangement.
+
 ## [0.3.0] - 2021-05-08
 
 ### Added
 
--   support for inline handlers!
--   ability to override settings through a parameter in router component data!
+-   Support for inline handlers!
+-   Ability to override settings through a parameter in router component data!
 
 ### Changed
 
--	switched to typescript.
--   better route matching taken from preact-router.
--   multiple handlers syntax, no longer comma separated but array instead.
+-	Switched to typescript.
+-   Better route matching taken from preact-router.
+-   Multiple handlers syntax, no longer comma separated but array instead.
 
 ### Removed
 
--   remove all events since loading ones cant be accurate and init one is useless until someone ask for it.
--   remove option to turn off intercepting links since it don't work. may be back with javascript config.
--   attribute settings like `x-hash`, `x-base`, `x-slash`.
+-   Remove all events since loading ones cant be accurate and init one is useless until someone ask for it.
+-   Remove option to turn off intercepting links since it don't work. may be back with javascript config.
+-   Attribute settings like `x-hash`, `x-base`, `x-slash`.
 
 ## [0.1.1] - 2021-05-02
 
@@ -40,7 +50,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Removed
 
--   onLinkIntercepted middleware function.
+-   Removed onLinkIntercepted middleware function.
 
 ## [0.1.0] - 2021-05-01
 
@@ -110,7 +120,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Let go of multi-router support for simpler codebase.
 
-[unreleased]: https://github.com/pinecone-router/router/compare/0.0.9...HEAD
+[unreleased]: https://github.com/pinecone-router/router/compare/0.3.1...HEAD
 [0.0.4]: https://github.com/pinecone-router/router/compare/0.0.2...0.0.4
 [0.0.5]: https://github.com/pinecone-router/router/compare/0.0.4...0.0.5
 [0.0.6]: https://github.com/pinecone-router/router/compare/0.0.5..0.0.6
@@ -121,3 +131,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.1.1]: https://github.com/pinecone-router/router/compare/0.1.0..0.1.1
 [0.1.2]: https://github.com/pinecone-router/router/compare/0.1.1..0.1.2
 [0.3.0]: https://github.com/pinecone-router/router/compare/0.1.2..0.3.0
+[0.3.1]: https://github.com/pinecone-router/router/compare/0.3.0..0.3.1

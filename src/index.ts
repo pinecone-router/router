@@ -1,4 +1,5 @@
 import Route from './route';
+
 import {
 	buildContext,
 	handle,
@@ -10,8 +11,8 @@ import {
 } from './utils';
 
 const PineconeRouter = {
-	name: 'Pinecone-Router',
-	version: '0.3.0',
+	name: 'Pinecone Router',
+	version: '0.3.1',
 	/**
 	 * @type Array<Route>
 	 * @summary array of routes instantiated from the Route class.
@@ -39,14 +40,13 @@ const PineconeRouter = {
 	},
 
 	/**
-	 * @type {object}
+	 * @type {Context}
 	 * @summary The context object for current path.
 	 */
-	currentContext: {},
+	currentContext: <Context>{},
 
 	/**
 	 * @description The handler for 404 pages, can be overwritten by a notfound route
-	 * @param {object} context The context object.
 	 */
 	notfound: new Route('notfound'),
 
@@ -55,9 +55,7 @@ const PineconeRouter = {
 	 */
 	start() {
 		if (!window.Alpine) {
-			throw new Error(
-				`Alpine is required for ${this.name} to work.`
-			);
+			throw new Error(`Alpine is required for ${this.name} to work.`);
 		}
 
 		// Routers that are already initialized
@@ -393,5 +391,17 @@ declare global {
 		PineconeRouterMiddlewares: Array<Object>;
 	}
 }
+
+export declare type Context = {
+	route: string;
+	path: string;
+	params: object;
+	// query without leading '?'
+	query: string;
+	// hash without leading '#'
+	hash: string;
+	redirect: (path: string) => string;
+};
+
 
 export default PineconeRouter;

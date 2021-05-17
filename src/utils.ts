@@ -1,9 +1,11 @@
+import type { Context } from './index';
+
 var isLocation = window.location;
 
 /**
  * Create the context object
  */
-export function buildContext(route: string, path: string, params: {}): object {
+export function buildContext(route: string, path: string, params: {}): Context {
 	return {
 		route: route,
 		path: path,
@@ -23,7 +25,7 @@ export function buildContext(route: string, path: string, params: {}): object {
  * taken from preact-router
  * https://github.com/preactjs/preact-router
  * @param url url to segmentize
- * @returns 
+ * @returns
  */
 function segmentize(url: string): string[] {
 	return url.replace(/(^\/+|\/+$)/g, '').split('/');
@@ -129,7 +131,7 @@ export function handle(handlers: Array<Function>, context: object): boolean {
 		if (typeof handlers[i] == 'function') {
 			let result = handlers[i](context);
 			// if the handler redirected, return
-			if (result == 'stop') return false
+			if (result == 'stop') return false;
 		}
 	}
 	return true;

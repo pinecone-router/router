@@ -1,7 +1,8 @@
+import type { Context } from './index';
 /**
  * Create the context object
  */
-export declare function buildContext(route: string, path: string, params: {}): object;
+export declare function buildContext(route: string, path: string, params: {}): Context;
 /**
  * check if a path match with this route
  * taken from preact-router

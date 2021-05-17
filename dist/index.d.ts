@@ -26,13 +26,12 @@ declare const PineconeRouter: {
         allowNoHandler: boolean;
     };
     /**
-     * @type {object}
+     * @type {Context}
      * @summary The context object for current path.
      */
-    currentContext: {};
+    currentContext: Context;
     /**
      * @description The handler for 404 pages, can be overwritten by a notfound route
-     * @param {object} context The context object.
      */
     notfound: Route;
     /**
@@ -86,4 +85,12 @@ declare global {
         PineconeRouterMiddlewares: Array<Object>;
     }
 }
+export declare type Context = {
+    route: string;
+    path: string;
+    params: object;
+    query: string;
+    hash: string;
+    redirect: (path: string) => string;
+};
 export default PineconeRouter;
