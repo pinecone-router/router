@@ -297,12 +297,10 @@ and_chr 89, and_ff 86, and_qq 10.4, and_uc 12.12, android 89, baidu 7.12, chrome
 
 Please refer to [CONTRIBUTING.md](/CONTRIBUTING.md)
 
-## [Sponsor](http://sponsor.rehhouari.eu.org)
+## [Sponsor](http://sponsor.rehhouari.eu.org) ♥️
 
 If you find this helpful and would like to support my work you can
-<a href="http://sponsor.rehhouari.eu.org" alt="donate crypto with coinbase">
-	Donate with
-	<img src="https://upload.wikimedia.org/wikipedia/commons/1/1a/Coinbase.svg" alt="coinbase logo" width="80"/>
+<a href="http://sponsor.rehhouari.eu.org" alt="donate crypto with coinbase">Donate with <img src="https://upload.wikimedia.org/wikipedia/commons/1/1a/Coinbase.svg" alt="Coinbase" width="80"/>
 </a>
 
 Any amount would be appreciated ^^
