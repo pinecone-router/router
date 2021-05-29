@@ -8,6 +8,7 @@
 [![npm](https://img.shields.io/npm/dm/pinecone-router?color=37C8AB&label=npm&logo=npm&logoColor=37C8AB)](https://npmjs.com/package/pinecone-router)
 ![David](https://img.shields.io/david/pinecone-router/router?color=37C8AB)
 [![Changelog](https://img.shields.io/badge/change-log-%2337C8AB)](/CHANGELOG.md)
+[![Sponsor](https://img.shields.io/badge/Sponsor-%E2%99%A5-pink)](#sponsor-%EF%B8%8F)
 
 # Pinecone Router
 
