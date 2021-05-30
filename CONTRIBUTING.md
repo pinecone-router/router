@@ -15,4 +15,5 @@ Want to contribute to code? please do!
 
 **things to keep in mind:**
 
+-	uses `pnpm` for package management. `npm i -g pnpm` to install if you haven't.
 -   if you use VS Code or VSCodium, use Prettier extension and load the `.prettierrc` settings file.

@@ -1,30 +1,15 @@
+import type { ComponentController } from '@leanadmin/alpine-typescript';
+import type { Context, Handler, Settings } from './utils';
 import Route from './route';
 declare const PineconeRouter: {
     name: string;
     version: string;
     /**
-     * @type Array<Route>
+     * @type Route[]
      * @summary array of routes instantiated from the Route class.
      */
-    routes: any[];
-    settings: {
-        /**
-         * @type {boolean}
-         * @summary enable hash routing
-         */
-        hash: boolean;
-        /**
-         * @type {string}
-         * @summary The base path of the site, for example /blog
-         * Note: do not use with using hash routing!
-         */
-        basePath: string;
-        /**
-         * @type {boolean}
-         * @summary may be set to true by a middleware that don't need handlers like x-views.
-         */
-        allowNoHandler: boolean;
-    };
+    routes: Route[];
+    settings: Settings;
     /**
      * @type {Context}
      * @summary The context object for current path.
@@ -43,7 +28,7 @@ declare const PineconeRouter: {
      * @param {HTMLTemplateElement} el the routes HTML element, must be a template tag.
      * @param {any} component the router Alpine component
      */
-    processRoute(el: HTMLTemplateElement, component: any): void;
+    processRoute(el: HTMLTemplateElement, component: ComponentController): void;
     /**
      * Check if the anchor element point to a navigation route.
      * @param {any} el The anchor element or Event target
@@ -67,30 +52,11 @@ declare const PineconeRouter: {
     navigate(path: string, fromPopState?: boolean, firstLoad?: boolean): void;
     /**
      * Add a new route
-     * @param {string} path
-     * @param {array} handlers array of functions
      */
-    add(path: string, handlers: Array<Function>): void;
+    add(path: string, handlers: Handler): void;
     /**
      * Remove a route
-     * @param {string} path
      */
     remove(path: string): void;
-};
-declare global {
-    interface Window {
-        Alpine: any;
-        deferLoadingAlpine: any;
-        PineconeRouter: typeof PineconeRouter;
-        PineconeRouterMiddlewares: Array<Object>;
-    }
-}
-export declare type Context = {
-    route: string;
-    path: string;
-    params: object;
-    query: string;
-    hash: string;
-    redirect: (path: string) => string;
 };
 export default PineconeRouter;

@@ -2,6 +2,7 @@ lockfileVersion: 5.3
 
 specifiers:
   '@babel/preset-env': ^7.11.0
+  '@leanadmin/alpine-typescript': ^0.1.22
   '@testing-library/dom': ^7.2.2
   '@testing-library/jest-dom': ^5.5.0
   alpinejs: ^2.8.2
@@ -14,6 +15,7 @@ dependencies:
 
 devDependencies:
   '@babel/preset-env': 7.14.2
+  '@leanadmin/alpine-typescript': 0.1.22
   '@testing-library/dom': 7.31.0
   '@testing-library/jest-dom': 5.12.0
   jest: 26.6.3
@@ -2101,6 +2103,10 @@ packages:
       chalk: 4.1.1
     dev: true
 
+  /@leanadmin/alpine-typescript/0.1.22:
+    resolution: {integrity: sha512-P5h8Or0pCa05a1eeAGTUYOUwfBs2vtZ/h+DsvtgaZkgRnQRbN5Qu2Itrh8HZWypTxWoKrO7mNuYO7S04wjlQrg==}
+    dev: true
+
   /@rollup/plugin-alias/3.1.2_rollup@2.48.0:
     resolution: {integrity: sha512-wzDnQ6v7CcoRzS0qVwFPrFdYA4Qlr+ookA217Y2Z3DPZE1R8jrFNM3jvGgOf6o6DMjbnQIn5lCIJgHPe1Bt3uw==}
     engines: {node: '>=8.0.0'}
@@ -2799,7 +2805,7 @@ packages:
       has-value: 1.0.0
       isobject: 3.0.1
       set-value: 2.0.1
-      to-object-path: 0.3.1
+      to-object-path: 0.3.0
       union-value: 1.0.1
       unset-value: 1.0.0
     dev: true
@@ -3107,7 +3113,7 @@ packages:
     engines: {node: '>4'}
     dependencies:
       postcss: 7.0.35
-      timsort: 0.3.1
+      timsort: 0.3.0
     dev: true
 
   /css-select-base-adapter/0.1.1:
@@ -4958,7 +4964,7 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /levn/0.3.1:
+  /levn/0.3.0:
     resolution: {integrity: sha1-OwmSTt+fCDwEkP3UwLxEIeBHZO4=}
     engines: {node: '>= 0.8.0'}
     dependencies:
@@ -5415,7 +5421,7 @@ packages:
     dependencies:
       deep-is: 0.1.3
       fast-levenshtein: 2.0.6
-      levn: 0.3.1
+      levn: 0.3.0
       prelude-ls: 1.1.2
       type-check: 0.3.2
       word-wrap: 1.2.3
@@ -6228,7 +6234,7 @@ packages:
       resolve: 1.20.0
       rollup-pluginutils: 2.8.2
       safe-identifier: 0.4.2
-      style-inject: 0.3.1
+      style-inject: 0.3.0
     dev: true
 
   /rollup-plugin-terser/7.0.2_rollup@2.48.0:
@@ -6645,7 +6651,7 @@ packages:
       min-indent: 1.0.1
     dev: true
 
-  /style-inject/0.3.1:
+  /style-inject/0.3.0:
     resolution: {integrity: sha512-IezA2qp+vcdlhJaVm5SOdPPTUu0FCEqfNSli2vRuSIBbu5Nq5UvygTk/VzeCqfLz2Atj3dVII5QBKGZRZ0edzw==}
     dev: true
 
@@ -6747,7 +6753,7 @@ packages:
     resolution: {integrity: sha512-fcwX4mndzpLQKBS1DVYhGAcYaYt7vsHNIvQV+WXMvnow5cgjPphq5CaayLaGsjRdSCKZFNGt7/GYAuXaNOiYCA==}
     dev: true
 
-  /timsort/0.3.1:
+  /timsort/0.3.0:
     resolution: {integrity: sha1-QFQRqOfmM5/mTbmiNN4R3DHgK9Q=}
     dev: true
 
@@ -6767,7 +6773,7 @@ packages:
     engines: {node: '>=4'}
     dev: true
 
-  /to-object-path/0.3.1:
+  /to-object-path/0.3.0:
     resolution: {integrity: sha1-KXWIt7Dn4KwI4E5nL4XB9JmeF68=}
     engines: {node: '>=0.10.0'}
     dependencies:

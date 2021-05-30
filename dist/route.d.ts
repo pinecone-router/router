@@ -1,8 +1,9 @@
+import type { Handler } from './utils';
 declare class Route {
     params: {};
     path: string;
-    handlers: Array<Function>;
-    constructor(path: string, handlers?: Array<Function>);
+    handlers: Handler;
+    constructor(path: string, handlers?: Handler);
     prototype: any;
 }
 export default Route;

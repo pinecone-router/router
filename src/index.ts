@@ -1,5 +1,7 @@
-import Route from './route';
+import type { ComponentController } from '@leanadmin/alpine-typescript';
+import type { Context, Handler, Settings } from './utils';
 
+import Route from './route';
 import {
 	buildContext,
 	handle,
@@ -12,31 +14,18 @@ import {
 
 const PineconeRouter = {
 	name: 'Pinecone Router',
-	version: '0.3.1',
+	version: '1.0.0',
 	/**
-	 * @type Array<Route>
+	 * @type Route[]
 	 * @summary array of routes instantiated from the Route class.
 	 */
-	routes: Array(),
+	routes: <Route[]>[],
 
-	settings: {
-		/**
-		 * @type {boolean}
-		 * @summary enable hash routing
-		 */
+	settings: <Settings>{
 		hash: false,
-		/**
-		 * @type {string}
-		 * @summary The base path of the site, for example /blog
-		 * Note: do not use with using hash routing!
-		 */
 		basePath: '/',
-
-		/**
-		 * @type {boolean}
-		 * @summary may be set to true by a middleware that don't need handlers like x-views.
-		 */
 		allowNoHandler: false,
+		middlewares: [],
 	},
 
 	/**
@@ -63,44 +52,58 @@ const PineconeRouter = {
 
 		// Whenever a component is initialized, check if it is a router
 		// and check if the children are valid routes
-		window.Alpine.onComponentInitialized((component: any) => {
-			if (component.$el.hasAttribute('x-router')) {
-				if (routerCount > 1) {
-					throw new Error(
-						`${this.name}: Only one router can be in a page.`
+		window.Alpine.onComponentInitialized(
+			(component: ComponentController) => {
+				// @ts-ignore
+				if (component.$el.hasAttribute('x-router')) {
+					if (routerCount > 1) {
+						throw new Error(
+							`${this.name}: Only one router can be in a page.`
+						);
+					}
+
+					// Detect router settings
+
+					// javascript config
+					// this will check if there is a "settings" parameter
+					// inside the router component's data.
+					this.settings = {
+						...this.settings,
+						...(component.getUnobservedData()['settings'] ?? {}),
+					};
+
+					middleware('init', component, this.settings);
+
+					// Loop through child elements of this router
+					// filtering out everything that isn't a template tag
+					// and doesn't have x-route attribute.
+					// @ts-ignore
+					Array.from(component.$el.children)
+						.filter(
+							(el: any) => el.tagName.toLowerCase() == 'template'
+						)
+						.forEach((el: any) => this.processRoute(el, component));
+
+					routerCount++;
+
+					if (!this.settings.hash) {
+						// navigate to the current page to handle it
+						// ONLY if we not using hash routing for the default router
+						return this.navigate(
+							window.location.pathname,
+							false,
+							true
+						);
+					}
+
+					this.navigate(
+						window.location.hash.substring(1),
+						true,
+						true
 					);
 				}
-
-				// Detect router settings
-
-				// javascript config
-				// this will check if there is a "settings" parameter
-				// inside the router component's data.
-				this.settings = {
-					...this.settings,
-					...(component.getUnobservedData()['settings'] ?? {}),
-				};
-
-				middleware('init', component, this.settings);
-
-				// Loop through child elements of this router
-				// filtering out everything that isn't a template tag
-				// and doesn't have x-route attribute.
-				Array.from(component.$el.children)
-					.filter((el: any) => el.tagName.toLowerCase() == 'template')
-					.forEach((el: any) => this.processRoute(el, component));
-
-				routerCount++;
-
-				if (!this.settings.hash) {
-					// navigate to the current page to handle it
-					// ONLY if we not using hash routing for the default router
-					return this.navigate(window.location.pathname, false, true);
-				}
-
-				this.navigate(window.location.hash.substring(1), true, true);
 			}
-		});
+		);
 
 		// Intercept click event in links
 		this.interceptLinks(this);
@@ -128,7 +131,7 @@ const PineconeRouter = {
 	 * @param {HTMLTemplateElement} el the routes HTML element, must be a template tag.
 	 * @param {any} component the router Alpine component
 	 */
-	processRoute(el: HTMLTemplateElement, component: any) {
+	processRoute(el: HTMLTemplateElement, component: ComponentController) {
 		// The path must be a string
 		let path = el.getAttribute('x-route') ?? '/';
 
@@ -351,10 +354,8 @@ const PineconeRouter = {
 
 	/**
 	 * Add a new route
-	 * @param {string} path
-	 * @param {array} handlers array of functions
 	 */
-	add(path: string, handlers: Array<Function>) {
+	add(path: string, handlers: Handler) {
 		// check if the route was registered on the same router.
 		if (this.routes.find((r: Route) => r.path == path) != null) {
 			throw new Error('Pinecone Router: route already exist');
@@ -365,7 +366,6 @@ const PineconeRouter = {
 
 	/**
 	 * Remove a route
-	 * @param {string} path
 	 */
 	remove(path: string) {
 		this.routes = this.routes.filter((r: Route) => r.path != path);
@@ -382,26 +382,5 @@ window.deferLoadingAlpine = function (callback: Function) {
 
 	alpine(callback);
 };
-
-declare global {
-	interface Window {
-		Alpine: any;
-		deferLoadingAlpine: any;
-		PineconeRouter: typeof PineconeRouter;
-		PineconeRouterMiddlewares: Array<Object>;
-	}
-}
-
-export declare type Context = {
-	route: string;
-	path: string;
-	params: object;
-	// query without leading '?'
-	query: string;
-	// hash without leading '#'
-	hash: string;
-	redirect: (path: string) => string;
-};
-
 
 export default PineconeRouter;

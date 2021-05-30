@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2021-05-17
+
+### Added
+
+-	Added type definition for the Settings object
+
 ## [0.3.1] - 2021-05-17
 
 ### Added
@@ -132,3 +138,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.1.2]: https://github.com/pinecone-router/router/compare/0.1.1..0.1.2
 [0.3.0]: https://github.com/pinecone-router/router/compare/0.1.2..0.3.0
 [0.3.1]: https://github.com/pinecone-router/router/compare/0.3.0..0.3.1
+[1.0.0]: https://github.com/pinecone-router/router/compare/0.3.1..1.0.0

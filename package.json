@@ -3,7 +3,7 @@
 	"description": "The extendable client-side router for Alpine.js.",
 	"license": "MIT",
 	"author": "Rafik El Hadi Houari <rehhouari@gmail.com>",
-	"version": "0.3.1",
+	"version": "1.0.0",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/pinecone-router/router"
@@ -30,6 +30,7 @@
 	},
 	"devDependencies": {
 		"@babel/preset-env": "^7.11.0",
+		"@leanadmin/alpine-typescript": "^0.1.22",
 		"@testing-library/dom": "^7.2.2",
 		"@testing-library/jest-dom": "^5.5.0",
 		"jest": "^26.6.3",

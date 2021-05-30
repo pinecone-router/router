@@ -1,4 +1,5 @@
-import type { Context } from './index';
+import type { Alpine } from "@leanadmin/alpine-typescript";
+import PineconeRouter from ".";
 
 var isLocation = window.location;
 
@@ -182,3 +183,51 @@ export function samePath(url: any) {
 	var loc = window.location;
 	return url.pathname === loc.pathname && url.search === loc.search;
 }
+
+
+declare global {
+	interface Window {
+		Alpine: Alpine;
+		deferLoadingAlpine: any;
+		PineconeRouter: typeof PineconeRouter;
+		PineconeRouterMiddlewares: Array<Object>;
+	}
+}
+
+export declare type Context = {
+	route: string;
+	path: string;
+	params: object;
+	// query without leading '?'
+	query: string;
+	// hash without leading '#'
+	hash: string;
+	redirect: (path: string) => string;
+};
+
+export declare interface Settings {
+	/**
+	 * @default false
+	 * @summary enable hash routing
+	 */
+	hash: boolean,
+	/**
+	 * @default `/`
+	 * @summary The base path of the site, for example /blog
+	 * Note: do not use with using hash routing!
+	 */
+	basePath: string,
+
+	/**
+	 * @default false
+	 * @summary when true it wont throw an error when the handler of a route is not specified.
+	 */
+	allowNoHandler: boolean,
+	/**
+	 * @default []
+	 * @summmary array of middlewares
+	 */
+	middlewares: {[key: string]: {[key: string]: any}[]}[],
+};
+
+export type Handler = ((context: Context)=>any)[];
