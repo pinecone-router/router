@@ -12,8 +12,8 @@ import {
 } from './utils';
 
 const PineconeRouter = {
-	name: 'Pinecone Router',
-	version: '1.0.2',
+	name: 'pinecone-router',
+	version: '1.0.3',
 	/**
 	 * @type Route[]
 	 * @summary array of routes instantiated from the Route class.
@@ -24,7 +24,7 @@ const PineconeRouter = {
 		hash: false,
 		basePath: '/',
 		allowNoHandler: false,
-		middlewares: [],
+		middlewares: {},
 	},
 
 	/**
@@ -424,7 +424,7 @@ export declare interface Settings {
 	 * @default []
 	 * @summmary array of middlewares
 	 */
-	middlewares: Middleware[];
+	middlewares: {[key: string]: Middleware};
 }
 
 export type Handler = ((context: Context) => any)[];

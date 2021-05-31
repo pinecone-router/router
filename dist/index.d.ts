@@ -96,7 +96,9 @@ export declare interface Settings {
      * @default []
      * @summmary array of middlewares
      */
-    middlewares: Middleware[];
+    middlewares: {
+        [key: string]: Middleware;
+    };
 }
 export declare type Handler = ((context: Context) => any)[];
 export declare interface Middleware {
