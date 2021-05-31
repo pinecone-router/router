@@ -46,13 +46,13 @@ It can be used to:
 Include the following `<script>` tag in the `<head>` of your document, before Alpine.js:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/pinecone-router@1.0.2/dist/index.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pinecone-router@1.x.x/dist/index.umd.js"></script>
 ```
 
 **ES6 Module:**
 
 ```javascript
-import 'https://cdn.jsdelivr.net/npm/pinecone-router@1.0.2/dist/index.module.js';
+import 'https://cdn.jsdelivr.net/npm/pinecone-router@1.x.x/dist/index.module.js';
 ```
 
 ### NPM
