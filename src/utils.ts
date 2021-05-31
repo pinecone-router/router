@@ -1,5 +1,6 @@
-import type { Alpine } from "@leanadmin/alpine-typescript";
+import type { Alpine, ComponentController } from "@leanadmin/alpine-typescript";
 import PineconeRouter from ".";
+import Route from "./route";
 
 var isLocation = window.location;
 
@@ -227,7 +228,47 @@ export declare interface Settings {
 	 * @default []
 	 * @summmary array of middlewares
 	 */
-	middlewares: {[key: string]: {[key: string]: any}[]}[],
+	middlewares: Middleware[],
 };
 
 export type Handler = ((context: Context)=>any)[];
+
+export declare interface Middleware {
+	name: string,
+	version?: string,
+	settings?: {[key:string]:any},
+	/**
+	 * This will be called at router initialization.
+	 * used for detecting router settings.
+	 */
+	init?: (component: ComponentController, settings: Settings)=>void,
+	/**
+	 * Called for each route during initialization,
+	 * before the route is processed & added.
+	 * @param {HTMLTemplateElement} el the route's <template> element
+	 * @param {ComponentController} component the router's alpine component
+	 * @param {string} path the route's path
+	 */
+	onBeforeRouteProcessed?: (el: Element, component: ComponentController, path: string) => void,
+	/**
+	 * Will be called before the handlers are executed.
+	 * during navigation (PineconeRouter.navigate()).
+	 * @param {object} route the matched route, undefined if not found.
+	 * @param {string} path the path visited by the client
+	 * @param {boolean} firstload first page load and not link navigation request
+	 * @returns {'stop'|null} 'stop' to make the navigate function exit (make sure to send the loadend event); none to continute execution.
+	 */
+	 onBeforeHandlersExecuted?: (route: Route, path: string, firstload: boolean) => 'stop'|void,
+
+	 /**
+	  * Will be called after the handlers are executed and done.
+	  * during navigation (PineconeRouter.navigate()).
+	  * @param {object} route the matched route, undefined if not found.
+	  * @param {string} path the path visited by the client
+	  * @param {boolean} firstload first page load and not link navigation request
+	  * @returns {'stop'|null} 'stop' to make the navigate function exit (make sure to send the loadend event); none to continute execution.
+	  */
+	 onHandlersExecuted?: (route: Route, path: string, firstload: boolean) => 'stop'|void,
+
+	 [key: string]: any
+}

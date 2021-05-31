@@ -14,7 +14,7 @@ import {
 
 const PineconeRouter = {
 	name: 'Pinecone Router',
-	version: '1.0.0',
+	version: '1.0.1',
 	/**
 	 * @type Route[]
 	 * @summary array of routes instantiated from the Route class.
