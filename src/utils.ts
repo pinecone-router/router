@@ -249,11 +249,11 @@ export declare interface Middleware {
 	 * @param {ComponentController} component the router's alpine component
 	 * @param {string} path the route's path
 	 */
-	onBeforeRouteProcessed?: (el: Element, component: ComponentController, path: string) => void,
+	onBeforeRouteProcessed?: (el: HTMLTemplateElement, component: ComponentController, path: string) => void,
 	/**
 	 * Will be called before the handlers are executed.
 	 * during navigation (PineconeRouter.navigate()).
-	 * @param {object} route the matched route, undefined if not found.
+	 * @param {Route} route the matched route, undefined if not found.
 	 * @param {string} path the path visited by the client
 	 * @param {boolean} firstload first page load and not link navigation request
 	 * @returns {'stop'|null} 'stop' to make the navigate function exit (make sure to send the loadend event); none to continute execution.
@@ -263,7 +263,7 @@ export declare interface Middleware {
 	 /**
 	  * Will be called after the handlers are executed and done.
 	  * during navigation (PineconeRouter.navigate()).
-	  * @param {object} route the matched route, undefined if not found.
+	  * @param {Route} route the matched route, undefined if not found.
 	  * @param {string} path the path visited by the client
 	  * @param {boolean} firstload first page load and not link navigation request
 	  * @returns {'stop'|null} 'stop' to make the navigate function exit (make sure to send the loadend event); none to continute execution.
