@@ -2,8 +2,8 @@
   <img src="https://github.com/pinecone-router/router/blob/main/.github/pinecone-router-social-card-alt-big.png?raw=true" title="Pinecone Router logo with the text: The extendable client-side router for Alpine.js">
 </p>
 
-[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?color=%2337C8AB&label=version&sort=semver)](https://github.com/pinecone-router/router/tree/1.0.1)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router?color=37C8AB)](https://bundlephobia.com/result?p=pinecone-router@1.0.1)
+[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?color=%2337C8AB&label=version&sort=semver)](https://github.com/pinecone-router/router/tree/1.0.2)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router?color=37C8AB)](https://bundlephobia.com/result?p=pinecone-router@1.0.2)
 [![Downloads from JSDelivr](https://data.jsdelivr.com/v1/package/npm/pinecone-router/badge?style=rounded)](https://www.jsdelivr.com/package/npm/pinecone-router)
 [![npm](https://img.shields.io/npm/dm/pinecone-router?color=37C8AB&label=npm&logo=npm&logoColor=37C8AB)](https://npmjs.com/package/pinecone-router)
 ![David](https://img.shields.io/david/pinecone-router/router?color=37C8AB)
@@ -46,13 +46,13 @@ It can be used to:
 Include the following `<script>` tag in the `<head>` of your document, before Alpine.js:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/pinecone-router@1.0.1/dist/index.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pinecone-router@1.0.2/dist/index.umd.js"></script>
 ```
 
 **ES6 Module:**
 
 ```javascript
-import 'https://cdn.jsdelivr.net/npm/pinecone-router@1.0.1/dist/index.module.js';
+import 'https://cdn.jsdelivr.net/npm/pinecone-router@1.0.2/dist/index.module.js';
 ```
 
 ### NPM

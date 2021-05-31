@@ -1,4 +1,4 @@
-import type { Handler } from './utils';
+import type { Handler } from '.';
 declare class Route {
     params: {};
     path: string;
