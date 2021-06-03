@@ -52,7 +52,7 @@ declare const PineconeRouter: {
     /**
      * Add a new route
      */
-    add(path: string, handlers: Handler): void;
+    add(path: string, handlers: Handler[]): void;
     /**
      * Remove a route
      */
@@ -71,7 +71,13 @@ export declare type Context = {
     params: {
         [key: string]: any;
     };
+    /**
+     * query without leading '?'
+     */
     query: string;
+    /**
+     * hash without leading '#'
+     */
     hash: string;
     redirect: (path: string) => string;
 };
@@ -100,7 +106,7 @@ export declare interface Settings {
         [key: string]: Middleware;
     };
 }
-export declare type Handler = ((context: Context) => any)[];
+export declare type Handler = (context: Context) => 'stop' | void;
 export declare interface Middleware {
     name: string;
     version?: string;

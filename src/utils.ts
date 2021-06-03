@@ -1,4 +1,4 @@
-import { Context } from ".";
+import { Context, Handler } from ".";
 
 var isLocation = window.location;
 
@@ -122,11 +122,8 @@ export function saferEval(
 
 /**
  * execute the handlers of routes that are given passing them the context.
- * @param {array} handlers handlers to execute.
- * @param {object} context the current context to pass as argument.
- * @returns {boolean} false if the handler request a redirect.
  */
-export function handle(handlers: Array<Function>, context: object): boolean {
+export function handle(handlers: Array<Handler>, context: Context): boolean {
 	for (let i = 0; i < handlers.length; i++) {
 		if (typeof handlers[i] == 'function') {
 			let result = handlers[i](context);

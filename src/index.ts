@@ -13,7 +13,7 @@ import {
 
 const PineconeRouter = {
 	name: 'pinecone-router',
-	version: '1.0.3',
+	version: '1.0.4',
 	/**
 	 * @type Route[]
 	 * @summary array of routes instantiated from the Route class.
@@ -354,7 +354,7 @@ const PineconeRouter = {
 	/**
 	 * Add a new route
 	 */
-	add(path: string, handlers: Handler) {
+	add(path: string, handlers: Handler[]) {
 		// check if the route was registered on the same router.
 		if (this.routes.find((r: Route) => r.path == path) != null) {
 			throw new Error('Pinecone Router: route already exist');
@@ -395,9 +395,13 @@ export declare type Context = {
 	route: string;
 	path: string;
 	params: { [key: string]: any };
-	// query without leading '?'
+	/**
+	 * query without leading '?'
+	 */
 	query: string;
-	// hash without leading '#'
+	/**
+	 * hash without leading '#'
+	 */
 	hash: string;
 	redirect: (path: string) => string;
 };
@@ -427,7 +431,7 @@ export declare interface Settings {
 	middlewares: {[key: string]: Middleware};
 }
 
-export type Handler = ((context: Context) => any)[];
+export type Handler = (context: Context) => 'stop' | void;
 
 export declare interface Middleware {
 	name: string;

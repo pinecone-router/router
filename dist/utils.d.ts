@@ -1,4 +1,4 @@
-import { Context } from ".";
+import { Context, Handler } from ".";
 /**
  * Create the context object
  */
@@ -28,11 +28,8 @@ export declare function middleware(func: string, ...args: any): string | undefin
 export declare function saferEval(expression: any, dataContext: object, additionalHelperVariables?: object): any;
 /**
  * execute the handlers of routes that are given passing them the context.
- * @param {array} handlers handlers to execute.
- * @param {object} context the current context to pass as argument.
- * @returns {boolean} false if the handler request a redirect.
  */
-export declare function handle(handlers: Array<Function>, context: object): boolean;
+export declare function handle(handlers: Array<Handler>, context: Context): boolean;
 /**
  * Check if `href` is the same origin.
  * https://github.com/visionmedia/page.js/blob/4f9991658f9b9e3de9b6059bade93693af24d6bd/page.js#L888
