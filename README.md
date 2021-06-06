@@ -143,6 +143,7 @@ Parameters can be made optional by adding a ?, or turned into a wildcard match b
 
 ```html
 <template x-route="/b/:id" x-handler="..."></template>
+<template x-route="/a/:optional?/:params?" x-handler="..."></template>
 <template x-route="/c/:remaining_path*" x-handler="..."></template>
 <template x-route="/d/:remaining_path+" x-handler="..."></template>
 ```
