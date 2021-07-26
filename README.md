@@ -13,6 +13,10 @@
 
 The extendable client-side router for Alpine.js.
 
+## Compatibility
+
+[Currently works with Alpine.js v2 only](https://github.com/pinecone-router/router/issues/12)
+
 ## About
 
 An easy to use but feature-packed client-side router for use with Alpine.js.
