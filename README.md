@@ -15,7 +15,7 @@ The extendable client-side router for Alpine.js.
 
 ## Compatibility
 
-V2 is compatible with Alpine.js v3!
+This is now compatible with Alpine.js v3!
 
 ## About
 
