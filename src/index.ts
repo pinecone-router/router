@@ -283,15 +283,21 @@ function navigate(path, fromPopState = false, firstLoad = false) {
 			}
 		}
 	}
+	// only call handle if the route has a handler
+	// or the route doesnt exist and there is a not found handler
 	if (
-		!handle(
-			route?.handlers ?? window.PineconeRouter.notfound.handlers,
-			context
-		)
+		(!route && !!window.PineconeRouter.notfound.handlers) ||
+		(route && !!route.handlers)
 	) {
-		window.dispatchEvent(window.PineconeRouter.loadEnd)
+		if (
+			!handle(
+				route?.handlers ?? window.PineconeRouter.notfound.handlers,
+				context
+			)
+		) {
+			window.dispatchEvent(window.PineconeRouter.loadEnd)
+		}
 	}
-
 	middleware('onHandlersExecuted', route, path, firstLoad)
 }
 
