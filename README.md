@@ -32,7 +32,7 @@ It can be used to:
 -   :smile: Easy and familiar syntax well integrated with Alpine.js.
 -   :link: Automatically dispatch relative links and handle them.
 -   :hash: [Hash routing](#settings).
--   :heavy_plus_sign: Extendable using tiny [Middlewares! 🪜](#middlewares).
+-   :heavy_plus_sign: Extendable using tiny [Middlewares!](#middlewares).
 -   :sparkles: [Magic **$router** helper](#magic-helper) to access current route, params, redirect, ect. from _all_ alpine components!
 
 **Demo**: [Pinecone example](https://pinecone-example.vercel.app/), [(source code)](https://github.com/rehhouari/pinecone-example).
@@ -72,7 +72,7 @@ import 'alpinejs';
 
 ## Usage
 
-### [Demo & Usage Example](https://pinecone-router-example.vercel.app) WIP
+### [Demo & Usage Example](https://pinecone-router-example.vercel.app)
 
 ## Handle routes
 
@@ -175,12 +175,12 @@ handler(context) {
 
 Pinecone Router is extendable through middlewares!
 
-### [Views (x-view="/file.html")](https://github.com/pinecone-router/middleware-views) WIP for v2
+### [Views (x-view="/file.html")](https://github.com/pinecone-router/middleware-views)
 
 Allows you to set the path for an HTML file and it'll be fetched and displayed in the specified element (`#app` by default). 
 
 
-Create your own middlewares [using this template](https://github.com/pinecone-router/middleware-template)! WIP for v2
+Create your own middlewares [using this template](https://github.com/pinecone-router/middleware-template)!
 
 ## Settings:
 
@@ -220,8 +220,8 @@ You can easily use [nProgress](http://ricostacruz.com/nprogress).
 
 if you're going to `fetch` pages, you can use [views middleware](https://github.com/pinecone-router/middleware-views) which provide [loading events](https://github.com/pinecone-router/middleware-views/#events)
 
-[**Demo**](https://pinecone-example-views.vercel.app/) WIP
-[**Source**](https://github.com/rehhouari/pinecone-example-views) WIP
+[**Demo**](https://pinecone-example-views.vercel.app/)
+[**Source**](https://github.com/rehhouari/pinecone-example-views)
 
 ### Advanced
 
