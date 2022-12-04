@@ -2,8 +2,8 @@
   <img src="https://github.com/pinecone-router/router/blob/main/.github/pinecone-router-social-card-alt-big.png?raw=true" title="Pinecone Router logo with the text: The extendable client-side router for Alpine.js">
 </p>
 
-[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?color=%2337C8AB&label=version&sort=semver)](https://github.com/pinecone-router/router/tree/1.0.4)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router?color=37C8AB)](https://bundlephobia.com/result?p=pinecone-router@1.0.4)
+[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?color=%2337C8AB&label=version&sort=semver)](https://github.com/pinecone-router/router/tree/2.0.0)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router?color=37C8AB)](https://bundlephobia.com/result?p=pinecone-router@2.0.0)
 [![Downloads from JSDelivr](https://data.jsdelivr.com/v1/package/npm/pinecone-router/badge?style=rounded)](https://www.jsdelivr.com/package/npm/pinecone-router)
 [![npm](https://img.shields.io/npm/dm/pinecone-router?color=37C8AB&label=npm&logo=npm&logoColor=37C8AB)](https://npmjs.com/package/pinecone-router)
 [![Changelog](https://img.shields.io/badge/change-log-%2337C8AB)](/CHANGELOG.md)
@@ -15,7 +15,7 @@ The extendable client-side router for Alpine.js.
 
 ## Compatibility
 
-[Currently works with Alpine.js v2 only](https://github.com/pinecone-router/router/issues/12)
+V2 is compatible with Alpine.js v3!
 
 ## About
 
@@ -30,13 +30,10 @@ It can be used to:
 ## Features:
 
 -   :smile: Easy and familiar syntax well integrated with Alpine.js.
--   -   The router is an Alpine component, handlers and settings are set in its data.
 -   :link: Automatically dispatch relative links and handle them.
 -   :hash: [Hash routing](#settings).
 -   :heavy_plus_sign: Extendable using tiny [Middlewares! 🪜](#middlewares).
 -   :sparkles: [Magic **$router** helper](#magic-helper) to access current route, params, redirect, ect. from _all_ alpine components!
--   :gear: Easily configurable through [settings](#settings)!
--   Typescript definitions
 
 **Demo**: [Pinecone example](https://pinecone-example.vercel.app/), [(source code)](https://github.com/rehhouari/pinecone-example).
 
@@ -49,13 +46,13 @@ It can be used to:
 Include the following `<script>` tag in the `<head>` of your document, before Alpine.js:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/pinecone-router@1.x.x/dist/index.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pinecone-router@2.x.x/dist/router.min.js"></script>
 ```
 
 **ES6 Module:**
 
 ```javascript
-import 'https://cdn.jsdelivr.net/npm/pinecone-router@1.x.x/dist/index.module.js';
+import 'https://cdn.jsdelivr.net/npm/pinecone-router@2.x.x/dist/router.esm.js';
 ```
 
 ### NPM
@@ -75,15 +72,14 @@ import 'alpinejs';
 
 ## Usage
 
-### [Demo & Usage Example](https://pinecone-router-example.vercel.app)
+### [Demo & Usage Example](https://pinecone-router-example.vercel.app) WIP
 
-### Handle routes
+## Handle routes
 
-1.  Create an Alpine.js component with an empty `x-router` attribute.
-2.  Declare routes by creating a template tag with `x-route` and `x-handler` attributes.
+Declare routes by creating a template tag with `x-route` and optionally an `x-handler` attribute.
 
 ```html
-<div x-data="router()" x-router>
+<div x-data="router()">
 	<!-- You can pass in a function name -->
 	<template x-route="/" x-handler="home"></template>
 	<!-- Or an anonymous/arrow function -->
@@ -97,8 +93,6 @@ import 'alpinejs';
 <div id="app"></div>
 ```
 
-> **Important**: There can only be one router in the page!
-
 The javascript:
 
 > can also be embedded inside `x-data`.
@@ -106,7 +100,7 @@ The javascript:
 ```js
 function router() {
 	return {
-		main(context) {
+		home(context) {
 			document.querySelector('#app').innerHTML = `<h1>Home</h1>`;
 		},
 		checkName(context) {
@@ -128,7 +122,7 @@ function router() {
 }
 ```
 
-#### Context Object
+### Context Object
 
 The handler takes a `context` argument which consists of:
 
@@ -138,7 +132,8 @@ The handler takes a `context` argument which consists of:
 -   **context.hash** hash fragment without the #
 -   **context.query** search query without the ?
 -   **context.redirect(path: string)** function that allow you to redirect to another page.
--   -   **Important**: usage within x-handler: `return context.redirect('/path');`
+-   -   **Note**: usage within x-handler: `return context.redirect('/path');`
+-   **context.navigate(path: string)** same as clicking a link
 
 ### Route matching
 
@@ -153,18 +148,19 @@ Parameters can be made optional by adding a ?, or turned into a wildcard match b
 
 > Borrowed from [Preact Router](https://github.com/preactjs/preact-router)
 
-### Redirecting
+## Redirecting
 
 It can be done many ways! here's how:
 
 **From an Alpine component**:
 
--   use [`$router` magic helper](#magic-helper): `$router.redirect(path)`.
--   -   example: `@click="$router.redirect(path)"`
+-   use [`$router` magic helper](#magic-helper): `$router.navigate(path)`.
 
 **Redirecting from the handler**:
 
 To redirect from inside a handler function return the context's `redirect` method:
+
+This will stop any other handlers from executing
 
 ```js
 handler(context) {
@@ -175,49 +171,29 @@ handler(context) {
 
 > **Important**: inside the handler you _must_ return the `context.redirect()` function.
 
-### Middlewares
+## Middlewares
 
 Pinecone Router is extendable through middlewares!
 
-#### Official Middlewares
+### [Views (x-view="/file.html")](https://github.com/pinecone-router/middleware-views) WIP for v2
 
--   [Render views](https://github.com/pinecone-router/middleware-views): manually set the view for each route and have it rendered!
+Allows you to set the path for an HTML file and it'll be fetched and displayed in the specified element (`#app` by default). 
 
--   [Display server rendered pages](https://github.com/pinecone-router/middleware-render): automatically load server-rendered pages with preloading (like Turbolinks) **WIP!**
 
-Create your own middlewares [using this template](https://github.com/pinecone-router/middleware-template)!
+Create your own middlewares [using this template](https://github.com/pinecone-router/middleware-template)! WIP for v2
 
-### Settings:
+## Settings:
 
-To override settings simply add a `settings` parameter to your router component's data.
-
-**Note**: you _don't_ have to specify all, just the ones you want to override.
-
-```js
-function router() {
-	return {
-		// configuration
-		settings: {
-			/**
-			 * @type {boolean}
-			 * @summary enable hash routing
-			 */
-			hash: false,
-			/**
-			 * @type {string}
-			 * @summary The base path of the site, for example /blog
-			 * Note: do not use with using hash routing!
-			 */
-			basePath: '/',
-		}
-		// handlers
-		...
-	};
-}
-
+```html
+<script>
+    document.addEventListener('alpine:initialized', () => {
+        window.PineconeRouter.settings.hash = false // use hash routing
+        window.PineconeRouter.settings.basePath = '/' // set the base for the URL, doesn't work with hash routing
+    })
+</script>
 ```
 
-#### Bypass link handling
+## Bypass link handling
 
 Adding a `native` attribute to a link will prevent Pinecone Router from handling it:
 
@@ -225,9 +201,9 @@ Adding a `native` attribute to a link will prevent Pinecone Router from handling
 <a href="/foo" native>Foo</a>
 ```
 
-### Global Context
+## Global Context / $router helper
 
-You can access current path's [context](#context-object) from alpine components use [$router magic helper](#magic-helper) or from anywhere in your javascript by accessing `window.PineconeRouter.currentContext`.
+You can access current route's [context](#context-object) from alpine components use [$router magic helper](#magic-helper) or from anywhere in your javascript by accessing `window.PineconeRouter.currentContext`.
 
 ### Magic Helper
 
@@ -235,16 +211,17 @@ To make it easier to access the [current context](#context-object) from anywhere
 
 **Usage**:
 Refer to [global context](#global-context).
-`$router.params.name`, `$router.redirect(path)`, `$router.hash`, [etc](#context-object).
+`$router.params.name`, `$router.navigate(path)`, `$router.hash`, [etc](#context-object).
+
 
 ### Loading bar
 
 You can easily use [nProgress](http://ricostacruz.com/nprogress).
 
-**Tip:** if you're going to `fetch` views, you can use [this middleware](https://github.com/pinecone-router/middleware-views) which provide [loading events](https://github.com/pinecone-router/middleware-views/#events)
+if you're going to `fetch` pages, you can use [views middleware](https://github.com/pinecone-router/middleware-views) which provide [loading events](https://github.com/pinecone-router/middleware-views/#events)
 
-[**Demo**](https://pinecone-example-views.vercel.app/)
-[**Source**](https://github.com/rehhouari/pinecone-example-views)
+[**Demo**](https://pinecone-example-views.vercel.app/) WIP
+[**Source**](https://github.com/rehhouari/pinecone-example-views) WIP
 
 ### Advanced
 
@@ -260,11 +237,11 @@ you can add routes & remove them anytime using Javascript.
 **Adding a route**:
 
 ```js
-window.PineconeRouter.add(path, handlers);
+window.PineconeRouter.add(path, options);
 ```
 
 -   path: string, the route's path.
--   handlers: array of functions, the handlers of the route.
+-   options: array of options that can be anything for example: `{handlers: [], view: '/home.html'}`
 
 **Removing a route**:
 
@@ -284,16 +261,6 @@ window.PineconeRouter.navigate(path);
 
 </details>
 
-### Browser Support
-
-Supports same versions supported by Alpine.js by default, including IE11.
-
-> `dist/index.modern` is provided if you want to only support modern browsers with es6+ support.
-
-<details>
-<summary>full list</summary>
-and_chr 89, and_ff 86, and_qq 10.4, and_uc 12.12, android 89, baidu 7.12, chrome 90, chrome 89, chrome 88, chrome 87, edge 90, edge 89, edge 88, firefox 87, firefox 86, firefox 78, ie 11, ios_saf 14.0-14.5, ios_saf 13.4-13.7, kaios 2.5, op_mini all, op_mob 62, opera 73, opera 72, safari 14, safari 13.1, samsung 13.0, samsung 12.0
-</details>
 
 ## Contributing:
 
@@ -315,7 +282,7 @@ This projects follow the [Semantic Versioning](https://semver.org/) guidelines.
 
 ## License
 
-Copyright (c) 2021 Rafik El Hadi Houari and contributors
+Copyright (c) 2022 Rafik El Hadi Houari and contributors
 
 Licensed under the MIT license, see [LICENSE.md](LICENSE.md) for details.
 

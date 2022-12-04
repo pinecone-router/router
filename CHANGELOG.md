@@ -7,46 +7,61 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2022-12-04
+
+Updated to Alpine.js v3
+
+It's mostly backward compatible but need a few tweaks:
+
+### Removed
+
+-   no longer need `x-router` attribute in the alpine-component!
+
+### Changed
+
+-   Changed the way you adjust [settings has changed](#settings)
+-   Middleware api
+
 ## [1.0.4] - 2021-06-03
 
 ### Fix
 
--	Fix Handler type
+-   Fix Handler type
 
 ## [1.0.3] - 2021-05-31
 
 ### Fix
 
--	Fix Settings.middlewares type
--	Change `PineconeRouter.name` from `Pinecone Router` to `pinecone-router`. (Non-breaking).
+-   Fix Settings.middlewares type
+-   Change `PineconeRouter.name` from `Pinecone Router` to `pinecone-router`. (Non-breaking).
 
 ## [1.0.2] - 2021-05-31
 
 ### Fix
 
--	Moved types back to index.ts.
+-   Moved types back to index.ts.
 
 ## [1.0.1] - 2021-05-31
 
 ### Added
 
--	`Middleware` type (Typescript).
+-   `Middleware` type (Typescript).
 
 ## [1.0.0] - 2021-05-31
 
 ### Added
 
--	Added type definition for the Settings object
+-   Added type definition for the Settings object
 
 ## [0.3.1] - 2021-05-17
 
 ### Added
 
--	Added type definition for the Context object.
+-   Added type definition for the Context object.
 
 ### Changed
 
--	Internal change: Switched to PNPM for package mangement.
+-   Internal change: Switched to PNPM for package mangement.
 
 ## [0.3.0] - 2021-05-08
 
@@ -57,7 +72,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
--	Switched to typescript.
+-   Switched to typescript.
 -   Better route matching taken from preact-router.
 -   Multiple handlers syntax, no longer comma separated but array instead.
 

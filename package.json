@@ -3,7 +3,7 @@
 	"description": "The extendable client-side router for Alpine.js.",
 	"license": "MIT",
 	"author": "Rafik El Hadi Houari <rehhouari@gmail.com>",
-	"version": "1.0.4",
+	"version": "2.0.0",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/pinecone-router/router"
@@ -11,33 +11,25 @@
 	"keywords": [
 		"alpinejs",
 		"alpine",
+		"alpine.js",
+		"Alpine JS",
+		"Alpine JS Plugin",
+		"Alpine JS Plugins",
 		"router",
-		"routing",
 		"history",
-		"views",
-		"ssr",
-		"hashbang",
 		"pushstate"
 	],
 	"source": "src/index.ts",
-	"main": "dist/index.js",
-	"umd:main": "dist/index.umd.js",
-	"module": "dist/index.module.js",
+	"main": "dist/router.min.js",
+	"umd:main": "dist/router.min.js",
+	"module": "dist/router.esm.js",
 	"scripts": {
-		"build": "microbundle",
-		"watch": "microbundle watch",
-		"test": "jest"
+		"build": "node scripts/build.js",
+		"build:types": "tsc --emitDeclarationOnly --declaration --project tsconfig.json"
 	},
 	"devDependencies": {
-		"@babel/preset-env": "^7.11.0",
-		"@leanadmin/alpine-typescript": "^0.1.22",
-		"@testing-library/dom": "^7.2.2",
-		"@testing-library/jest-dom": "^5.5.0",
-		"jest": "^26.6.3",
-		"jsdom-simulant": "^1.1.2",
-		"microbundle": "^0.13.0"
-	},
-	"dependencies": {
-		"alpinejs": "^2.8.2"
+		"esbuild": "^0.14.53",
+		"typescript": "^4.9.3",
+		"vite": "^3.2.4"
 	}
 }
