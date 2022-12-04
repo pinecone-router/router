@@ -3,7 +3,7 @@ import type { Settings, Context, Middleware, Handler } from './types'
 import { handle, match, middleware, validLink } from './utils'
 
 const PineconeRouter = {
-	version: '2.1.2',
+	version: '2.1.3',
 	name: 'pinecone-router',
 	viewCache: {},
 	settings: <Settings>{
@@ -296,6 +296,7 @@ function navigate(path, fromPopState = false, firstLoad = false) {
 			)
 		) {
 			window.dispatchEvent(window.PineconeRouter.loadEnd)
+			return // do not call onHandlersExecuted middlewares
 		}
 	}
 	middleware('onHandlersExecuted', route, path, firstLoad)

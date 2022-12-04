@@ -3,7 +3,7 @@
 	"description": "The extendable client-side router for Alpine.js.",
 	"license": "MIT",
 	"author": "Rafik El Hadi Houari <rehhouari@gmail.com>",
-	"version": "2.1.2",
+	"version": "2.1.3",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/pinecone-router/router"
