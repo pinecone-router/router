@@ -23,7 +23,7 @@ An easy to use but feature-packed client-side router for use with Alpine.js.
 
 It can be used to:
 
--   Handle routes & process route variables.
+-   Register routes & process route variables.
 -   Use magic helper `$router` helper to display elements dynamically etc. inside all Alpine.js Components.
 -   Many more using [middlewares](#middlewares)!.
 
