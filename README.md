@@ -160,7 +160,7 @@ Every `handler` method takes the context object as the only argument
 -  *context*.**query** search query without the ?
 -  *context*.**redirect(path: string)** function that allow you to redirect to another page.
 -  -   **Note**: usage within x-handler: `return context.redirect('/path');`
--  *context.navigate(path: string)** same as clicking a link
+-  *context*.**navigate(path: string)** same as clicking a link
 
 **Using magic helper:** `$router.params.id`, `$router.route`, etc
 
