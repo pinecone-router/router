@@ -226,7 +226,7 @@ Adding a `native` attribute to a link will prevent Pinecone Router from handling
 <a href="/foo" native>Foo</a>
 ```
 
-### Loading bar
+## Loading bar
 
 You can easily use [nProgress](http://ricostacruz.com/nprogress).
 
@@ -235,7 +235,7 @@ if you're going to `fetch` pages, you can use [views middleware](https://github.
 [**Demo**](https://pinecone-example-views.vercel.app/)
 [**Source**](https://github.com/rehhouari/pinecone-example-views)
 
-### Advanced
+## Advanced
 
 <details>
 	<summary>
