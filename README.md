@@ -79,6 +79,8 @@ import 'alpinejs';
 
 Declare routes by creating a template tag with `x-route` and **optionally** an `x-handler` attribute.
 
+>Note: alternatively you can [use Javascript to add routes](#advanced)
+
 ### Without `x-handler`
 
 ```html
