@@ -7,15 +7,11 @@
 [![Downloads from JSDelivr](https://data.jsdelivr.com/v1/package/npm/pinecone-router/badge?style=rounded)](https://www.jsdelivr.com/package/npm/pinecone-router)
 [![npm](https://img.shields.io/npm/dm/pinecone-router?color=37C8AB&label=npm&logo=npm&logoColor=37C8AB)](https://npmjs.com/package/pinecone-router)
 [![Changelog](https://img.shields.io/badge/change-log-%2337C8AB)](/CHANGELOG.md)
-[![Sponsor](https://img.shields.io/badge/Sponsor-%E2%99%A5-pink)](#sponsor-%EF%B8%8F)
+[![Sponsor](https://img.shields.io/badge/Sponsor-%E2%99%A5-pink)](https://ko-fi.com/rehhouari)
 
 # Pinecone Router
 
-The extendable client-side router for Alpine.js.
-
-## Compatibility
-
-This is now compatible with Alpine.js v3!
+The extendable client-side router for Alpine.js v3.
 
 ## About
 
@@ -277,6 +273,12 @@ window.PineconeRouter.currentContext.navigate(path);
 
 </details>
 
+
+## Compatibility
+| Version      | Alpine.js Version |
+| ----------- | ----------- |
+| v2.x      | v3       |
+| v1.x   | v2        |
 
 ## Contributing:
 
