@@ -31,9 +31,9 @@ It can be used to:
 
 -   :smile: Easy and familiar syntax well integrated with Alpine.js.
 -   :link: Automatically dispatch relative links and handle them.
+-   :sparkles: [Magic **$router** helper](#context-object) to access current route, params, redirect, ect. from _all_ alpine components!
 -   :hash: [Hash routing](#settings).
 -   :heavy_plus_sign: Extendable using tiny [Middlewares!](#middlewares).
--   :sparkles: [Magic **$router** helper](#magic-helper) to access current route, params, redirect, ect. from _all_ alpine components!
 
 **Demo**: [Pinecone example](https://pinecone-example.vercel.app/), [(source code)](https://github.com/rehhouari/pinecone-example).
 
@@ -74,9 +74,26 @@ import 'alpinejs';
 
 ### [Demo & Usage Example](https://pinecone-router-example.vercel.app)
 
+
 ## Handle routes
 
-Declare routes by creating a template tag with `x-route` and optionally an `x-handler` attribute.
+Declare routes by creating a template tag with `x-route` and **optionally** an `x-handler` attribute.
+
+### Without `x-handler`
+
+```html
+<!-- register the route, no need for a handler-->
+<template x-route="/profile/:id"></template>
+
+<!-- now you can use the route in anyway you'd like! -->
+<template x-if="$router.route == '/profile/:id'">
+  <div>profile <span x-text="$router.params.id"></span></div>
+</template>
+```
+
+[More about $router helper](#context-object)
+
+### With `x-handler`
 
 ```html
 <div x-data="router()">
@@ -99,41 +116,51 @@ The javascript:
 
 ```js
 function router() {
-	return {
-		home(context) {
-			document.querySelector('#app').innerHTML = `<h1>Home</h1>`;
-		},
-		checkName(context) {
-			// if the name is "home" go to the home page.
-			if (context.params.name.toLowerCase() == 'home') {
-				// redirecting is done by returning the context.redirect method.
-				return context.redirect('/');
-			}
-		},
-		hello(context) {
-			document.querySelector(
-				'#app'
-			).innerHTML = `<h1>Hello, ${context.params.name}</h1>`;
-		},
-		notfound(context) {
-			document.querySelector('#app').innerHTML = `<h1>Not Found</h1>`;
-		},
-	};
+  return {
+    home(context) {
+      document.querySelector('#app').innerHTML = `<h1>Home</h1>`;
+    },
+    checkName(context) {
+      // if the name is "home" go to the home page.
+      if (context.params.name.toLowerCase() == 'home') {
+        // redirecting is done by returning the context.redirect method.
+        return context.redirect('/');
+    }
+    },
+    hello(context) {
+      document.querySelector(
+        '#app'
+      ).innerHTML = `<h1>Hello, ${context.params.name}</h1>`;
+    },
+    notfound(context) {
+      document.querySelector('#app').innerHTML = `<h1>Not Found</h1>`;
+    },
+  };
 }
 ```
 
 ### Context Object
 
-The handler takes a `context` argument which consists of:
 
--   **context.route** _(/path/:var)_ The route set with `x-route`.
--   **context.path** _(/path/something)_ The path visited by the client.
--   **context.params** _({var: something})_ Object that contains route parameters if any.
--   **context.hash** hash fragment without the #
--   **context.query** search query without the ?
--   **context.redirect(path: string)** function that allow you to redirect to another page.
--   -   **Note**: usage within x-handler: `return context.redirect('/path');`
--   **context.navigate(path: string)** same as clicking a link
+Contains information about the current route. This available at all times:
+
+Using the `$router` magic helper in Alpine components
+
+From Javascript using `window.PineconeRouter.currentContext`
+
+Every `handler` method takes the context object as the only argument
+
+
+-  *context*.**route** _(/path/:var)_ The route set with `x-route`.
+-  *context*.**path** _(/path/something)_ The path visited by the client.
+-  *context*.**params** _({var: something})_ Object that contains route parameters if any.
+-  *context*.**hash** hash fragment without the #
+-  *context*.**query** search query without the ?
+-  *context*.**redirect(path: string)** function that allow you to redirect to another page.
+-  -   **Note**: usage within x-handler: `return context.redirect('/path');`
+-  *context.navigate(path: string)** same as clicking a link
+
+**Using magic helper:** `$router.params.id`, `$router.route`, etc
 
 ### Route matching
 
@@ -201,19 +228,6 @@ Adding a `native` attribute to a link will prevent Pinecone Router from handling
 <a href="/foo" native>Foo</a>
 ```
 
-## Global Context / $router helper
-
-You can access current route's [context](#context-object) from alpine components use [$router magic helper](#magic-helper) or from anywhere in your javascript by accessing `window.PineconeRouter.currentContext`.
-
-### Magic Helper
-
-To make it easier to access the [current context](#context-object) from anywhere, you can use the `$router` magic helper:
-
-**Usage**:
-Refer to [global context](#global-context).
-`$router.params.name`, `$router.navigate(path)`, `$router.hash`, [etc](#context-object).
-
-
 ### Loading bar
 
 You can easily use [nProgress](http://ricostacruz.com/nprogress).
@@ -253,10 +267,10 @@ window.PineconeRouter.remove(path);
 
 **Navigating from Javascript**:
 
-To navigate to another page from javascript you can:
+To navigate to another page from javascript you can use:
 
 ```js
-window.PineconeRouter.navigate(path);
+window.PineconeRouter.currentContext.navigate(path);
 ```
 
 </details>
