@@ -237,11 +237,6 @@ if you're going to `fetch` pages, you can use [views middleware](https://github.
 
 ## Advanced
 
-<details>
-	<summary>
-		<strong>Show</strong>
-	</summary>
-
 #### Adding & Removing routes with Javascript
 
 you can add routes & remove them anytime using Javascript.
@@ -270,8 +265,6 @@ To navigate to another page from javascript you can use:
 ```js
 window.PineconeRouter.currentContext.navigate(path);
 ```
-
-</details>
 
 
 ## Compatibility
