@@ -68,7 +68,7 @@ import 'alpinejs';
 
 ## Usage
 
-### [Demo & Usage Example](https://pinecone-router-example.vercel.app)
+### [Demo & Usage Example](https://pinecone-example.vercel.app/)
 
 
 ## Handle routes
