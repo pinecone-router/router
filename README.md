@@ -39,16 +39,19 @@ It can be used to:
 
 ### CDN
 
-Include the following `<script>` tag in the `<head>` of your document, before Alpine.js:
+Include the following `<script>` tag in the `<head>` of your document, **before Alpine.js**:
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/pinecone-router@2.x.x/dist/router.min.js"></script>
 ```
 
-**ES6 Module:**
+**ES6 Module on the browser:**
 
 ```javascript
-import 'https://cdn.jsdelivr.net/npm/pinecone-router@2.x.x/dist/router.esm.js';
+import PineconeRouter from 'https://cdn.jsdelivr.net/npm/pinecone-router@2.x.x/dist/router.esm.js'
+import Alpine from 'https://esm.sh/alpinejs'
+Alpine.plugin(PineconeRouter)
+Alpine.start()
 ```
 
 ### NPM
@@ -59,12 +62,15 @@ npm install pinecone-router
 
 ```javascript
 // load pinecone router
-import 'pinecone-router';
+import PineconeRouter from 'pinecone-router';
 // then load alpine.js
 import 'alpinejs';
+// add the router as an plugin
+Alpine.plugin(PineconeRouter)
+// start alpine
+Alpine.start()
 ```
 
-> **Important**: This must be added **before** loading Alpine.js.
 
 ## Usage
 
