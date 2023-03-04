@@ -64,7 +64,7 @@ npm install pinecone-router
 // load pinecone router
 import PineconeRouter from 'pinecone-router';
 // then load alpine.js
-import 'alpinejs';
+import Alpine from 'alpinejs';
 // add the router as an plugin
 Alpine.plugin(PineconeRouter)
 // start alpine
