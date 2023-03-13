@@ -77,7 +77,7 @@ Alpine.start()
 ### [Demo & Usage Example](https://pinecone-example.vercel.app/)
 
 
-## Handle routes
+## Declare routes
 
 Declare routes by creating a template tag with `x-route` and **optionally** an `x-handler` attribute.
 
@@ -106,6 +106,7 @@ Declare routes by creating a template tag with `x-route` and **optionally** an `
 	<!-- Or an anonymous/arrow function -->
 	<template x-route="/home" x-handler="(ctx) => ctx.redirect('/')"></template>
 	<!-- Or even an array of multiple function names/anonymous functions! -->
+	<!-- To prevent the next handlers from executing return 'stop' from the previous handler` or redirect -->
 	<template x-route="/hello/:name" x-handler="[checkName, hello]"></template>
 	<!-- 404 handler -->
 	<template x-route="notfound" x-handler="notfound"></template>
@@ -125,11 +126,9 @@ function router() {
       document.querySelector('#app').innerHTML = `<h1>Home</h1>`;
     },
     checkName(context) {
-      // if the name is "home" go to the home page.
-      if (context.params.name.toLowerCase() == 'home') {
-        // redirecting is done by returning the context.redirect method.
-        return context.redirect('/');
-    }
+      if (context.params.name.toLowerCase() == 'rafik') {
+         console.log('we have the same name!');
+      }
     },
     hello(context) {
       document.querySelector(
@@ -142,6 +141,10 @@ function router() {
   };
 }
 ```
+#### Multiple Handlers for a single route
+
+To prevent / stop the next handlers from executing `return 'stop'` from the previous handler or `return $router.redirect('/some/path')`
+
 
 ### Context Object
 
@@ -181,8 +184,6 @@ Parameters can be made optional by adding a ?, or turned into a wildcard match b
 
 ## Redirecting
 
-It can be done many ways! here's how:
-
 **From an Alpine component**:
 
 -   use [`$router` magic helper](#magic-helper): `$router.navigate(path)`.
@@ -201,6 +202,10 @@ handler(context) {
 ```
 
 > **Important**: inside the handler you _must_ return the `context.redirect()` function.
+
+> `return context.redirect(path)` will prevent execution of any other handelers that are after this one
+
+> if you wish to prevent execution of other handlers without redirecting use `return 'stop'`
 
 ## Middlewares
 
