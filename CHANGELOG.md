@@ -6,19 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [3.0.0] - 2023-04-06
+
+### Removed
+
+-   Removed `viewCache` property, since I removed caching functionality in Views Middleware v3.0.0
+
 ## [2.1.3] - 2022-12-04
 
 ### Fixed
 
-- Do not call `onHandlersExecuted` middlewares if a handler redirected
+-   Do not call `onHandlersExecuted` middlewares if a handler redirected
 
 ## [2.1.2] - 2022-12-04
 
-
 ### Fixed
 
--  routes can now be declared without handlers
-
+-   routes can now be declared without handlers
 
 ## [2.0.0] - 2022-12-04
 

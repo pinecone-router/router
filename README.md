@@ -2,8 +2,8 @@
   <img src="https://github.com/pinecone-router/router/blob/main/.github/pinecone-router-social-card-alt-big.png?raw=true" title="Pinecone Router logo with the text: The extendable client-side router for Alpine.js">
 </p>
 
-[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?color=%2337C8AB&label=version&sort=semver)](https://github.com/pinecone-router/router/tree/2.0.0)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router?color=37C8AB)](https://bundlephobia.com/result?p=pinecone-router@2.0.0)
+[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?color=%2337C8AB&label=version&sort=semver)](https://github.com/pinecone-router/router/tree/3.0.0)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router?color=37C8AB)](https://bundlephobia.com/result?p=pinecone-router@3.0.0)
 [![Downloads from JSDelivr](https://data.jsdelivr.com/v1/package/npm/pinecone-router/badge?style=rounded)](https://www.jsdelivr.com/package/npm/pinecone-router)
 [![npm](https://img.shields.io/npm/dm/pinecone-router?color=37C8AB&label=npm&logo=npm&logoColor=37C8AB)](https://npmjs.com/package/pinecone-router)
 [![Changelog](https://img.shields.io/badge/change-log-%2337C8AB)](/CHANGELOG.md)
@@ -42,13 +42,13 @@ It can be used to:
 Include the following `<script>` tag in the `<head>` of your document, **before Alpine.js**:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/pinecone-router@2.x.x/dist/router.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pinecone-router@3.x.x/dist/router.min.js"></script>
 ```
 
 **ES6 Module on the browser:**
 
 ```javascript
-import PineconeRouter from 'https://cdn.jsdelivr.net/npm/pinecone-router@2.x.x/dist/router.esm.js'
+import PineconeRouter from 'https://cdn.jsdelivr.net/npm/pinecone-router@3.x.x/dist/router.esm.js'
 import Alpine from 'https://esm.sh/alpinejs'
 Alpine.plugin(PineconeRouter)
 Alpine.start()
@@ -62,26 +62,24 @@ npm install pinecone-router
 
 ```javascript
 // load pinecone router
-import PineconeRouter from 'pinecone-router';
+import PineconeRouter from 'pinecone-router'
 // then load alpine.js
-import Alpine from 'alpinejs';
+import Alpine from 'alpinejs'
 // add the router as a plugin
 Alpine.plugin(PineconeRouter)
 // start alpine
 Alpine.start()
 ```
 
-
 ## Usage
 
 ### [Demo & Usage Example](https://pinecone-example.vercel.app/)
-
 
 ## Declare routes
 
 Declare routes by creating a template tag with `x-route` and **optionally** an `x-handler` attribute.
 
->Note: alternatively you can [use Javascript to add routes](#advanced)
+> Note: alternatively you can [use Javascript to add routes](#advanced)
 
 ### Without `x-handler`
 
@@ -91,7 +89,7 @@ Declare routes by creating a template tag with `x-route` and **optionally** an `
 
 <!-- now you can use the route in anyway you'd like! -->
 <template x-if="$router.route == '/profile/:id'">
-  <div>profile <span x-text="$router.params.id"></span></div>
+	<div>profile <span x-text="$router.params.id"></span></div>
 </template>
 ```
 
@@ -121,33 +119,32 @@ The javascript:
 
 ```js
 function router() {
-  return {
-    home(context) {
-      document.querySelector('#app').innerHTML = `<h1>Home</h1>`;
-    },
-    checkName(context) {
-      if (context.params.name.toLowerCase() == 'rafik') {
-         console.log('we have the same name!');
-      }
-    },
-    hello(context) {
-      document.querySelector(
-        '#app'
-      ).innerHTML = `<h1>Hello, ${context.params.name}</h1>`;
-    },
-    notfound(context) {
-      document.querySelector('#app').innerHTML = `<h1>Not Found</h1>`;
-    },
-  };
+	return {
+		home(context) {
+			document.querySelector('#app').innerHTML = `<h1>Home</h1>`
+		},
+		checkName(context) {
+			if (context.params.name.toLowerCase() == 'rafik') {
+				console.log('we have the same name!')
+			}
+		},
+		hello(context) {
+			document.querySelector(
+				'#app'
+			).innerHTML = `<h1>Hello, ${context.params.name}</h1>`
+		},
+		notfound(context) {
+			document.querySelector('#app').innerHTML = `<h1>Not Found</h1>`
+		},
+	}
 }
 ```
+
 #### Multiple Handlers for a single route
 
 To prevent / stop the next handlers from executing `return 'stop'` from the previous handler or `return $router.redirect('/some/path')`
 
-
 ### Context Object
-
 
 Contains information about the current route. This available at all times:
 
@@ -157,15 +154,14 @@ From Javascript using `window.PineconeRouter.currentContext`
 
 Every `handler` method takes the context object as the only argument
 
-
--  *context*.**route** _(/path/:var)_ The route set with `x-route`.
--  *context*.**path** _(/path/something)_ The path visited by the client.
--  *context*.**params** _({var: something})_ Object that contains route parameters if any.
--  *context*.**hash** hash fragment without the #
--  *context*.**query** search query without the ?
--  *context*.**redirect(path: string)** function that allow you to redirect to another page.
--  -   **Note**: usage within x-handler: `return context.redirect('/path');`
--  *context*.**navigate(path: string)** same as clicking a link
+-   _context_.**route** _(/path/:var)_ The route set with `x-route`.
+-   _context_.**path** _(/path/something)_ The path visited by the client.
+-   _context_.**params** _({var: something})_ Object that contains route parameters if any.
+-   _context_.**hash** hash fragment without the #
+-   _context_.**query** search query without the ?
+-   _context_.**redirect(path: string)** function that allow you to redirect to another page.
+-   -   **Note**: usage within x-handler: `return context.redirect('/path');`
+-   _context_.**navigate(path: string)** same as clicking a link
 
 **Using magic helper:** `$router.params.id`, `$router.route`, etc
 
@@ -213,8 +209,7 @@ Pinecone Router is extendable through middlewares!
 
 ### [Views (x-view="/file.html")](https://github.com/pinecone-router/middleware-views)
 
-Allows you to set the path for an HTML file and it'll be fetched and displayed in the specified element (`#app` by default). 
-
+Allows you to set the path for an HTML file and it'll be fetched and displayed in the specified element (`#app` by default).
 
 Create your own middlewares [using this template](https://github.com/pinecone-router/middleware-template)!
 
@@ -222,10 +217,10 @@ Create your own middlewares [using this template](https://github.com/pinecone-ro
 
 ```html
 <script>
-    document.addEventListener('alpine:initialized', () => {
-        window.PineconeRouter.settings.hash = false // use hash routing
-        window.PineconeRouter.settings.basePath = '/' // set the base for the URL, doesn't work with hash routing
-    })
+	document.addEventListener('alpine:initialized', () => {
+		window.PineconeRouter.settings.hash = false // use hash routing
+		window.PineconeRouter.settings.basePath = '/' // set the base for the URL, doesn't work with hash routing
+	})
 </script>
 ```
 
@@ -255,7 +250,7 @@ you can add routes & remove them anytime using Javascript.
 **Adding a route**:
 
 ```js
-window.PineconeRouter.add(path, options);
+window.PineconeRouter.add(path, options)
 ```
 
 -   path: string, the route's path.
@@ -264,7 +259,7 @@ window.PineconeRouter.add(path, options);
 **Removing a route**:
 
 ```js
-window.PineconeRouter.remove(path);
+window.PineconeRouter.remove(path)
 ```
 
 -   path: string, the path of the route you want to remove.
@@ -274,15 +269,15 @@ window.PineconeRouter.remove(path);
 To navigate to another page from javascript you can use:
 
 ```js
-window.PineconeRouter.currentContext.navigate(path);
+window.PineconeRouter.currentContext.navigate(path)
 ```
 
-
 ## Compatibility
-| Version      | Alpine.js Version |
-| ----------- | ----------- |
-| v2.x      | v3       |
-| v1.x   | v2        |
+
+| Version | Alpine.js Version |
+| ------- | ----------------- |
+| ^v2.x   | v3                |
+| v1.x    | v2                |
 
 ## Contributing:
 
