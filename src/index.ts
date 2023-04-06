@@ -3,7 +3,7 @@ import type { Settings, Context, Middleware, Handler } from './types'
 import { handle, match, middleware, validLink } from './utils'
 
 const PineconeRouter = {
-	version: '3.0.0',
+	version: '3.0.1',
 	name: 'pinecone-router',
 	settings: <Settings>{
 		hash: false,
