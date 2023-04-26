@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.1.0] - 2023-04-26
+
+### Fixed
+
+-   hash routing: fix automatically adding path to hash ([discussion#18](18#discussioncomment-5722802))
+
 ## [3.0.1] - 2023-04-06
 
 ### Fixed
@@ -190,7 +196,7 @@ It's mostly backward compatible but need a few tweaks:
 
 -   Let go of multi-router support for simpler codebase.
 
-[unreleased]: https://github.com/pinecone-router/router/compare/0.3.1...HEAD
+[unreleased]: https://github.com/pinecone-router/router/compare/3.1.0...HEAD
 [0.0.4]: https://github.com/pinecone-router/router/compare/0.0.2...0.0.4
 [0.0.5]: https://github.com/pinecone-router/router/compare/0.0.4...0.0.5
 [0.0.6]: https://github.com/pinecone-router/router/compare/0.0.5..0.0.6

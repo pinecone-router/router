@@ -3,7 +3,7 @@ import type { Settings, Context, Middleware, Handler } from './types'
 import { handle, match, middleware, validLink } from './utils'
 
 const PineconeRouter = {
-	version: '3.0.1',
+	version: '3.1.0',
 	name: 'pinecone-router',
 	settings: <Settings>{
 		hash: false,
@@ -186,6 +186,7 @@ function interceptLinks() {
 			// use shadow dom when available if not, fall back to composedPath()
 			// for browsers that only have shady
 			let el = e.target
+
 			let eventPath: any = e.composedPath()
 			if (eventPath) {
 				for (let i = 0; i < eventPath.length; i++) {
@@ -198,16 +199,16 @@ function interceptLinks() {
 				}
 			}
 			if (el == null) return
-			// allow skipping handler
+			// allow skipping link
 			// @ts-ignore
 			if (el.hasAttribute('native')) return
 			let ret = validLink(el, window.PineconeRouter.settings.hash)
 			if (!ret.valid) return
-
-			navigate(ret.link)
-
 			// prevent default behavior.
+			if (e.stopImmediatePropagation) e.stopImmediatePropagation()
+			if (e.stopPropagation) e.stopPropagation()
 			e.preventDefault()
+			navigate(ret.link)
 		}
 	)
 }
@@ -265,9 +266,6 @@ function navigate(path, fromPopState = false, firstLoad = false) {
 		let fullPath = ''
 		if (window.PineconeRouter.settings.hash) {
 			fullPath = '#'
-			if (window.location.pathname != '/') {
-				fullPath += window.location.pathname
-			}
 			fullPath += window.location.search + path
 		} else {
 			fullPath = path + window.location.search + window.location.hash
