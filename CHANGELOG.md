@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.1.1] - 2023-05-29
+
+### Added
+
+-   Add "types" field to package.json ([#19](#19))
+
 ## [3.1.0] - 2023-04-26
 
 ### Fixed
