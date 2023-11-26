@@ -238,8 +238,7 @@ You can easily use [nProgress](http://ricostacruz.com/nprogress).
 
 if you're going to `fetch` pages, you can use [views middleware](https://github.com/pinecone-router/middleware-views) which provide [loading events](https://github.com/pinecone-router/middleware-views/#events)
 
-[**Demo**](https://pinecone-example-views.vercel.app/)
-[**Source**](https://github.com/rehhouari/pinecone-example-views)
+[**Demo**](https://pinecone-example-views.vercel.app/) - [**Source**](https://github.com/rehhouari/pinecone-example-views)
 
 ## Advanced
 
