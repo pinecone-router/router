@@ -89,9 +89,15 @@ Declare routes by creating a template tag with `x-route` and **optionally** an `
 
 <!-- now you can use the route in anyway you'd like! -->
 <template x-if="$router.route == '/profile/:id'">
-	<div>profile <span x-text="$router.params.id"></span></div>
+	<div>Profile ID: <span x-text="$router.params.id"></span></div>
+</template>
+
+<!--- Alternatively you can make it even shorter: --->
+<template x-route="/post/:id" x-if="$router.route == '/post/:id'">
+	<div>Post ID: <span x-text="$router.params.id"></span></div>
 </template>
 ```
+
 
 [More about $router helper](#context-object)
 
