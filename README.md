@@ -147,10 +147,8 @@ To prevent / stop the next handlers from executing `return 'stop'` from the prev
 ### Context Object
 
 Contains information about the current route. This available at all times:
-
-Using the `$router` magic helper in Alpine components
-
-From Javascript using `window.PineconeRouter.currentContext`
+- Using the `$router` magic helper in Alpine components
+- From Javascript using `window.PineconeRouter.currentContext`
 
 Every `handler` method takes the context object as the only argument
 
