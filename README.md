@@ -177,7 +177,7 @@ function router() {
 			document.querySelector('#app').innerHTML = `<h1>Not Found</h1>`
 		},
 		thisWontRun() {
-			// This function wont run because the previous function returned ctx.redirect() which
+			// This function wont run because the previous function returned ctx.redirect()
 			console.log("skipped!")
 		}
 	}
