@@ -193,7 +193,7 @@ To prevent / stop the next handlers from executing and templates from rendering 
 
 ## Context object / $router magic helper
 
-Contains information about the current route. This available at all times:
+Contains information about the current route. This is available at all times:
 
 - Using the `$router` magic helper in Alpine components
 - From Javascript using `window.PineconeRouter.context`
