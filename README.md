@@ -114,7 +114,6 @@ This directive allows you to specify an external template file fetched from a UR
 <!-- when the route is visited, this will fetch the content of profile.html and insert it to the page -->
 <template x-route="/" x-template="/home.html"></template>
 
-<<<<<<< HEAD
 <!-- you can prefetch templates without having to wait for the route to be visited -->
 <template x-route="notfound" x-template.prefetch="/404.html"></template>
 
@@ -127,21 +126,7 @@ This directive allows you to specify an external template file fetched from a UR
 ```
 
 > Default Target ID can be set globally in [settings](#settings)
-=======
-<!-- now you can use the route in anyway you'd like! -->
-<template x-if="$router.route == '/profile/:id'">
-	<div>Profile ID: <span x-text="$router.params.id"></span></div>
-</template>
 
-<!--- Alternatively you can make it even shorter: --->
-<template x-route="/post/:id" x-if="$router.route == '/post/:id'">
-	<div>Post ID: <span x-text="$router.params.id"></span></div>
-</template>
-```
-
-
-[More about $router helper](#context-object)
->>>>>>> fab97ad99d30fddb957bebdfef897029cb5a6919
 
 ## `x-handler`
 
@@ -209,7 +194,6 @@ To prevent / stop the next handlers from executing and templates from rendering 
 ## Context object / $router magic helper
 
 Contains information about the current route. This available at all times:
-<<<<<<< HEAD
 
 - Using the `$router` magic helper in Alpine components
 - From Javascript using `window.PineconeRouter.context`
@@ -224,10 +208,6 @@ Reference:
 -   _$router_.**redirect(path: string)** function that allow you to redirect to another page.
 -   -   **Note**: usage within [x-handler](#x-handler): `return context.redirect('/path');`
 -   _$router_.**navigate(path: string)** same as clicking a link
-=======
-- Using the `$router` magic helper in Alpine components
-- From Javascript using `window.PineconeRouter.currentContext`
->>>>>>> fab97ad99d30fddb957bebdfef897029cb5a6919
 
 > **Inside `x-handler`:** `context.params.id`, `context.route`, etc
 
