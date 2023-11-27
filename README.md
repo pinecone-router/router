@@ -125,6 +125,11 @@ This directive allows you to specify an external template file fetched from a UR
 </div>
 ```
 
+### modifiers
+
+- **.preload**: Fetches the template on load, without waiting for the route to be visited
+- **.target**: Takes an ID paramater for example `.target.app` will render the template inside the element with the `app` ID
+
 > Default Target ID can be set globally in [settings](#settings)
 
 
