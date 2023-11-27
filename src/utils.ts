@@ -1,5 +1,3 @@
-import { Context } from './types'
-
 var isLocation = window.location
 
 /**
@@ -90,13 +88,13 @@ export function sameOrigin(href: string) {
 	var loc = window.location
 
 	/*
-    When the port is the default http port 80 for http, or 443 for
-    https, internet explorer 11 returns an empty string for loc.port,
-    so we need to compare loc.port with an empty string if url.port
-    is the default port 80 or 443.
-    Also the comparison with `port` is changed from `===` to `==` because
-    `port` can be a string sometimes. This only applies to ie11.
-    */
+	When the port is the default http port 80 for http, or 443 for
+	https, internet explorer 11 returns an empty string for loc.port,
+	so we need to compare loc.port with an empty string if url.port
+	is the default port 80 or 443.
+	Also the comparison with `port` is changed from `===` to `==` because
+	`port` can be a string sometimes. This only applies to ie11.
+	*/
 	return (
 		loc.protocol === url.protocol &&
 		loc.hostname === url.hostname &&
@@ -170,19 +168,7 @@ export function validLink(
 	return ret
 }
 
-/**
- * execute the handlers of routes that are given passing them the context.
- */
-export function handle(handlers, context) {
-	for (let i = 0; i < handlers.length; i++) {
-		if (typeof handlers[i] == 'function') {
-			let result = handlers[i](context)
-			// if the handler redirected, return
-			if (result == 'stop') return false
-		}
-	}
-	return true
-}
+
 
 /**
  * Call a function on all middlewares loaded, if any.

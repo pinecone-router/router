@@ -17,6 +17,6 @@
 		// go to js file when using IDE functions like
 		// "Go to Definition" in VSCode
 		"declarationMap": true,
-		"lib": ["DOM", "ES6", "ES5"]
+		"lib": ["DOM", "ES6", "ES5", "es2018.promise"]
 	}
 }

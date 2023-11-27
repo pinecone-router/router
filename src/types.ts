@@ -79,8 +79,9 @@ export declare interface Settings {
 	 */
 	basePath: string
 	/**
-	 * @default `#app`
-	 * @summmary selector for where the views will render
+	 * @default null
+	 * @summmary Set an optional ID for where the templates will render by default
+	 * This can be overriden by the .target modifier
 	 */
-	viewSelector: string
+	templateTargetId: string
 }

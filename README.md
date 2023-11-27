@@ -2,8 +2,8 @@
   <img src="https://github.com/pinecone-router/router/blob/main/.github/pinecone-router-social-card-alt-big.png?raw=true" title="Pinecone Router logo with the text: The extendable client-side router for Alpine.js">
 </p>
 
-[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?color=%2337C8AB&label=version&sort=semver)](https://github.com/pinecone-router/router/tree/3.1.2)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router?color=37C8AB)](https://bundlephobia.com/result?p=pinecone-router@3.1.2)
+[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?color=%2337C8AB&label=version&sort=semver)](https://github.com/pinecone-router/router/tree/4.0.0)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router?color=37C8AB)](https://bundlephobia.com/result?p=pinecone-router@4.0.0)
 [![Downloads from JSDelivr](https://data.jsdelivr.com/v1/package/npm/pinecone-router/badge?style=rounded)](https://www.jsdelivr.com/package/npm/pinecone-router)
 [![npm](https://img.shields.io/npm/dm/pinecone-router?color=37C8AB&label=npm&logo=npm&logoColor=37C8AB)](https://npmjs.com/package/pinecone-router)
 [![Changelog](https://img.shields.io/badge/change-log-%2337C8AB)](/CHANGELOG.md)
@@ -13,21 +13,19 @@
 
 The extendable client-side router for Alpine.js v3.
 
+> v4 update brings new features with minor breaking changees, see [ChangeLog](/CHANGELOG.md#400---2023-11-26) for what to update!
+
 ## About
 
 An easy to use but feature-packed client-side router for use with Alpine.js.
 
-It can be used to:
-
--   Register routes & process route variables.
--   Use magic helper `$router` helper to display elements dynamically etc. inside all Alpine.js Components.
--   Many more using [middlewares](#middlewares)!.
-
 ## Features:
 
 -   :smile: Easy and familiar syntax well integrated with Alpine.js.
+-   :gear: [Handler functions](#x-handler) allow you to run code before content is displayed
+-   :sparkles: [Magic **$router** helper](#context-object--router-magic-helper) to access current route, params, redirect, ect. from _all_ alpine components!
+-	:beginner: Inline and external [templates](#x-templates).
 -   :link: Automatically dispatch relative links and handle them.
--   :sparkles: [Magic **$router** helper](#context-object) to access current route, params, redirect, ect. from _all_ alpine components!
 -   :hash: [Hash routing](#settings).
 -   :heavy_plus_sign: Extendable using tiny [Middlewares!](#middlewares).
 
@@ -42,13 +40,13 @@ It can be used to:
 Include the following `<script>` tag in the `<head>` of your document, **before Alpine.js**:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/pinecone-router@3.x.x/dist/router.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pinecone-router@4.x.x/dist/router.min.js"></script>
 ```
 
 **ES6 Module on the browser:**
 
 ```javascript
-import PineconeRouter from 'https://cdn.jsdelivr.net/npm/pinecone-router@3.x.x/dist/router.esm.js'
+import PineconeRouter from 'https://cdn.jsdelivr.net/npm/pinecone-router@4.x.x/dist/router.esm.js'
 import Alpine from 'https://esm.sh/alpinejs'
 Alpine.plugin(PineconeRouter)
 Alpine.start()
@@ -75,37 +73,76 @@ Alpine.start()
 
 ### [Demo & Usage Example](https://pinecone-example.vercel.app/)
 
-## Declare routes
+## `x-route`
 
-Declare routes by creating a template tag with `x-route` and **optionally** an `x-handler` attribute.
+Declare routes by creating a template tag with the `x-route` directive.
+
+```html
+<!-- inside an Alpine component -->
+<template x-route="/hello/:name">
+	<div>
+		Hello <span x-text="$router.params.name"></span>
+	</div>
+</template>
+
+```
+
+> [See more about the $router magic helper](#context-object--router-magic-helper)
+
+### Route matching
+
+Parameters can be made optional by adding a ?, or turned into a wildcard match by adding \* (zero or more characters) or + (one or more characters):
+
+```html
+<template x-route="/a/:id"></template>
+<template x-route="/b/:optional?/:params?"></template>
+<template x-route="/c/:remaining_path*"></template>
+<template x-route="/d/:remaining_path+"></template>
+<template x-route="notfound"></template>
+```
+
+> Borrowed from [Preact Router](https://github.com/preactjs/preact-router)
 
 > Note: alternatively you can [use Javascript to add routes](#advanced)
 
-### Without `x-handler`
+
+## `x-template`
+
+This directive allows you to specify an external template file fetched from a URL
 
 ```html
-<!-- register the route, no need for a handler-->
-<template x-route="/profile/:id"></template>
+<!-- when the route is visited, this will fetch the content of profile.html and insert it to the page -->
+<template x-route="/" x-template="/home.html"></template>
 
-<!-- now you can use the route in anyway you'd like! -->
-<template x-if="$router.route == '/profile/:id'">
-	<div>profile <span x-text="$router.params.id"></span></div>
-</template>
+<!-- you can prefetch templates without having to wait for the route to be visited -->
+<template x-route="notfound" x-template.prefetch="/404.html"></template>
+
+<!-- you can specify an element to display the content of the template inside -->
+<template x-route="/profile/:id" x-template.target.app="/profile.html"></template>
+
+<div id="app">
+	<!-- profile.html content will be displayed here -->
+</div>
 ```
 
-[More about $router helper](#context-object)
+> Default Target ID can be set globally in [settings](#settings)
 
-### With `x-handler`
+## `x-handler`
+
+This directive can be used alone or alongisde `x-template`, it allow you to excute one or more methods when a route is visited.
+This runs **before inline templates and `x-template`** allowing you to redirect before showing any content, and fetch any data you need.
 
 ```html
 <div x-data="router()">
 	<!-- You can pass in a function name -->
 	<template x-route="/" x-handler="home"></template>
+
 	<!-- Or an anonymous/arrow function -->
-	<template x-route="/home" x-handler="(ctx) => ctx.redirect('/')"></template>
+	<template x-route="/home" x-handler="[(ctx) => ctx.redirect('/'), thisWontRun]"></template>
+
 	<!-- Or even an array of multiple function names/anonymous functions! -->
-	<!-- To prevent the next handlers from executing return 'stop' from the previous handler` or redirect -->
 	<template x-route="/hello/:name" x-handler="[checkName, hello]"></template>
+
 	<!-- 404 handler -->
 	<template x-route="notfound" x-handler="notfound"></template>
 </div>
@@ -123,9 +160,11 @@ function router() {
 		home(context) {
 			document.querySelector('#app').innerHTML = `<h1>Home</h1>`
 		},
-		checkName(context) {
+		// async functions will be automatically awaited by Pinecone Router
+		async checkName(context) {
+			await new Promise(resolve => setTimeout(resolve, 1000))
 			if (context.params.name.toLowerCase() == 'rafik') {
-				console.log('we have the same name!')
+				alert('we have the same name!')
 			}
 		},
 		hello(context) {
@@ -136,47 +175,41 @@ function router() {
 		notfound(context) {
 			document.querySelector('#app').innerHTML = `<h1>Not Found</h1>`
 		},
+		thisWontRun() {
+			// This function wont run because the previous function returned ctx.redirect() which
+			console.log("skipped!")
+		}
 	}
 }
 ```
 
-#### Multiple Handlers for a single route
+See [Redirecting](#redirecting)
 
-To prevent / stop the next handlers from executing `return 'stop'` from the previous handler or `return $router.redirect('/some/path')`
+### Multiple Handlers for a single route
 
-### Context Object
+To prevent / stop the next handlers from executing and templates from rendering `return 'stop'` from the current handler or `return $router.redirect('/some/path')`.
+
+
+## Context object / $router magic helper
 
 Contains information about the current route. This available at all times:
 
-Using the `$router` magic helper in Alpine components
+- Using the `$router` magic helper in Alpine components
+- From Javascript using `window.PineconeRouter.context`
+- Every `handler` method takes the context object as the only argument
 
-From Javascript using `window.PineconeRouter.currentContext`
+Reference: 
+-   _$router_.**route** _(/path/:var)_ The route set with `x-route`.
+-   _$router_.**path** _(/path/something)_ The path visited by the client.
+-   _$router_.**params** _({var: something})_ Object that contains route parameters if any.
+-   _$router_.**hash** hash fragment without the #
+-   _$router_.**query** search query without the ?
+-   _$router_.**redirect(path: string)** function that allow you to redirect to another page.
+-   -   **Note**: usage within [x-handler](#x-handler): `return context.redirect('/path');`
+-   _$router_.**navigate(path: string)** same as clicking a link
 
-Every `handler` method takes the context object as the only argument
+> **Inside `x-handler`:** `context.params.id`, `context.route`, etc
 
--   _context_.**route** _(/path/:var)_ The route set with `x-route`.
--   _context_.**path** _(/path/something)_ The path visited by the client.
--   _context_.**params** _({var: something})_ Object that contains route parameters if any.
--   _context_.**hash** hash fragment without the #
--   _context_.**query** search query without the ?
--   _context_.**redirect(path: string)** function that allow you to redirect to another page.
--   -   **Note**: usage within x-handler: `return context.redirect('/path');`
--   _context_.**navigate(path: string)** same as clicking a link
-
-**Using magic helper:** `$router.params.id`, `$router.route`, etc
-
-### Route matching
-
-Parameters can be made optional by adding a ?, or turned into a wildcard match by adding \* (zero or more characters) or + (one or more characters):
-
-```html
-<template x-route="/b/:id" x-handler="..."></template>
-<template x-route="/a/:optional?/:params?" x-handler="..."></template>
-<template x-route="/c/:remaining_path*" x-handler="..."></template>
-<template x-route="/d/:remaining_path+" x-handler="..."></template>
-```
-
-> Borrowed from [Preact Router](https://github.com/preactjs/preact-router)
 
 ## Redirecting
 
@@ -184,11 +217,11 @@ Parameters can be made optional by adding a ?, or turned into a wildcard match b
 
 -   use [`$router` magic helper](#magic-helper): `$router.navigate(path)`.
 
-**Redirecting from the handler**:
+**Redirecting from a handler**:
 
 To redirect from inside a handler function return the context's `redirect` method:
 
-This will stop any other handlers from executing
+This will prevent any following handlers from executing
 
 ```js
 handler(context) {
@@ -197,19 +230,13 @@ handler(context) {
 }
 ```
 
-> **Important**: inside the handler you _must_ return the `context.redirect()` function.
+> **Remember**: inside the handler you _must_ **return** the `context.redirect()` function to redirect without running the next handlers.
 
-> `return context.redirect(path)` will prevent execution of any other handelers that are after this one
-
-> if you wish to prevent execution of other handlers without redirecting use `return 'stop'`
+> if you wish to prevent execution of any following handlers without redirecting, use `return 'stop'`
 
 ## Middlewares
 
 Pinecone Router is extendable through middlewares!
-
-### [Views (x-view="/file.html")](https://github.com/pinecone-router/middleware-views)
-
-Allows you to set the path for an HTML file and it'll be fetched and displayed in the specified element (`#app` by default).
 
 Create your own middlewares [using this template](https://github.com/pinecone-router/middleware-template)!
 
@@ -220,11 +247,14 @@ Create your own middlewares [using this template](https://github.com/pinecone-ro
 	document.addEventListener('alpine:initialized', () => {
 		window.PineconeRouter.settings.hash = false // use hash routing
 		window.PineconeRouter.settings.basePath = '/' // set the base for the URL, doesn't work with hash routing
+		templateTargetId = null // Set an optional ID for where the external templates will render by default.
 	})
 </script>
 ```
 
-## Bypass link handling
+## Advanced
+
+### Bypass link handling
 
 Adding a `native` attribute to a link will prevent Pinecone Router from handling it:
 
@@ -232,18 +262,23 @@ Adding a `native` attribute to a link will prevent Pinecone Router from handling
 <a href="/foo" native>Foo</a>
 ```
 
-## Loading bar
+### Events / Loading bar
 
-You can easily use [nProgress](http://ricostacruz.com/nprogress).
+You can easily use [nProgress](http://ricostacruz.com/nprogress) with `x-template`:
 
-if you're going to `fetch` pages, you can use [views middleware](https://github.com/pinecone-router/middleware-views) which provide [loading events](https://github.com/pinecone-router/middleware-views/#events)
+```js
+	document.body.addEventListener('pinecone-start', () => NProgress.start());
+	document.body.addEventListener('pinecone-end', () => NProgress.done());
+```
 
-[**Demo**](https://pinecone-example-views.vercel.app/)
-[**Source**](https://github.com/rehhouari/pinecone-example-views)
+| name               | recipient     | when is it dispatched              |
+| ------------------ | ------------- | ---------------------------------- |
+| **pinecone-start** | document.body | when the template start fetching   |
+| **pinecone-end**   | document.body | when the fetching ends successfuly |
+| **fetch-error**    | document.body | when the fetch fail                |
 
-## Advanced
 
-#### Adding & Removing routes with Javascript
+### Adding & Removing routes with Javascript
 
 you can add routes & remove them anytime using Javascript.
 
@@ -269,14 +304,23 @@ window.PineconeRouter.remove(path)
 To navigate to another page from javascript you can use:
 
 ```js
-window.PineconeRouter.currentContext.navigate(path)
+window.PineconeRouter.context.navigate(path)
 ```
+
+### Handling link clicks while handlers are in progress
+
+If a user enter a link while handlers haven't finished yet, only the current one will finish while others will be canceled.
+
+Make use of multiple handlers, for example one for fetching the data, 2nd one for redirecting if needed or displaying it.
+
+This way if a user click a link while data is being fetched, the redirection handler wont be ran.
+
 
 ## Compatibility
 
 | Version | Alpine.js Version |
 | ------- | ----------------- |
-| ^v2.x   | v3                |
+| ^v2.x   | ^v3               |
 | v1.x    | v2                |
 
 ## Contributing:
@@ -288,6 +332,8 @@ Please refer to [CONTRIBUTING.md](/CONTRIBUTING.md)
 This library uses modified chunks of code from [this tutorial](https://medium.com/swlh/lets-code-a-client-side-router-for-your-no-framework-spa-19da93105e10) & from [page.js](https://github.com/visionmedia/page.js).
 
 ## Acknowledgment
+
+[@shaun/alpinejs-router](https://github.com/shaunlee/alpinejs-router/) for the template system inspiration! I saw they re-used `x-if` code so I figured I could instead add an `x-if`` attribute without copying its code.
 
 [@KevinBatdorf](https://twitter.com/KevinBatdorf) for many ideas and early feedback!
 

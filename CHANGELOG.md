@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.0.0] - 2023-11-27
+
+### Added
+
+- Added `x-template` directive making the views middleware obsolete.
+- Added events: `pinecone-start` & `pinecone-end` that dispatch to `document` on template loading, and `fetch-error` on failure.
+- Added `cleanup()` for when the route element is removed from the page, it now removes the route as well.
+- Added `cleanup()` for `x-handler` and `x-template`, now the handlers and tempate are deleted when the attributes are removed.
+- Added `PineconeRouter.settings.templateTargetId` when set all external templates will use render to this element
+  
+### Changed
+
+- `PineconeRouter.currentContext` is now `PineconeRouter.context`
+- Handlers are now **awaited** if they're async, so operations such as fetching will prevent rendering templates and execution of subsequent handlers until current handler is done.
+- If a link is a clicked to navigate to a new page while there are handlers active, they will be automatically canceled, the current one will finish running but any ones after will not.
+
 ## [3.1.2] - 2023-11-26
 
 ### Removed

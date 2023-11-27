@@ -1,16 +1,18 @@
 import type { Handler } from './types'
 
 class Route {
-	params = {}
+	params: { [key: string]: any } = {}
 	path: string
-	handlers: Handler[]
+	handlers: Handler[] = []
 	constructor(path: string, options = {}) {
 		this.path = path
 		Object.keys(options).forEach((opt) => {
 			this[opt] = options[opt]
 		})
 	}
-	prototype: any
+	template: ''
+	handlersDone: boolean = false
+	cancelHandlers: boolean
 }
 
 export default Route
