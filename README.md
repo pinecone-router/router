@@ -292,15 +292,11 @@ You can easily use [nProgress](http://ricostacruz.com/nprogress) with `x-templat
 	document.body.addEventListener('pinecone-end', () => NProgress.done());
 ```
 
-<<<<<<< HEAD
 | name               | recipient | when is it dispatched              |
 | ------------------ | --------- | ---------------------------------- |
 | **pinecone-start** | document  | when the template start fetching   |
 | **pinecone-end**   | document  | when the fetching ends successfuly |
 | **fetch-error**    | document  | when the fetch fail                |
-=======
-[**Demo**](https://pinecone-example-views.vercel.app/) - [**Source**](https://github.com/rehhouari/pinecone-example-views)
->>>>>>> fab97ad99d30fddb957bebdfef897029cb5a6919
 
 
 ### Adding & Removing routes with Javascript
