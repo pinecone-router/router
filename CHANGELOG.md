@@ -225,7 +225,8 @@ It's mostly backward compatible but need a few tweaks:
 -   Let go of multi-router support for simpler codebase.
 
 [unreleased]: https://github.com/pinecone-router/router/compare/3.1.0...HEAD
-[0.0.4]: https://github.com/pinecone-router/router/compare/0.0.2...0.0.4
+[0.0.3]: https://github.com/pinecone-router/router/compare/0.0.2...0.0.3
+[0.0.4]: https://github.com/pinecone-router/router/compare/0.0.3...0.0.4
 [0.0.5]: https://github.com/pinecone-router/router/compare/0.0.4...0.0.5
 [0.0.6]: https://github.com/pinecone-router/router/compare/0.0.5..0.0.6
 [0.0.7]: https://github.com/pinecone-router/router/compare/0.0.6..0.0.7
@@ -240,3 +241,14 @@ It's mostly backward compatible but need a few tweaks:
 [1.0.1]: https://github.com/pinecone-router/router/compare/1.0.0..1.0.1
 [1.0.2]: https://github.com/pinecone-router/router/compare/1.0.1..1.0.2
 [1.0.3]: https://github.com/pinecone-router/router/compare/1.0.2..1.0.3
+[1.0.3]: https://github.com/pinecone-router/router/compare/1.0.2..1.0.3
+[1.0.4]: https://github.com/pinecone-router/router/compare/1.0.3..1.0.4
+[2.0.0]: https://github.com/pinecone-router/router/compare/1.0.4..2.0.0
+[2.1.2]: https://github.com/pinecone-router/router/compare/2.0.0..2.1.2
+[2.1.3]: https://github.com/pinecone-router/router/compare/2.1.2..2.1.3
+[3.0.0]: https://github.com/pinecone-router/router/compare/2.1.3..3.0.0
+[3.0.1]: https://github.com/pinecone-router/router/compare/3.0.0..3.0.1
+[3.1.0]: https://github.com/pinecone-router/router/compare/3.0.1..3.1.0
+[3.1.1]: https://github.com/pinecone-router/router/compare/3.1.0..3.1.1
+[3.1.2]: https://github.com/pinecone-router/router/compare/3.1.1..3.1.2
+[4.0.0]: https://github.com/pinecone-router/router/compare/3.1.2..4.0.0
