@@ -354,7 +354,7 @@ This library uses modified chunks of code from [this tutorial](https://medium.co
 
 ## Acknowledgment
 
-[@shaun/alpinejs-router](https://github.com/shaunlee/alpinejs-router/) for the template system inspiration! I saw they re-used `x-if` code so I figured I could instead add an `x-if`` attribute without copying its code.
+[@shaun/alpinejs-router](https://github.com/shaunlee/alpinejs-router/) for the template system inspiration and implementation!.
 
 [@KevinBatdorf](https://twitter.com/KevinBatdorf) for many ideas and early feedback!
 
