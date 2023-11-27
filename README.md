@@ -111,7 +111,7 @@ Parameters can be made optional by adding a ?, or turned into a wildcard match b
 This directive allows you to specify an external template file fetched from a URL
 
 ```html
-<!-- when the route is visited, this will fetch the content of profile.html and insert it to the page -->
+<!-- when the route is visited, this will fetch the content of home.html and insert it to the page -->
 <template x-route="/" x-template="/home.html"></template>
 
 <!-- you can prefetch templates without having to wait for the route to be visited -->
