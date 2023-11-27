@@ -103,7 +103,7 @@ Parameters can be made optional by adding a ?, or turned into a wildcard match b
 
 > Borrowed from [Preact Router](https://github.com/preactjs/preact-router)
 
-> Note: alternatively you can [use Javascript to add routes](#advanced)
+> Note: alternatively you can [use Javascript to add routes](#adding--removing-routes-with-javascript)
 
 
 ## `x-template`
