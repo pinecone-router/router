@@ -24,9 +24,9 @@ An easy to use but feature-packed client-side router for use with Alpine.js.
 -   :smile: Easy and familiar syntax well integrated with Alpine.js.
 -   :gear: [Handler functions](#x-handler) allow you to run code before content is displayed
 -   :sparkles: [Magic **$router** helper](#context-object--router-magic-helper) to access current route, params, redirect, ect. from _all_ alpine components!
--	:beginner: Inline and external [templates](#x-templates).
+-   :beginner: Inline and external [templates](#x-template).
 -   :link: Automatically dispatch relative links and handle them.
--   :hash: [Hash routing](#settings).
+-   :hash:  [Hash routing](#settings).
 -   :heavy_plus_sign: Extendable using tiny [Middlewares!](#middlewares).
 
 **Demo**: [Pinecone example](https://pinecone-example.vercel.app/), [(source code)](https://github.com/rehhouari/pinecone-example).
