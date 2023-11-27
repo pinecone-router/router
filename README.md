@@ -29,7 +29,7 @@ An easy to use but feature-packed client-side router for use with Alpine.js.
 -   :hash:  [Hash routing](#settings).
 -   :heavy_plus_sign: Extendable using tiny [Middlewares!](#middlewares).
 
-**Demo**: [Pinecone example](https://pinecone-example.vercel.app/), [(source code)](https://github.com/rehhouari/pinecone-example).
+**Demo**: [Pinecone example](https://pinecone-example.vercel.app/), [(source code)](https://github.com/pinecone-router/pinecone-example).
 
 ## Installation
 
