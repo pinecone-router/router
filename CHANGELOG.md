@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Added `x-template` directive making the views middleware obsolete.
+- Added `x-template` directive replacing the views middleware.
 - Added events: `pinecone-start` & `pinecone-end` that dispatch to `document` on template loading, and `fetch-error` on failure.
 - Added `cleanup()` for when the route element is removed from the page, it now removes the route as well.
 - Added `cleanup()` for `x-handler` and `x-template`, now the handlers and tempate are deleted when the attributes are removed.
