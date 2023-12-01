@@ -24,7 +24,7 @@ An easy to use but feature-packed client-side router for use with Alpine.js.
 -   :smile: Easy and familiar syntax well integrated with Alpine.js.
 -   :gear: [Handler functions](#x-handler) allow you to run code before content is displayed
 -   :sparkles: [Magic **$router** helper](#context-object--router-magic-helper) to access current route, params, redirect, ect. from _all_ alpine components!
--   :beginner: Inline and external [templates](#x-template).
+-   :beginner: [Inline](#inline-templates) and [external](#x-template) templates.
 -   :link: Automatically dispatch relative links and handle them.
 -   :hash:  [Hash routing](#settings).
 -   :heavy_plus_sign: Extendable using tiny [Middlewares!](#middlewares).
@@ -107,6 +107,19 @@ Then you access paramaters with `$route.params.X`.
 
 > Note: alternatively you can [use Javascript to add routes](#adding--removing-routes-with-javascript)
 
+### Inline templates
+
+If you add a child to the `<template>` element, Pinecone Router automatically adds an `x-if` attribute to it that will evaluate to true when the route is matched, therefore displaying the content:
+
+```html
+<template x-route="/">
+	<div>
+		Hello World!
+	</div>
+</template>
+```
+
+In this example it will add the `div` with "Hello World" to the document the same way `x-if` does: as after the `template` tag.
 
 ## `x-template`
 
