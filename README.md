@@ -101,6 +101,8 @@ Parameters can be made optional by adding a ?, or turned into a wildcard match b
 <template x-route="notfound"></template>
 ```
 
+Then you access paramaters with `$route.params.X`.
+
 > Borrowed from [Preact Router](https://github.com/preactjs/preact-router)
 
 > Note: alternatively you can [use Javascript to add routes](#adding--removing-routes-with-javascript)
