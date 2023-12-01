@@ -126,10 +126,10 @@ In this example it will add the `div` with "Hello World" to the document the sam
 This directive allows you to specify an external template file fetched from a URL
 
 ```html
-<!-- when the route is visited, this will fetch the content of home.html and insert it to the page -->
+<!-- when the route is matched, this will fetch the content of home.html and insert it to the page -->
 <template x-route="/" x-template="/home.html"></template>
 
-<!-- you can prefetch templates without having to wait for the route to be visited -->
+<!-- you can prefetch templates without having to wait for the route to be matched-->
 <template x-route="notfound" x-template.prefetch="/404.html"></template>
 
 <!-- you can specify an element to display the content of the template inside -->
@@ -142,7 +142,7 @@ This directive allows you to specify an external template file fetched from a UR
 
 ### Modifiers
 
-- **.preload**: Fetches the template on load, without waiting for the route to be visited
+- **.preload**: Fetches the template on load, without waiting for the route to be matched.
 - **.target**: Takes an ID paramater for example `.target.app` will render the template inside the element with the `app` ID
 
 > Can be used simulateneously: `x-template.preload.target.app`
@@ -152,7 +152,7 @@ This directive allows you to specify an external template file fetched from a UR
 
 ## `x-handler`
 
-This directive can be used alone or alongisde `x-template`, it allow you to excute one or more methods when a route is visited.
+This directive can be used alone or alongisde `x-template`, it allow you to excute one or more methods when a route is matched.
 This runs **before inline templates and `x-template`** allowing you to redirect before showing any content, and fetch any data you need.
 
 ```html
