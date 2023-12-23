@@ -290,8 +290,8 @@ Adding a `native` attribute to a link will prevent Pinecone Router from handling
 You can easily use [nProgress](http://ricostacruz.com/nprogress) with `x-template`:
 
 ```js
-	document.addEventListener('pinecone-start', () => NProgress.start());
-	document.addEventListener('pinecone-end', () => NProgress.done());
+document.addEventListener('pinecone-start', () => NProgress.start());
+document.addEventListener('pinecone-end', () => NProgress.done());
 ```
 
 | name               | recipient | when is it dispatched              |
