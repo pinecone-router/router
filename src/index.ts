@@ -1,6 +1,6 @@
 import Route from './route'
 import type { Settings, Context, Middleware, Handler } from './types'
-import { match, middleware, validLink } from './utils'
+import { fetchError, match, middleware, validLink } from './utils'
 
 
 declare global {
@@ -24,7 +24,7 @@ declare global {
 export default function (Alpine) {
 
 	const PineconeRouter = Alpine.reactive(<Window["PineconeRouter"]>{
-		version: '4.0.0',
+		version: '4.0.1',
 		name: 'pinecone-router',
 
 		settings: <Settings>{
@@ -106,12 +106,20 @@ export default function (Alpine) {
 				}
 			})
 		} else {
-			loadingTemplates[url] = fetch(url).then(r => r.text()).then(html => {
+			loadingTemplates[url] = fetch(url).then(r => {
+				if (r.ok) return r.text()
+				throw new Error(String(r.status))
+			}).then(html => {
 				cachedTemplates[url] = html
 				if (target == null) {
 					el.innerHTML = html
 				}
 				return html
+			}).catch(err => {
+				fetchError(err)
+				// returning a value is a must because we are assigning returned value to loadingTemplates[url]
+				// by returning a null it will refetch again when the route is (re)visited
+				return null
 			})
 		}
 		return loadingTemplates[url]
@@ -178,8 +186,6 @@ export default function (Alpine) {
 				// register the new route if possible
 				routeIndex = PineconeRouter.add(path)
 			}
-
-
 
 			// add if statement for inline template
 			if (el.content.firstElementChild != null) {
@@ -270,11 +276,10 @@ export default function (Alpine) {
 			if (modifiers.includes("preload")) {
 				isPreloading = loadTemplate(el, url, target).finally(() => {
 					isPreloading = false
+					// In case of failed fetch the template wont be cached
+					// therefore we check for it and not add anything if it's null
+					if (cachedTemplates[url] == null) return
 					if (!target) addIf(el, routeIndex, path);
-				}).catch((error) => {
-					document.dispatchEvent(
-						new CustomEvent('fetch-error', { detail: error })
-					)
 				})
 			}
 
@@ -296,7 +301,7 @@ export default function (Alpine) {
 			Alpine.nextTick(() => {
 				effect(() => {
 					if (route.handlersDone && PineconeRouter.context.route == path) {
-						if (cachedTemplates[url]) {
+						if (cachedTemplates[url] != null) {
 							if (!target) {
 								endLoading()
 								if (el.content.firstElementChild) return
@@ -306,15 +311,13 @@ export default function (Alpine) {
 						} else {
 							if (!isPreloading) {
 								loadTemplate(el, url, target).finally(() => {
+									if (cachedTemplates[url] == null) return
 									if (!target) addIf(el, routeIndex, path)
 									else insertHtmlInTarget(targetEl, url)
-								}).catch((error) => {
-									document.dispatchEvent(
-										new CustomEvent('fetch-error', { detail: error })
-									)
 								})
 							} else {
 								isPreloading.finally(() => {
+									if (cachedTemplates[url] == null) return
 									if (target) {
 										insertHtmlInTarget(targetEl, url)
 									}

@@ -168,8 +168,6 @@ export function validLink(
 	return ret
 }
 
-
-
 /**
  * Call a function on all middlewares loaded, if any.
  * @param {string} func middleware function to call.
@@ -186,4 +184,10 @@ export function middleware(func: string, ...args: any): string | undefined {
 		// if the middleware request stopping the navigate function.
 		if (ret == 'stop') return 'stop'
 	}
+}
+
+export function fetchError(error: string) {
+	document.dispatchEvent(
+		new CustomEvent('fetch-error', { detail: error })
+	)
 }

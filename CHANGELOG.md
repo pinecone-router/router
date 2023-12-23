@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.0.1] - 2023-12-23
+
+### Fixed
+
+- Fixed `fetch-error` event not triggered for 404, 500 responses (#26)
+
 ## [4.0.0] - 2023-11-27
 
 ### Added
@@ -252,3 +258,4 @@ It's mostly backward compatible but need a few tweaks:
 [3.1.1]: https://github.com/pinecone-router/router/compare/3.1.0..3.1.1
 [3.1.2]: https://github.com/pinecone-router/router/compare/3.1.1..3.1.2
 [4.0.0]: https://github.com/pinecone-router/router/compare/3.1.2..4.0.0
+[4.0.1]: https://github.com/pinecone-router/router/compare/4.0.0..4.0.1
