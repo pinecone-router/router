@@ -7,8 +7,7 @@ Want to contribute to code? please do!
 
 **things you can do!**
 
--   add tests, I don't know where to start tbh and I'll appreciate it :)
--   improve documentation.
+- improve documentation.
 -	bug fixes, improve code.
 -	fix typos!
 -	test for browser compatibility
