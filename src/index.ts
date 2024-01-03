@@ -24,7 +24,7 @@ declare global {
 export default function (Alpine) {
 
 	const PineconeRouter = Alpine.reactive(<Window["PineconeRouter"]>{
-		version: '4.0.2',
+		version: '4.0.3',
 		name: 'pinecone-router',
 
 		settings: <Settings>{
@@ -236,6 +236,11 @@ export default function (Alpine) {
 				throw new Error(
 					`Pinecone Router: Invalid handler type: ${typeof evaluatedExpression}.`
 				)
+			}
+
+			// add `this` context for handlers inside an Alpine.component
+			for (let index = 0; index < handlers.length; index++) {
+				handlers[index] = handlers[index].bind(Alpine.$data(el))
 			}
 
 			let route
