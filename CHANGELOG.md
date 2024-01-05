@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+
+## [4.1.0] - 2024-01-05
+
+### Fixed
+
+- Fixed template rendering method, borrowed from [shaunlee/alpinejs-router](https://github.com/shaunlee/alpinejs-router).
+- Templates no longer cause issues with for loops inside them.
+
 ## [4.0.3] - 2024-01-03
 
 ### Fixed

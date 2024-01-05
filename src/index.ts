@@ -19,12 +19,16 @@ declare global {
 		}
 		PineconeRouterMiddlewares: Array<Middleware>
 	}
+	interface HTMLTemplateElement {
+		_x_undoIf: Function
+		_x_currentIfEl: Element
+	}
 }
 
 export default function (Alpine) {
 
 	const PineconeRouter = Alpine.reactive(<Window["PineconeRouter"]>{
-		version: '4.0.3',
+		version: '4.1.0',
 		name: 'pinecone-router',
 
 		settings: <Settings>{
@@ -97,51 +101,92 @@ export default function (Alpine) {
 
 	var loadingTemplates: { [key: string]: Promise<string> } = {}
 	var cachedTemplates: { [key: string]: string } = {}
+	const inMakeProgress = new Set()
+	var isPreloading: any
 
-	const loadTemplate = (el: HTMLElement, url: string, target: string | null): Promise<string> => {
+	const load = (el: HTMLTemplateElement, url: string) => {
 		if (loadingTemplates[url]) {
-			loadingTemplates[url].then(html => {
-				if (target == null) {
-					el.innerHTML = html
-				}
-			})
+			loadingTemplates[url].then(html => el.innerHTML = html)
 		} else {
 			loadingTemplates[url] = fetch(url).then(r => {
-				if (r.ok) return r.text()
-				throw new Error(String(r.status))
-			}).then(html => {
-				cachedTemplates[url] = html
-				if (target == null) {
-					el.innerHTML = html
+				if (!r.ok) {
+					fetchError(r.statusText);
+					return null
 				}
+				return r.text()
+			}).then(html => {
+				if (html == null) {
+					cachedTemplates[url] = null;
+					loadingTemplates[url] = null
+					return null;
+				}
+				cachedTemplates[url] = html
+				el.innerHTML = html
 				return html
-			}).catch(err => {
-				fetchError(err)
-				// returning a value is a must because we are assigning returned value to loadingTemplates[url]
-				// by returning a null it will refetch again when the route is (re)visited
-				return null
 			})
 		}
 		return loadingTemplates[url]
 	}
 
-	const addIf = (el: HTMLElement, routeIndex, path) => {
-		// this make sure inline templates dont render until handlers are done
-		let route_expression = (routeIndex != null) ? `PineconeRouter.routes[${routeIndex}]` : 'PineconeRouter.notfound'
-		let expression = `$router.route == "${path}" && ${route_expression}.handlersDone`
-		if (el.hasAttribute("x-if")) return
-		el.setAttribute("x-if", expression)
-		endLoading()
+	const make = (el: HTMLTemplateElement, expression: string, targetEl?: HTMLElement) => {
+		if (inMakeProgress.has(expression)) return
+		inMakeProgress.add(expression)
+
+		const clone = (el.content.cloneNode(true) as HTMLElement).firstElementChild
+
+		if (!clone) return
+
+		Alpine.addScopeToNode(clone, {}, el)
+
+		Alpine.mutateDom(() => {
+			if (targetEl != null) {
+				targetEl.appendChild(clone)
+			} else
+				el.after(clone)
+			Alpine.initTree(clone)
+		})
+
+		el._x_currentIfEl = clone
+
+		el._x_undoIf = () => {
+			clone.remove()
+
+			delete el._x_currentIfEl
+		}
+
+		Alpine.nextTick(() => inMakeProgress.delete(expression))
 	}
 
-	const removeIf = (el: HTMLElement) => {
-		if (!el.hasAttribute("x-if")) return
-		el.removeAttribute("x-if")
+	function hide(el: HTMLTemplateElement) {
+		if (el._x_undoIf) {
+			el._x_undoIf()
+			delete el._x_undoIf
+		}
 	}
 
-	const insertHtmlInTarget = (targetEl: HTMLElement, url: string) => {
-		endLoading()
-		targetEl.innerHTML = cachedTemplates[url]
+	function show(el: HTMLTemplateElement, expression: string, url?: string, targetEl?: HTMLElement) {
+		if (el._x_currentIfEl) return el._x_currentIfEl
+
+		if (el.content.firstElementChild) {
+			make(el, expression)
+			endLoading()
+		} else if (url) {
+			// Since during loading, the content is automatically put inside the template
+			// This first case will only happen if the content of the template was cleared somehow
+			// Likely manually
+			if (cachedTemplates[url]) {
+				el.innerHTML = cachedTemplates[url]
+				make(el, expression, targetEl)
+				endLoading()
+			} else {
+				// This second case is that it didn't finish loading
+				if (isPreloading) {
+					isPreloading.then(() => make(el, expression, targetEl))
+				} else {
+					load(el, url).then(() => make(el, expression, targetEl)).finally(() => endLoading())
+				}
+			}
+		}
 	}
 
 	const startLoading = () => {
@@ -166,7 +211,7 @@ export default function (Alpine) {
 
 	Alpine.directive(
 		'route',
-		(el: HTMLTemplateElement, { expression }, { cleanup }) => {
+		(el: HTMLTemplateElement, { expression }, { effect, cleanup }) => {
 			let path = expression
 
 			middleware('onBeforeRouteProcessed', el, path)
@@ -187,18 +232,29 @@ export default function (Alpine) {
 				routeIndex = PineconeRouter.add(path)
 			}
 
-			// add if statement for inline template
-			if (el.content.firstElementChild != null) {
-				let route = PineconeRouter.routes[routeIndex] ?? PineconeRouter.notfound
-				addIf(el, routeIndex, path)
+			let route = PineconeRouter.routes[routeIndex] ?? PineconeRouter.notfound
+
+			// this will show inline templates, you can't mix inline and x-template
+			// so we check if we already have x-template
+			// this is due to x-template also putting the template inside el.content.firstElementChild
+			// so we omit the x-template this code will run both here and in x-template directive
+			// and also x-template.target will not work!
+			if (!el.hasAttribute('x-template') && el.content.firstElementChild != null) {
+				Alpine.nextTick(() => {
+					effect(() => {
+						let found = route.handlersDone && PineconeRouter.context.route == path
+						found ? show(el, expression) : hide(el)
+					})
+				})
 			}
+
+			cleanup(() => {
+				el._x_undoIf && el._x_undoIf();
+				PineconeRouter.remove(path);
+			})
 
 			middleware('onAfterRouteProcessed', el, path)
 
-			cleanup(() => {
-				PineconeRouter.remove(path)
-				removeIf(el)
-			})
 
 		}
 	)
@@ -269,7 +325,6 @@ export default function (Alpine) {
 
 			if (!el.hasAttribute("x-route")) throw new Error("Pinecone Router: x-template must be used on the same element as x-route.")
 
-			var isPreloading: any
 			let url: string = expression
 
 			let target = modifierValue(modifiers, 'target', null) ?? window.PineconeRouter.settings.templateTargetId
@@ -279,18 +334,13 @@ export default function (Alpine) {
 				throw new Error("Pinecone Router: Can't find an element with the suplied x-template target ID (" + target + ")")
 
 			if (modifiers.includes("preload")) {
-				isPreloading = loadTemplate(el, url, target).finally(() => {
-					isPreloading = false
-					// In case of failed fetch the template wont be cached
-					// therefore we check for it and not add anything if it's null
-					if (cachedTemplates[url] == null) return
-					if (!target) addIf(el, routeIndex, path);
-				})
+				isPreloading = load(el, url).finally(() => isPreloading = null)
 			}
 
 			let path = el.getAttribute("x-route")
 			let route;
 			let routeIndex
+
 			if (path == 'notfound') {
 				PineconeRouter.notfound.template = url
 				route = PineconeRouter.notfound
@@ -305,40 +355,15 @@ export default function (Alpine) {
 
 			Alpine.nextTick(() => {
 				effect(() => {
-					if (route.handlersDone && PineconeRouter.context.route == path) {
-						if (cachedTemplates[url] != null) {
-							if (!target) {
-								endLoading()
-								if (el.content.firstElementChild) return
-								el.innerHTML = cachedTemplates[url]
-							}
-							else insertHtmlInTarget(targetEl, url)
-						} else {
-							if (!isPreloading) {
-								loadTemplate(el, url, target).finally(() => {
-									if (cachedTemplates[url] == null) return
-									if (!target) addIf(el, routeIndex, path)
-									else insertHtmlInTarget(targetEl, url)
-								})
-							} else {
-								isPreloading.finally(() => {
-									if (cachedTemplates[url] == null) return
-									if (target) {
-										insertHtmlInTarget(targetEl, url)
-									}
-								})
-							}
-						}
-					}
+					let found = route.handlersDone && PineconeRouter.context.route == route.path
+					found ? show(el, expression, url, targetEl) : hide(el)
 				})
-
 			})
 
 			cleanup(() => {
-				delete cachedTemplates[route.template]
-				route.template = ''
-				removeIf(el)
+				el._x_undoIf && el._x_undoIf();
 			})
+
 		}
 	)
 
