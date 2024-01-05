@@ -129,8 +129,8 @@ This directive allows you to specify an external template file fetched from a UR
 <!-- when the route is matched, this will fetch the content of home.html and insert it to the page -->
 <template x-route="/" x-template="/home.html"></template>
 
-<!-- you can prefetch templates without having to wait for the route to be matched-->
-<template x-route="notfound" x-template.prefetch="/404.html"></template>
+<!-- you can preload templates without having to wait for the route to be matched-->
+<template x-route="notfound" x-template.preload="/404.html"></template>
 
 <!-- you can specify an element to display the content of the template inside -->
 <template x-route="/profile/:id" x-template.target.app="/profile.html"></template>
