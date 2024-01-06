@@ -8,12 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
-## [4.1.0] - 2024-01-05
+## [4.1.0] - 2024-01-06
 
 ### Fixed
 
-- Fixed template rendering method, borrowed from [shaunlee/alpinejs-router](https://github.com/shaunlee/alpinejs-router).
-- Templates no longer cause issues with for loops inside them.
+- Fixed template not rendering when preloading another one.
+- x-template.target no longer need the target to be cleared manually if the other routes do not use it.
+
+### Changed
+
+- Changed template rendering method, borrowed from [shaunlee/alpinejs-router](https://github.com/shaunlee/alpinejs-router).
+- Changed link handling method, use preact-router's method instead of page.js
+- There should be no difference for you as it's an internal change.
 
 ## [4.0.3] - 2024-01-03
 
@@ -281,3 +287,4 @@ It's mostly backward compatible but need a few tweaks:
 [4.0.1]: https://github.com/pinecone-router/router/compare/4.0.0..4.0.1
 [4.0.2]: https://github.com/pinecone-router/router/compare/4.0.1..4.0.2
 [4.0.3]: https://github.com/pinecone-router/router/compare/4.0.2..4.0.3
+[4.1.0]: https://github.com/pinecone-router/router/compare/4.0.3..4.1.0

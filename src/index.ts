@@ -1,6 +1,6 @@
 import Route from './route'
 import type { Settings, Context, Middleware, Handler } from './types'
-import { fetchError, match, middleware, validLink } from './utils'
+import { fetchError, match, middleware } from './utils'
 
 
 declare global {
@@ -102,7 +102,7 @@ export default function (Alpine) {
 	var loadingTemplates: { [key: string]: Promise<string> } = {}
 	var cachedTemplates: { [key: string]: string } = {}
 	const inMakeProgress = new Set()
-	var isPreloading: any
+	var preloadingTemplates: { [key: string]: Promise<string> } = {}
 
 	const load = (el: HTMLTemplateElement, url: string) => {
 		if (loadingTemplates[url]) {
@@ -166,7 +166,6 @@ export default function (Alpine) {
 
 	function show(el: HTMLTemplateElement, expression: string, url?: string, targetEl?: HTMLElement) {
 		if (el._x_currentIfEl) return el._x_currentIfEl
-
 		if (el.content.firstElementChild) {
 			make(el, expression)
 			endLoading()
@@ -175,13 +174,14 @@ export default function (Alpine) {
 			// This first case will only happen if the content of the template was cleared somehow
 			// Likely manually
 			if (cachedTemplates[url]) {
+
 				el.innerHTML = cachedTemplates[url]
 				make(el, expression, targetEl)
 				endLoading()
 			} else {
 				// This second case is that it didn't finish loading
-				if (isPreloading) {
-					isPreloading.then(() => make(el, expression, targetEl))
+				if (preloadingTemplates[url]) {
+					preloadingTemplates[url].then(() => make(el, expression, targetEl))
 				} else {
 					load(el, url).then(() => make(el, expression, targetEl)).finally(() => endLoading())
 				}
@@ -334,7 +334,7 @@ export default function (Alpine) {
 				throw new Error("Pinecone Router: Can't find an element with the suplied x-template target ID (" + target + ")")
 
 			if (modifiers.includes("preload")) {
-				isPreloading = load(el, url).finally(() => isPreloading = null)
+				preloadingTemplates[url] = load(el, url).finally(() => preloadingTemplates[url] = null)
 			}
 
 			let path = el.getAttribute("x-route")
@@ -375,7 +375,7 @@ export default function (Alpine) {
 		// virtually navigate the path on the first page load
 		// this will register the path in history and sets the pathvariable
 		// navigate(window.location.pathname, false, true)
-		if (!PineconeRouter.settings.hash) {
+		if (PineconeRouter.settings.hash == false) {
 			// navigate to the current page to handle it
 			// ONLY if we not using hash routing for the default router
 			navigate(location.pathname, false, true)
@@ -402,58 +402,52 @@ export default function (Alpine) {
 	 * @description Add a handler to click events on all valid links
 	 */
 	function interceptLinks() {
+		function validateLink(node) {
+			// only valid elements
+			if (!node || !node.getAttribute) return;
+
+			let href = node.getAttribute('href'),
+				target = node.getAttribute('target');
+
+			// ignore links with targets and non-path URLs
+			if (!href || !href.match(/^\//g) || (target && !target.match(/^_?self$/i)))
+				return;
+
+			if (typeof href !== 'string' && href.url) {
+				href = href.url;
+			}
+			return href
+
+		}
 		window.document.body.addEventListener(
-			document.ontouchstart ? 'touchstart' : 'click',
-			function (e) {
-				if (
-					e.metaKey ||
-					e.ctrlKey ||
-					e.shiftKey ||
-					e.defaultPrevented
-				) {
-					return
-				}
+			'click',
+			function (e: any) {
+				if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey || e.button || e.defaultPrevented) return;
 
-				// ensure link
-				// use shadow dom when available if not, fall back to composedPath()
-				// for browsers that only have shady
-				let el = e.target
 
-				let eventPath: any = e.composedPath()
-				if (eventPath) {
-					for (let i = 0; i < eventPath.length; i++) {
-						if (!eventPath[i].nodeName) continue
-						if (eventPath[i].nodeName.toUpperCase() !== 'A') continue
-						if (!eventPath[i].href) continue
-
-						el = eventPath[i]
-						break
-					}
-				}
-				if (el == null) return
-				// allow skipping link
-				// @ts-ignore
-				if (el.hasAttribute('native')) return
-
-				let ret = validLink(el, PineconeRouter.settings.hash)
-
-				if (!ret.valid) {
-					return
-				}
-
-				let route = PineconeRouter.routes[findRouteIndex(PineconeRouter.context.route)] ?? PineconeRouter.notfound
+				let currentRoute = PineconeRouter.routes[findRouteIndex(PineconeRouter.context.route)] ?? PineconeRouter.notfound
 
 				// stop handlers in progress before navigating to the next page
-				if (!route.handlersDone) {
-					route.cancelHandlers = true
+				if (!currentRoute.handlersDone) {
+					currentRoute.cancelHandlers = true
 					endLoading()
 				}
 
-				// prevent default behavior.
-				if (e.stopImmediatePropagation) e.stopImmediatePropagation()
-				if (e.stopPropagation) e.stopPropagation()
-				e.preventDefault()
-				navigate(ret.link)
+				let node = e.target;
+
+				do {
+					if (node.localName === 'a' && node.getAttribute('href')) {
+						if (node.hasAttribute('data-native') || node.hasAttribute('native')) return;
+						let href = validateLink(node)
+						if (href) {
+							navigate(href)
+							if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+							if (e.stopPropagation) e.stopPropagation();
+							e.preventDefault();
+						}
+						break;
+					}
+				} while ((node = node.parentNode));
 			}
 		)
 	}
