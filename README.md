@@ -270,7 +270,7 @@ Create your own middlewares [using this template](https://github.com/pinecone-ro
 document.addEventListener('alpine:init', () => {
 	window.PineconeRouter.settings.hash = false // use hash routing
 	window.PineconeRouter.settings.basePath = '/' // set the base for the URL, doesn't work with hash routing
-	templateTargetId = null // Set an optional ID for where the external templates will render by default.
+	window.PineconeRouter.settings.templateTargetId = 'app' // Set an optional ID for where the external templates will render by default.
 })
 </script>
 ```
