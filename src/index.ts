@@ -28,7 +28,7 @@ declare global {
 export default function (Alpine) {
 
 	const PineconeRouter = Alpine.reactive(<Window["PineconeRouter"]>{
-		version: '4.1.0',
+		version: '4.1.1',
 		name: 'pinecone-router',
 
 		settings: <Settings>{
@@ -167,7 +167,7 @@ export default function (Alpine) {
 	function show(el: HTMLTemplateElement, expression: string, url?: string, targetEl?: HTMLElement) {
 		if (el._x_currentIfEl) return el._x_currentIfEl
 		if (el.content.firstElementChild) {
-			make(el, expression)
+			make(el, expression, targetEl)
 			endLoading()
 		} else if (url) {
 			// Since during loading, the content is automatically put inside the template
@@ -234,12 +234,7 @@ export default function (Alpine) {
 
 			let route = PineconeRouter.routes[routeIndex] ?? PineconeRouter.notfound
 
-			// this will show inline templates, you can't mix inline and x-template
-			// so we check if we already have x-template
-			// this is due to x-template also putting the template inside el.content.firstElementChild
-			// so we omit the x-template this code will run both here and in x-template directive
-			// and also x-template.target will not work!
-			if (!el.hasAttribute('x-template') && el.content.firstElementChild != null) {
+			if (el.content.firstElementChild != null) {
 				Alpine.nextTick(() => {
 					effect(() => {
 						let found = route.handlersDone && PineconeRouter.context.route == path
@@ -334,7 +329,10 @@ export default function (Alpine) {
 				throw new Error("Pinecone Router: Can't find an element with the suplied x-template target ID (" + target + ")")
 
 			if (modifiers.includes("preload")) {
-				preloadingTemplates[url] = load(el, url).finally(() => preloadingTemplates[url] = null)
+				preloadingTemplates[url] = load(el, url).finally(() => {
+					preloadingTemplates[url] = null;
+					endLoading()
+				})
 			}
 
 			let path = el.getAttribute("x-route")

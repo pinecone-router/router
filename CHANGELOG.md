@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## [4.1.1] - 2024-01-06
+
+### Fixed
+
+- Fixed template not rendering inside the target element after revisiting the page
+- Fixed loading event not being sent after preloading page finishes loading.
+
 ## [4.1.0] - 2024-01-06
 
 ### Fixed
@@ -288,3 +295,4 @@ It's mostly backward compatible but need a few tweaks:
 [4.0.2]: https://github.com/pinecone-router/router/compare/4.0.1..4.0.2
 [4.0.3]: https://github.com/pinecone-router/router/compare/4.0.2..4.0.3
 [4.1.0]: https://github.com/pinecone-router/router/compare/4.0.3..4.1.0
+[4.1.1]: https://github.com/pinecone-router/router/compare/4.1.0..4.1.1
