@@ -109,7 +109,7 @@ Then you access paramaters with `$router.params.X`.
 
 ### Inline templates
 
-If you add a child to the `<template>` element, Pinecone Router automatically adds an `x-if` attribute to it that will evaluate to true when the route is matched, therefore displaying the content:
+If you add a child to the `<template>` element, Pinecone Router will render it when the route is matched. It works similair to `x-if` therefore they cannot be used together, use [`x-handler`](#x-handler) instead for conditionally showing a template.
 
 ```html
 <template x-route="/">
