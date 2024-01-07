@@ -2,8 +2,8 @@
   <img src="https://github.com/pinecone-router/router/blob/main/.github/pinecone-router-social-card-alt-big.png?raw=true" title="Pinecone Router logo with the text: The extendable client-side router for Alpine.js">
 </p>
 
-[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?color=%2337C8AB&label=version&sort=semver)](https://github.com/pinecone-router/router/tree/4.1.1)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router?color=37C8AB)](https://bundlephobia.com/result?p=pinecone-router@4.1.1)
+[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?color=%2337C8AB&label=version&sort=semver)](https://github.com/pinecone-router/router/tree/4.2.0)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router?color=37C8AB)](https://bundlephobia.com/result?p=pinecone-router@4.2.0)
 [![Downloads from JSDelivr](https://data.jsdelivr.com/v1/package/npm/pinecone-router/badge?style=rounded)](https://www.jsdelivr.com/package/npm/pinecone-router)
 [![npm](https://img.shields.io/npm/dm/pinecone-router?color=37C8AB&label=npm&logo=npm&logoColor=37C8AB)](https://npmjs.com/package/pinecone-router)
 [![Changelog](https://img.shields.io/badge/change-log-%2337C8AB)](/CHANGELOG.md)
@@ -113,22 +113,48 @@ If you add a child to the `<template>` element, Pinecone Router will render it w
 
 ```html
 <template x-route="/">
-	<div>
-		Hello World!
-	</div>
+	<div>Hello World!</div>
 </template>
 ```
 
-In this example it will add the `div` with "Hello World" to the document the same way `x-if` does: as after the `template` tag.
+In this example it will add the `div` with "Hello World" to the document the same way `x-if` does: after the `template` tag.
+
+
+### Modifiers
+
+- **`.target`**: Takes an ID paramater for example `.target.app` will render the inline template inside the element with the `app` ID:
+
+
+```html
+<template x-route.target.app="/">
+	<div>Hello World!</div>
+</template>
+<div id="app"></div>
+```
+> Default Target ID can be set globally in [settings](#settings)
+
 
 ## `x-template`
 
 This directive allows you to specify an external template file fetched from a URL
 
 ```html
-<!-- when the route is matched, this will fetch the content of home.html and insert it to the page -->
+<!-- when the route is matched, this will fetch the content of home.html -->
+<!-- then inserts it into the page after this template element-->
 <template x-route="/" x-template="/home.html"></template>
+```
 
+### Modifiers
+
+- **`.preload`**: Fetches the template on page load, without waiting for the route to be matched.
+- **`.target`**: Takes an ID paramater for example `.target.app` will render the template inside the element with the `app` ID
+
+> Can be used simulateneously: `x-template.preload.target.app`
+
+> Default Target ID can be set globally in [settings](#settings)
+
+
+```html
 <!-- you can preload templates without having to wait for the route to be matched-->
 <template x-route="notfound" x-template.preload="/404.html"></template>
 
@@ -140,20 +166,11 @@ This directive allows you to specify an external template file fetched from a UR
 </div>
 ```
 
-### Modifiers
-
-- **.preload**: Fetches the template on load, without waiting for the route to be matched.
-- **.target**: Takes an ID paramater for example `.target.app` will render the template inside the element with the `app` ID
-
-> Can be used simulateneously: `x-template.preload.target.app`
-
-> Default Target ID can be set globally in [settings](#settings)
-
 
 ## `x-handler`
 
-This directive can be used alone or alongisde `x-template`, it allow you to excute one or more methods when a route is matched.
-This runs **before inline templates and `x-template`** allowing you to redirect before showing any content, and fetch any data you need.
+This powerful directive can be used alone or alongisde `x-template`, it allow you to excute one or more methods when a route is matched.
+This runs **before inline templates and `x-template`** allowing you to redirect before showing any content, detect implement authentication / authorization, or fetch any data you need.
 
 ```html
 <div x-data="router()">
@@ -210,7 +227,7 @@ See [Redirecting](#redirecting)
 
 ### Multiple Handlers for a single route
 
-To prevent / stop the next handlers from executing and templates from rendering `return 'stop'` from the current handler or `return $router.redirect('/some/path')`.
+To prevent / stop the next handlers from executing and templates from rendering, `return 'stop'` from the current handler or `return ctx.redirect('/some/path')`.
 
 
 ## Context object / $router magic helper
@@ -238,7 +255,7 @@ Reference:
 
 **From an Alpine component**:
 
--   use [`$router` magic helper](#magic-helper): `$router.navigate(path)`.
+-   use [`$router` magic helper](#magic-helper): `$router.navigate(path)`, `$router.redirect(path)`.
 
 **Redirecting from a handler**:
 
@@ -270,7 +287,7 @@ Create your own middlewares [using this template](https://github.com/pinecone-ro
 document.addEventListener('alpine:init', () => {
 	window.PineconeRouter.settings.hash = false // use hash routing
 	window.PineconeRouter.settings.basePath = '/' // set the base for the URL, doesn't work with hash routing
-	window.PineconeRouter.settings.templateTargetId = 'app' // Set an optional ID for where the external templates will render by default.
+	window.PineconeRouter.settings.templateTargetId = 'app' // Set an optional ID for where the internal & external templates will render by default.
 })
 </script>
 ```
@@ -279,7 +296,7 @@ document.addEventListener('alpine:init', () => {
 
 ### Bypass link handling
 
-Adding a `native` attribute to a link will prevent Pinecone Router from handling it:
+Adding a `native` / `data-native` attribute to a link will prevent Pinecone Router from handling it:
 
 ```html
 <a href="/foo" native>Foo</a>
@@ -292,18 +309,19 @@ You can easily use [nProgress](http://ricostacruz.com/nprogress) with `x-templat
 ```js
 document.addEventListener('pinecone-start', () => NProgress.start());
 document.addEventListener('pinecone-end', () => NProgress.done());
+document.addEventListener('fetch-error', (err) => console.error(err));
 ```
 
-| name               | recipient | when is it dispatched              |
-| ------------------ | --------- | ---------------------------------- |
-| **pinecone-start** | document  | when the template start fetching   |
-| **pinecone-end**   | document  | when the fetching ends successfuly |
-| **fetch-error**    | document  | when the fetch fail                |
+| name               | recipient | when it is dispatched                        |
+| ------------------ | --------- | -------------------------------------------- |
+| **pinecone-start** | document  | when the template start fetching             |
+| **pinecone-end**   | document  | when the fetching ends successfuly           |
+| **fetch-error**    | document  | when the fetching of external templates fail |
 
 
-### Adding & Removing routes with Javascript
+### Adding & Removing routes programatically with Javascript
 
-you can add routes & remove them anytime using Javascript.
+you can add routes & remove them anytime programatically using Javascript.
 
 **Adding a route**:
 

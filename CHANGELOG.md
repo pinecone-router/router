@@ -8,6 +8,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## [4.2.0] - 2024-01-07
+
+### Added
+
+- Support custom target element ID for inline templates: `x-route.target.app`.
+  - This means now inline templates also use [global template target id from settings](https://github.com/pinecone-router/router?tab=readme-ov-file#settings).
+- Added an error when trying to use `x-template` on a template element that have a child, meaning trying to mix inline and external templates.
+  - It is impossible to have both as they both put the content inside the template, x-template does after fetching it from a link. (no one tried this afaik but just in case).
+
+### Changed
+
+- No longer use the same variable names as `x-if` for showing and hiding inline or external templates:
+  - `el._x_undoIf` -> `el._x_PineconeRouter_undoTemplate`
+  - `el._x_currentIfEl` -> `el._x_PineconeRouter_CurrentTemplate`
+- Now `x-route` adds an `el._x_PineconeRouter_route` with the full route as its value (including base path in settings)
+> These changes are just for internal use.
+
 ## [4.1.1] - 2024-01-06
 
 ### Fixed
@@ -296,3 +313,4 @@ It's mostly backward compatible but need a few tweaks:
 [4.0.3]: https://github.com/pinecone-router/router/compare/4.0.2..4.0.3
 [4.1.0]: https://github.com/pinecone-router/router/compare/4.0.3..4.1.0
 [4.1.1]: https://github.com/pinecone-router/router/compare/4.1.0..4.1.1
+[4.2.0]: https://github.com/pinecone-router/router/compare/4.1.1..4.2.0

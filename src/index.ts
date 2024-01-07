@@ -20,15 +20,16 @@ declare global {
 		PineconeRouterMiddlewares: Array<Middleware>
 	}
 	interface HTMLTemplateElement {
-		_x_undoIf: Function
-		_x_currentIfEl: Element
+		_x_PineconeRouter_undoTemplate: Function
+		_x_PineconeRouter_CurrentTemplate: Element
+		_x_PineconeRouter_route: string
 	}
 }
 
 export default function (Alpine) {
 
 	const PineconeRouter = Alpine.reactive(<Window["PineconeRouter"]>{
-		version: '4.1.1',
+		version: '4.2.0',
 		name: 'pinecone-router',
 
 		settings: <Settings>{
@@ -146,26 +147,26 @@ export default function (Alpine) {
 			Alpine.initTree(clone)
 		})
 
-		el._x_currentIfEl = clone
+		el._x_PineconeRouter_CurrentTemplate = clone
 
-		el._x_undoIf = () => {
+		el._x_PineconeRouter_undoTemplate = () => {
 			clone.remove()
 
-			delete el._x_currentIfEl
+			delete el._x_PineconeRouter_CurrentTemplate
 		}
 
 		Alpine.nextTick(() => inMakeProgress.delete(expression))
 	}
 
 	function hide(el: HTMLTemplateElement) {
-		if (el._x_undoIf) {
-			el._x_undoIf()
-			delete el._x_undoIf
+		if (el._x_PineconeRouter_undoTemplate) {
+			el._x_PineconeRouter_undoTemplate()
+			delete el._x_PineconeRouter_undoTemplate
 		}
 	}
 
 	function show(el: HTMLTemplateElement, expression: string, url?: string, targetEl?: HTMLElement) {
-		if (el._x_currentIfEl) return el._x_currentIfEl
+		if (el._x_PineconeRouter_CurrentTemplate) return el._x_PineconeRouter_CurrentTemplate
 		if (el.content.firstElementChild) {
 			make(el, expression, targetEl)
 			endLoading()
@@ -211,7 +212,7 @@ export default function (Alpine) {
 
 	Alpine.directive(
 		'route',
-		(el: HTMLTemplateElement, { expression }, { effect, cleanup }) => {
+		(el: HTMLTemplateElement, { expression, modifiers }, { effect, cleanup }) => {
 			let path = expression
 
 			middleware('onBeforeRouteProcessed', el, path)
@@ -222,6 +223,10 @@ export default function (Alpine) {
 				)
 			}
 
+			let target = modifierValue(modifiers, 'target', null) ?? window.PineconeRouter.settings.templateTargetId
+			let targetEl = document.getElementById(target)
+			if (target && !targetEl)
+				throw new Error("Pinecone Router: Can't find an element with the suplied target ID: " + target + "")
 
 			let routeIndex = null
 
@@ -234,18 +239,22 @@ export default function (Alpine) {
 
 			let route = PineconeRouter.routes[routeIndex] ?? PineconeRouter.notfound
 
+			// set the path in the element so it is used by other directives
+			el._x_PineconeRouter_route = path
+
 			if (el.content.firstElementChild != null) {
 				Alpine.nextTick(() => {
 					effect(() => {
 						let found = route.handlersDone && PineconeRouter.context.route == path
-						found ? show(el, expression) : hide(el)
+						found ? show(el, expression, null, targetEl) : hide(el)
 					})
 				})
 			}
 
 			cleanup(() => {
-				el._x_undoIf && el._x_undoIf();
+				el._x_PineconeRouter_undoTemplate && el._x_PineconeRouter_undoTemplate();
 				PineconeRouter.remove(path);
+				delete el._x_PineconeRouter_route
 			})
 
 			middleware('onAfterRouteProcessed', el, path)
@@ -261,7 +270,7 @@ export default function (Alpine) {
 			{ expression },
 			{ evaluate, cleanup }
 		) => {
-			if (!el.hasAttribute('x-route')) {
+			if (!el._x_PineconeRouter_route) {
 				throw new Error(
 					`Pinecone Router: x-handler must be set on the same element as x-route.`
 				)
@@ -279,7 +288,6 @@ export default function (Alpine) {
 			}
 
 			let evaluatedExpression = evaluate(expression)
-			let path = el.getAttribute('x-route')
 
 			if (typeof evaluatedExpression == 'object')
 				handlers = evaluatedExpression
@@ -294,22 +302,15 @@ export default function (Alpine) {
 				handlers[index] = handlers[index].bind(Alpine.$data(el))
 			}
 
-			let route
-
-			if (path == 'notfound')
-				route = PineconeRouter.notfound
-			else {
-				// if specified add the basePath
-				path = addBasePath(path)
-				// add handlers to the route
-				let i = findRouteIndex(path)
-				route = PineconeRouter.routes[i]
-			}
+			// add handlers to the route
+			let path = el._x_PineconeRouter_route
+			let route = path == 'notfound' ? PineconeRouter.notfound : PineconeRouter.routes[findRouteIndex(path)];
 			route.handlers = handlers
 
 			cleanup(() => {
 				route.handlers = []
 				route.handlersDone = true
+				route.cancelHandlers = false
 			})
 		}
 	)
@@ -318,7 +319,9 @@ export default function (Alpine) {
 		'template',
 		(el: HTMLTemplateElement, { modifiers, expression }, { Alpine, effect, cleanup }) => {
 
-			if (!el.hasAttribute("x-route")) throw new Error("Pinecone Router: x-template must be used on the same element as x-route.")
+			if (!el._x_PineconeRouter_route) throw new Error("Pinecone Router: x-template must be used on the same element as x-route.")
+
+			if (el.content.firstElementChild != null) throw new Error("Pinecone Router: x-template cannot be used alongside an inline template (template element should not have a child).")
 
 			let url: string = expression
 
@@ -326,7 +329,7 @@ export default function (Alpine) {
 			let targetEl = document.getElementById(target)
 
 			if (target && !targetEl)
-				throw new Error("Pinecone Router: Can't find an element with the suplied x-template target ID (" + target + ")")
+				throw new Error("Pinecone Router: Can't find an element with the suplied target ID: " + target + "")
 
 			if (modifiers.includes("preload")) {
 				preloadingTemplates[url] = load(el, url).finally(() => {
@@ -335,20 +338,10 @@ export default function (Alpine) {
 				})
 			}
 
-			let path = el.getAttribute("x-route")
-			let route;
-			let routeIndex
-
-			if (path == 'notfound') {
-				PineconeRouter.notfound.template = url
-				route = PineconeRouter.notfound
-			}
-			else {
-				path = addBasePath(path)
-				routeIndex = findRouteIndex(path)
-				PineconeRouter.routes[routeIndex].template = url
-				route = PineconeRouter.routes[routeIndex]
-			}
+			// add template to the route
+			let path = el._x_PineconeRouter_route
+			let route = path == 'notfound' ? PineconeRouter.notfound : PineconeRouter.routes[findRouteIndex(path)];
+			route.template = url
 
 
 			Alpine.nextTick(() => {
@@ -359,7 +352,7 @@ export default function (Alpine) {
 			})
 
 			cleanup(() => {
-				el._x_undoIf && el._x_undoIf();
+				el._x_PineconeRouter_undoTemplate && el._x_PineconeRouter_undoTemplate();
 			})
 
 		}
