@@ -312,7 +312,9 @@ window.PineconeRouter.add(path, options)
 ```
 
 -   path: string, the route's path.
--   options: array of options that can be anything for example: `{handlers: [], view: '/home.html'}`
+-   options: array of options: `{handlers: [], template: '/home.html'}`
+
+Note that by adding handlers this way you wont have access to the `this` of the alpine.js component if the handler is part of one.
 
 **Removing a route**:
 
