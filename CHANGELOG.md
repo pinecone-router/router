@@ -320,3 +320,4 @@ It's mostly backward compatible but need a few tweaks:
 [4.1.0]: https://github.com/pinecone-router/router/compare/4.0.3..4.1.0
 [4.1.1]: https://github.com/pinecone-router/router/compare/4.1.0..4.1.1
 [4.2.0]: https://github.com/pinecone-router/router/compare/4.1.1..4.2.0
+[4.3.0]: https://github.com/pinecone-router/router/compare/4.2.0..4.3.0
