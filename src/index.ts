@@ -29,7 +29,7 @@ declare global {
 export default function (Alpine) {
 
 	const PineconeRouter = Alpine.reactive(<Window["PineconeRouter"]>{
-		version: '4.2.0',
+		version: '4.3.0',
 		name: 'pinecone-router',
 
 		settings: <Settings>{
@@ -105,8 +105,8 @@ export default function (Alpine) {
 	const inMakeProgress = new Set()
 	var preloadingTemplates: { [key: string]: Promise<string> } = {}
 
-	const load = (el: HTMLTemplateElement, url: string) => {
-		if (loadingTemplates[url]) {
+	const load = (el: HTMLTemplateElement | HTMLElement, url: string, programmaticRoute: boolean = false) => {
+		if (loadingTemplates[url] && !programmaticRoute) {
 			loadingTemplates[url].then(html => el.innerHTML = html)
 		} else {
 			loadingTemplates[url] = fetch(url).then(r => {
@@ -532,6 +532,22 @@ export default function (Alpine) {
 			}
 			route.handlersDone = true
 			if (!route.template) endLoading()
+		}
+
+
+		// show templates added programmatically
+		if (route.template && route.programmaticTemplate) {
+			let target = document.getElementById(PineconeRouter.settings.templateTargetId)
+			if (cachedTemplates[route.template]) {
+				target.innerHTML = cachedTemplates[route.template]
+				endLoading()
+			}
+			else {
+				load(target, route.template).then(() => {
+					target.innerHTML = cachedTemplates[route.template]
+					endLoading()
+				})
+			}
 		}
 
 

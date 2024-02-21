@@ -2,8 +2,8 @@
   <img src="https://github.com/pinecone-router/router/blob/main/.github/pinecone-router-social-card-alt-big.png?raw=true" title="Pinecone Router logo with the text: The extendable client-side router for Alpine.js">
 </p>
 
-[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?color=%2337C8AB&label=version&sort=semver)](https://github.com/pinecone-router/router/tree/4.2.0)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router?color=37C8AB)](https://bundlephobia.com/result?p=pinecone-router@4.2.0)
+[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?color=%2337C8AB&label=version&sort=semver)](https://github.com/pinecone-router/router/tree/4.3.0)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router?color=37C8AB)](https://bundlephobia.com/result?p=pinecone-router@4.3.0)
 [![Downloads from JSDelivr](https://data.jsdelivr.com/v1/package/npm/pinecone-router/badge?style=rounded)](https://www.jsdelivr.com/package/npm/pinecone-router)
 [![npm](https://img.shields.io/npm/dm/pinecone-router?color=37C8AB&label=npm&logo=npm&logoColor=37C8AB)](https://npmjs.com/package/pinecone-router)
 [![Changelog](https://img.shields.io/badge/change-log-%2337C8AB)](/CHANGELOG.md)
@@ -319,9 +319,9 @@ document.addEventListener('fetch-error', (err) => console.error(err));
 | **fetch-error**    | document  | when the fetching of external templates fail |
 
 
-### Adding & Removing routes programatically with Javascript
+### Adding and Removing routes & templates programmatically with Javascript
 
-you can add routes & remove them anytime programatically using Javascript.
+you can add routes & remove them anytime programmatically using Javascript.
 
 **Adding a route**:
 
@@ -330,9 +330,24 @@ window.PineconeRouter.add(path, options)
 ```
 
 -   path: string, the route's path.
--   options: array of options: `{handlers: [], template: '/home.html'}`
+-   options: array of options: `{handlers: []}`
 
 Note that by adding handlers this way you wont have access to the `this` of the alpine.js component if the handler is part of one.
+
+**Adding a template**
+
+You must set a templateTargetId in [settings](#settings):
+
+```html
+<script>
+document.addEventListener('alpine:init', () => {
+	window.PineconeRouter.settings.templateTargetId = 'app'
+	window.PineconeRouter.add('/route', {template: '/route.html'})
+	window.PineconeRouter.add('/notfound', {template: '/404.html'})
+})
+</script>
+```
+> Note: The template won't be cleared automatically until you access another route with a template, so make sure all your routes have one if you use this method.
 
 **Removing a route**:
 
