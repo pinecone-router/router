@@ -13,7 +13,7 @@
 
 The extendable client-side router for Alpine.js v3.
 
-> ### v4 update brings new features with minor breaking changes, see [ChangeLog](/CHANGELOG.md#400---2023-11-26) for what to update!
+> #### v4 update brings new features with minor breaking changes, see [ChangeLog](/CHANGELOG.md#400---2023-11-26) for what to update!
 
 ## About
 
