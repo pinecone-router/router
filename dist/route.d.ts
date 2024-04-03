@@ -1,10 +1,17 @@
 import type { Handler } from './types';
 declare class Route {
-    params: {};
+    params: {
+        [key: string]: any;
+    };
     path: string;
     handlers: Handler[];
-    constructor(path: string, options?: {});
-    prototype: any;
+    constructor(path: string, options?: {
+        [key: string]: any;
+    });
+    template: string;
+    programmaticTemplate: boolean;
+    handlersDone: boolean;
+    cancelHandlers: boolean;
 }
 export default Route;
 //# sourceMappingURL=route.d.ts.map

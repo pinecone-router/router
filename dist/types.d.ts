@@ -37,6 +37,14 @@ export declare interface Middleware {
      */
     onBeforeRouteProcessed?: (el: HTMLTemplateElement, path: string) => void;
     /**
+     * Called for each route on initialization,
+     * after the route is processed & added.
+     * @param {HTMLTemplateElement} el the route's <template> element
+     * @param {ComponentController} component the router's alpine component
+     * @param {string} path the route's path
+     */
+    onAfterRouteProcessed?: (el: HTMLTemplateElement, path: string) => void;
+    /**
      * Will be called before the handlers are executed.
      * during navigation (PineconeRouter.navigate()).
      * @param {Route} route the matched route, undefined if not found.
@@ -69,9 +77,10 @@ export declare interface Settings {
      */
     basePath: string;
     /**
-     * @default `#app`
-     * @summmary selector for where the views will render
+     * @default null
+     * @summmary Set an optional ID for where the templates will render by default
+     * This can be overriden by the .target modifier
      */
-    viewSelector: string;
+    templateTargetId: string;
 }
 //# sourceMappingURL=types.d.ts.map

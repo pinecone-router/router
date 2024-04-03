@@ -8,6 +8,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 
+## [4.3.1] - 2024-04-03
+
+### Added
+
+- Update Typescript definitons. (fix #36)
+
+### Changed
+
+- Merged the pnpm scripts `build` & `build:types` into `build`
+- Updated to latest dev dependencies
+
+### Removed
+
+- Removed Vite as a dev dependency
+
+
 ## [4.3.0] - 2024-02-21
 
 ### Added
@@ -321,3 +337,4 @@ It's mostly backward compatible but need a few tweaks:
 [4.1.1]: https://github.com/pinecone-router/router/compare/4.1.0..4.1.1
 [4.2.0]: https://github.com/pinecone-router/router/compare/4.1.1..4.2.0
 [4.3.0]: https://github.com/pinecone-router/router/compare/4.2.0..4.3.0
+[4.3.1]: https://github.com/pinecone-router/router/compare/4.3.0..4.3.1

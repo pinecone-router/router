@@ -2,7 +2,7 @@ build({
 	entryPoints: [`builds/cdn.js`],
 	outfile: `dist/router.min.js`,
 	platform: 'browser',
-	define: { CDN: true },
+	define: { CDN: 'true' },
 	sourcemap: 'inline',
 })
 

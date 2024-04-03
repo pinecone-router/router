@@ -36,6 +36,14 @@ export declare interface Middleware {
 	 */
 	onBeforeRouteProcessed?: (el: HTMLTemplateElement, path: string) => void
 	/**
+	 * Called for each route on initialization,
+	 * after the route is processed & added.
+	 * @param {HTMLTemplateElement} el the route's <template> element
+	 * @param {ComponentController} component the router's alpine component
+	 * @param {string} path the route's path
+	 */
+	onAfterRouteProcessed?: (el: HTMLTemplateElement, path: string) => void;
+	/**
 	 * Will be called before the handlers are executed.
 	 * during navigation (PineconeRouter.navigate()).
 	 * @param {Route} route the matched route, undefined if not found.
