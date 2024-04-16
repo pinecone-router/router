@@ -29,7 +29,7 @@ declare global {
 export default function (Alpine) {
 
 	const PineconeRouter = Alpine.reactive(<Window["PineconeRouter"]>{
-		version: '4.3.1',
+		version: '4.3.2',
 		name: 'pinecone-router',
 
 		settings: <Settings>{
@@ -537,14 +537,13 @@ export default function (Alpine) {
 
 		// show templates added programmatically
 		if (route.template && route.programmaticTemplate) {
-			let target = document.getElementById(PineconeRouter.settings.templateTargetId)
+			let target = document.getElementById(route.templateTargetId) ?? document.getElementById(PineconeRouter.settings.templateTargetId)
 			if (cachedTemplates[route.template]) {
 				target.innerHTML = cachedTemplates[route.template]
 				endLoading()
 			}
 			else {
 				load(target, route.template).then(() => {
-					target.innerHTML = cachedTemplates[route.template]
 					endLoading()
 				})
 			}

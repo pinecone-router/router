@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.3.2] - 2024-04-16
+
+### Fixed
+
+- Fixed template rendering twice when adding routes programmatically (fix #38)
 
 ## [4.3.1] - 2024-04-03
 
@@ -338,3 +343,5 @@ It's mostly backward compatible but need a few tweaks:
 [4.2.0]: https://github.com/pinecone-router/router/compare/4.1.1..4.2.0
 [4.3.0]: https://github.com/pinecone-router/router/compare/4.2.0..4.3.0
 [4.3.1]: https://github.com/pinecone-router/router/compare/4.3.0..4.3.1
+[4.3.1]: https://github.com/pinecone-router/router/compare/4.3.0..4.3.1
+[4.3.2]: https://github.com/pinecone-router/router/compare/4.3.1..4.3.2

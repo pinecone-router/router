@@ -9,6 +9,7 @@ declare class Route {
         [key: string]: any;
     });
     template: string;
+    templateTargetId: string;
     programmaticTemplate: boolean;
     handlersDone: boolean;
     cancelHandlers: boolean;

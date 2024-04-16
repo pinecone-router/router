@@ -14,6 +14,7 @@ class Route {
 		}
 	}
 	template: string = ''
+	templateTargetId: string = ''
 	programmaticTemplate: boolean = false
 	handlersDone: boolean = false
 	cancelHandlers: boolean
