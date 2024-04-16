@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed template rendering twice when adding routes programmatically (fix #38)
 
+### Added
+
+- Added `templateTargetId` option for `PineconeRouter.add()` method.
+
 ## [4.3.1] - 2024-04-03
 
 ### Added

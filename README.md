@@ -330,7 +330,10 @@ window.PineconeRouter.add(path, options)
 ```
 
 -   path: string, the route's path.
--   options: array of options: `{handlers: [], template: ''}`
+-   options: array of options:
+```js
+{handlers: [], template: '', templateTargetId: 'app'}
+```
 
 Note that by adding handlers this way you wont have access to the `this` of the alpine.js component if the handler is part of one.
 
