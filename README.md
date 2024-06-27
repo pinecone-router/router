@@ -406,7 +406,7 @@ This projects follow the [Semantic Versioning](https://semver.org/) guidelines.
 
 ## License
 
-Copyright (c) 2023 Rafik El Hadi Houari and contributors
+Copyright (c) 2024 Rafik El Hadi Houari and contributors
 
 Licensed under the MIT license, see [LICENSE.md](LICENSE.md) for details.
 
