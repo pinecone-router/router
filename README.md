@@ -312,7 +312,7 @@ You can set `PineconeRouter.settings.interceptLinks` to false to disable handlin
 ```html
 <script>
 document.addEventListener('alpine:init', () => {
-	window.PineconeRouter.settings.interceptLinks = truefalse // Set to false to disable global handling of links by the router
+	window.PineconeRouter.settings.interceptLinks = false // Set to false to disable global handling of links by the router
 
 })
 </script>
