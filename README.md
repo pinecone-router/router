@@ -2,8 +2,8 @@
   <img src="https://github.com/pinecone-router/router/blob/main/.github/pinecone-router-social-card-alt-big.png?raw=true" title="Pinecone Router logo with the text: The extendable client-side router for Alpine.js">
 </p>
 
-[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?color=%2337C8AB&label=version&sort=semver)](https://github.com/pinecone-router/router/tree/4.3.2)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router?color=37C8AB)](https://bundlephobia.com/result?p=pinecone-router@4.3.2)
+[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?color=%2337C8AB&label=version&sort=semver)](https://github.com/pinecone-router/router/tree/4.4.0)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router?color=37C8AB)](https://bundlephobia.com/result?p=pinecone-router@4.4.0)
 [![Downloads from JSDelivr](https://data.jsdelivr.com/v1/package/npm/pinecone-router/badge?style=rounded)](https://www.jsdelivr.com/package/npm/pinecone-router)
 [![npm](https://img.shields.io/npm/dm/pinecone-router?color=37C8AB&label=npm&logo=npm&logoColor=37C8AB)](https://npmjs.com/package/pinecone-router)
 [![Changelog](https://img.shields.io/badge/change-log-%2337C8AB)](/CHANGELOG.md)
@@ -288,6 +288,8 @@ document.addEventListener('alpine:init', () => {
 	window.PineconeRouter.settings.hash = false // use hash routing
 	window.PineconeRouter.settings.basePath = '/' // set the base for the URL, doesn't work with hash routing
 	window.PineconeRouter.settings.templateTargetId = 'app' // Set an optional ID for where the internal & external templates will render by default.
+	window.PineconeRouter.settings.interceptLinks = truefalse // Set to false to disable global handling of links by the router, see Disable link handling globally for more.
+
 })
 </script>
 ```
@@ -301,6 +303,24 @@ Adding a `native` / `data-native` attribute to a link will prevent Pinecone Rout
 ```html
 <a href="/foo" native>Foo</a>
 ```
+
+
+### Disable link handling globally
+
+You can set `PineconeRouter.settings.interceptLinks` to false to disable handling links by the router, unless an `x-link` attribute is set on the link, or using `$router.navigate('/path')`.
+
+```html
+<script>
+document.addEventListener('alpine:init', () => {
+	window.PineconeRouter.settings.interceptLinks = truefalse // Set to false to disable global handling of links by the router
+
+})
+</script>
+
+<a href="/path">This will reload the page</a>
+<a href="/path" x-link>This won't reload the page</a>
+```
+
 
 ### Events / Loading bar
 

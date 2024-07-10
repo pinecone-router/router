@@ -92,4 +92,9 @@ export declare interface Settings {
 	 * This can be overriden by the .target modifier
 	 */
 	templateTargetId: string
+	/**
+	 * @default true
+	 * @summary Set to false if you don't want to intercept links by default.
+	 */
+	interceptLinks: boolean
 }

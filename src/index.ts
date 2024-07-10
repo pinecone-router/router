@@ -29,13 +29,14 @@ declare global {
 export default function (Alpine) {
 
 	const PineconeRouter = Alpine.reactive(<Window["PineconeRouter"]>{
-		version: '4.3.2',
+		version: '4.4.0',
 		name: 'pinecone-router',
 
 		settings: <Settings>{
 			hash: false,
 			basePath: '/',
-			templateTargetId: null
+			templateTargetId: null,
+			interceptLinks: true
 		},
 
 		/**
@@ -428,6 +429,7 @@ export default function (Alpine) {
 
 				do {
 					if (node.localName === 'a' && node.getAttribute('href')) {
+						if (window.PineconeRouter.settings.interceptLinks == false && !node.hasAttribute('x-link')) return
 						if (node.hasAttribute('data-native') || node.hasAttribute('native')) return;
 						let href = validateLink(node)
 						if (href) {

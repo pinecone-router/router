@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.4.0] - 2024-07-10
+
+### Added
+
+- Added `PineconeRouter.settins.interceptLinks` option, true by default but can be set to false to disable automatic handling of links by the router.
+- Added `x-link` attribute to handle links when `interceptLinks` setting is set to false.
+
 ## [4.3.2] - 2024-04-16
 
 ### Fixed
@@ -349,3 +356,4 @@ It's mostly backward compatible but need a few tweaks:
 [4.3.1]: https://github.com/pinecone-router/router/compare/4.3.0..4.3.1
 [4.3.1]: https://github.com/pinecone-router/router/compare/4.3.0..4.3.1
 [4.3.2]: https://github.com/pinecone-router/router/compare/4.3.1..4.3.2
+[4.4.0]: https://github.com/pinecone-router/router/compare/4.3.2..4.4.0
