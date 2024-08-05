@@ -539,7 +539,7 @@ export default function (Alpine) {
 
 		// show templates added programmatically
 		if (route.template && route.programmaticTemplate) {
-			let target = document.getElementById(route.templateTargetId) ?? document.getElementById(PineconeRouter.settings.templateTargetId)
+			let target = route.templateTargetId ? document.getElementById(route.templateTargetId) : document.getElementById(PineconeRouter.settings.templateTargetId);
 			if (cachedTemplates[route.template]) {
 				target.innerHTML = cachedTemplates[route.template]
 				endLoading()
