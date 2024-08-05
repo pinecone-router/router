@@ -29,7 +29,7 @@ declare global {
 export default function (Alpine) {
 
 	const PineconeRouter = Alpine.reactive(<Window["PineconeRouter"]>{
-		version: '4.4.0',
+		version: '4.4.1',
 		name: 'pinecone-router',
 
 		settings: <Settings>{

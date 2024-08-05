@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.4.1] - 2024-08-05
+
+### Fixed
+
+- Prevent empty string from being passed to getElementById() when the route does not have own templateId by @Aramics #40
+
 ## [4.4.0] - 2024-07-10
 
 ### Added
@@ -357,3 +363,4 @@ It's mostly backward compatible but need a few tweaks:
 [4.3.1]: https://github.com/pinecone-router/router/compare/4.3.0..4.3.1
 [4.3.2]: https://github.com/pinecone-router/router/compare/4.3.1..4.3.2
 [4.4.0]: https://github.com/pinecone-router/router/compare/4.3.2..4.4.0
+[4.4.1]: https://github.com/pinecone-router/router/compare/4.4.0..4.4.1
