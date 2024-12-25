@@ -7,121 +7,130 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [5.0.0] - 2024-12-25
+
+### Added
+
+-   Added support for multiple templates inside `x-template` (Thanks @RobinManoli #44 for the suggestion)
+
+### Changed
+
+-   Breaking: Changed `Route.options.template` to `Route.options.templates`
+
 ## [4.4.1] - 2024-08-05
 
 ### Fixed
 
-- Prevent empty string from being passed to getElementById() when the route does not have own templateId by @Aramics #40
+-   Prevent empty string from being passed to getElementById() when the route does not have own templateId by @Aramics #40
 
 ## [4.4.0] - 2024-07-10
 
 ### Added
 
-- Added `PineconeRouter.settins.interceptLinks` option, true by default but can be set to false to disable automatic handling of links by the router.
-- Added `x-link` attribute to handle links when `interceptLinks` setting is set to false.
+-   Added `PineconeRouter.settins.interceptLinks` option, true by default but can be set to false to disable automatic handling of links by the router.
+-   Added `x-link` attribute to handle links when `interceptLinks` setting is set to false.
 
 ## [4.3.2] - 2024-04-16
 
 ### Fixed
 
-- Fixed template rendering twice when adding routes programmatically (fix #38)
+-   Fixed template rendering twice when adding routes programmatically (fix #38)
 
 ### Added
 
-- Added `templateTargetId` option for `PineconeRouter.add()` method.
+-   Added `templateTargetId` option for `PineconeRouter.add()` method.
 
 ## [4.3.1] - 2024-04-03
 
 ### Added
 
-- Update Typescript definitons. (fix #36)
+-   Update Typescript definitons. (fix #36)
 
 ### Changed
 
-- Merged the pnpm scripts `build` & `build:types` into `build`
-- Updated to latest dev dependencies
+-   Merged the pnpm scripts `build` & `build:types` into `build`
+-   Updated to latest dev dependencies
 
 ### Removed
 
-- Removed Vite as a dev dependency
-
+-   Removed Vite as a dev dependency
 
 ## [4.3.0] - 2024-02-21
 
 ### Added
 
-- Add support for adding templates programmatically using `PineconeRouter.add('/route', {template: '/route.html'})`
+-   Add support for adding templates programmatically using `PineconeRouter.add('/route', {template: '/route.html'})`
 
 ## [4.2.0] - 2024-01-07
 
 ### Added
 
-- Support custom target element ID for inline templates: `x-route.target.app`.
-  - This means now inline templates also use [global template target id from settings](https://github.com/pinecone-router/router?tab=readme-ov-file#settings).
-- Added an error when trying to use `x-template` on a template element that have a child, meaning trying to mix inline and external templates.
-  - It is impossible to have both as they both put the content inside the template, x-template does after fetching it from a link. (no one tried this afaik but just in case).
+-   Support custom target element ID for inline templates: `x-route.target.app`.
+    -   This means now inline templates also use [global template target id from settings](https://github.com/pinecone-router/router?tab=readme-ov-file#settings).
+-   Added an error when trying to use `x-template` on a template element that have a child, meaning trying to mix inline and external templates.
+    -   It is impossible to have both as they both put the content inside the template, x-template does after fetching it from a link. (no one tried this afaik but just in case).
 
 ### Changed
 
-- No longer use the same variable names as `x-if` for showing and hiding inline or external templates:
-  - `el._x_undoIf` -> `el._x_PineconeRouter_undoTemplate`
-  - `el._x_currentIfEl` -> `el._x_PineconeRouter_CurrentTemplate`
-- Now `x-route` adds an `el._x_PineconeRouter_route` with the full route as its value (including base path in settings)
-> These changes are just for internal use.
+-   No longer use the same variable names as `x-if` for showing and hiding inline or external templates:
+    -   `el._x_undoIf` -> `el._x_PineconeRouter_undoTemplate`
+    -   `el._x_currentIfEl` -> `el._x_PineconeRouter_CurrentTemplate`
+-   Now `x-route` adds an `el._x_PineconeRouter_route` with the full route as its value (including base path in settings)
+    > These changes are just for internal use.
 
 ## [4.1.1] - 2024-01-06
 
 ### Fixed
 
-- Fixed template not rendering inside the target element after revisiting the page
-- Fixed loading event not being sent after preloading page finishes loading.
+-   Fixed template not rendering inside the target element after revisiting the page
+-   Fixed loading event not being sent after preloading page finishes loading.
 
 ## [4.1.0] - 2024-01-06
 
 ### Fixed
 
-- Fixed template not rendering when preloading another one.
-- x-template.target no longer need the target to be cleared manually if the other routes do not use it.
+-   Fixed template not rendering when preloading another one.
+-   x-template.target no longer need the target to be cleared manually if the other routes do not use it.
 
 ### Changed
 
-- Changed template rendering method, borrowed from [shaunlee/alpinejs-router](https://github.com/shaunlee/alpinejs-router).
-- Changed link handling method, use preact-router's method instead of page.js
-- There should be no difference for you as it's an internal change.
+-   Changed template rendering method, borrowed from [shaunlee/alpinejs-router](https://github.com/shaunlee/alpinejs-router).
+-   Changed link handling method, use preact-router's method instead of page.js
+-   There should be no difference for you as it's an internal change.
 
 ## [4.0.3] - 2024-01-03
 
 ### Fixed
 
-- Fixed handlers not having access to `this` context when the handler is in an Alpine component.
+-   Fixed handlers not having access to `this` context when the handler is in an Alpine component.
 
 ## [4.0.2] - 2023-12-23
 
 ### Fixed
 
-- Prevent reloading on double clicking links. (Fixes #24)
+-   Prevent reloading on double clicking links. (Fixes #24)
 
 ## [4.0.1] - 2023-12-23
 
 ### Fixed
 
-- Fixed `fetch-error` event not triggered for 404, 500 responses (Fixes #26)
+-   Fixed `fetch-error` event not triggered for 404, 500 responses (Fixes #26)
 
 ## [4.0.0] - 2023-11-27
 
 ### Added
 
-- Added `x-template` directive replacing the views middleware.
-- Added events: `pinecone-start` & `pinecone-end` that dispatch to `document` on template loading, and `fetch-error` on failure.
-- Added `cleanup()` for when the route element is removed from the page, it now removes the route as well.
-- Added `cleanup()` for `x-handler` and `x-template`, now the handlers and tempate are deleted when the attributes are removed.
-- Added `PineconeRouter.settings.templateTargetId` when set all external templates will use render to this element
-  
+-   Added `x-template` directive replacing the views middleware.
+-   Added events: `pinecone-start` & `pinecone-end` that dispatch to `document` on template loading, and `fetch-error` on failure.
+-   Added `cleanup()` for when the route element is removed from the page, it now removes the route as well.
+-   Added `cleanup()` for `x-handler` and `x-template`, now the handlers and tempate are deleted when the attributes are removed.
+-   Added `PineconeRouter.settings.templateTargetId` when set all external templates will use render to this element
+
 ### Changed
 
-- `PineconeRouter.currentContext` is now `PineconeRouter.context`
-- Handlers are now **awaited** if they're async, so operations such as fetching will prevent rendering templates and execution of subsequent handlers until current handler is done.
-- If a link is a clicked to navigate to a new page while there are handlers active, they will be automatically canceled, the current one will finish running but any ones after will not.
+-   `PineconeRouter.currentContext` is now `PineconeRouter.context`
+-   Handlers are now **awaited** if they're async, so operations such as fetching will prevent rendering templates and execution of subsequent handlers until current handler is done.
+-   If a link is a clicked to navigate to a new page while there are handlers active, they will be automatically canceled, the current one will finish running but any ones after will not.
 
 ## [3.1.2] - 2023-11-26
 
@@ -364,3 +373,4 @@ It's mostly backward compatible but need a few tweaks:
 [4.3.2]: https://github.com/pinecone-router/router/compare/4.3.1..4.3.2
 [4.4.0]: https://github.com/pinecone-router/router/compare/4.3.2..4.4.0
 [4.4.1]: https://github.com/pinecone-router/router/compare/4.4.0..4.4.1
+[4.4.1]: https://github.com/pinecone-router/router/compare/4.4.1..5.0.0

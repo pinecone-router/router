@@ -8,9 +8,9 @@ declare class Route {
     constructor(path: string, options?: {
         [key: string]: any;
     });
-    template: string;
+    templates: string[];
     templateTargetId: string;
-    programmaticTemplate: boolean;
+    programmaticTemplates: boolean;
     handlersDone: boolean;
     cancelHandlers: boolean;
 }

@@ -9,13 +9,13 @@ class Route {
 		Object.keys(options).forEach((opt) => {
 			this[opt] = options[opt]
 		})
-		if (options.template) {
-			this.programmaticTemplate = true
+		if (options.templates) {
+			this.programmaticTemplates = true
 		}
 	}
-	template: string = ''
+	templates: string[] = []
 	templateTargetId: string = ''
-	programmaticTemplate: boolean = false
+	programmaticTemplates: boolean = false
 	handlersDone: boolean = false
 	cancelHandlers: boolean
 }
