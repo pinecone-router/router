@@ -373,4 +373,4 @@ It's mostly backward compatible but need a few tweaks:
 [4.3.2]: https://github.com/pinecone-router/router/compare/4.3.1..4.3.2
 [4.4.0]: https://github.com/pinecone-router/router/compare/4.3.2..4.4.0
 [4.4.1]: https://github.com/pinecone-router/router/compare/4.4.0..4.4.1
-[4.4.1]: https://github.com/pinecone-router/router/compare/4.4.1..5.0.0
+[5.0.0]: https://github.com/pinecone-router/router/compare/4.4.1..5.0.0
