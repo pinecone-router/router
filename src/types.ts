@@ -12,8 +12,14 @@ export declare type Context = {
 	 * hash without leading '#'
 	 */
 	hash: string
-	redirect(path: string)
-	navigate(path: string)
+	redirect(path: string): 'stop'
+	navigate(path: string): void
+	back(): void
+	forward(): void
+	canGoBack(): boolean
+	canGoForward(): boolean
+	navigationStack: String[]
+	navigationIndex: Number
 }
 
 export type Handler = (context: Context) => 'stop' | void
@@ -42,7 +48,7 @@ export declare interface Middleware {
 	 * @param {ComponentController} component the router's alpine component
 	 * @param {string} path the route's path
 	 */
-	onAfterRouteProcessed?: (el: HTMLTemplateElement, path: string) => void;
+	onAfterRouteProcessed?: (el: HTMLTemplateElement, path: string) => void
 	/**
 	 * Will be called before the handlers are executed.
 	 * during navigation (PineconeRouter.navigate()).
@@ -54,7 +60,7 @@ export declare interface Middleware {
 	onBeforeHandlersExecuted?: (
 		route: Route,
 		path: string,
-		firstload: boolean
+		firstload: boolean,
 	) => 'stop' | void
 
 	/**
@@ -68,7 +74,7 @@ export declare interface Middleware {
 	onHandlersExecuted?: (
 		route: Route,
 		path: string,
-		firstload: boolean
+		firstload: boolean,
 	) => 'stop' | void
 
 	[key: string]: any

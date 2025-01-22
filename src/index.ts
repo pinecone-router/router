@@ -27,7 +27,7 @@ declare global {
 
 export default function (Alpine) {
 	const PineconeRouter = Alpine.reactive(<Window['PineconeRouter']>{
-		version: '5.0.0',
+		version: '5.1.0',
 		name: 'pinecone-router',
 
 		settings: <Settings>{
@@ -58,12 +58,36 @@ export default function (Alpine) {
 			params: {},
 			query: window.location.search.substring(1),
 			hash: window.location.hash.substring(1),
+			navigationStack: [],
+			navigationIndex: 0,
 			redirect(path) {
 				navigate(path)
 				return 'stop'
 			},
 			navigate(path) {
 				navigate(path)
+			},
+			canGoBack() {
+				return this.navigationIndex > 0
+			},
+			back() {
+				navigate(
+					this.navigationStack[this.navigationIndex - 1],
+					false,
+					false,
+					this.navigationIndex - 1,
+				)
+			},
+			canGoForward() {
+				return this.navigationIndex < this.navigationStack.length - 1
+			},
+			forward() {
+				navigate(
+					this.navigationStack[this.navigationIndex + 1],
+					false,
+					false,
+					this.navigationIndex + 1,
+				)
 			},
 		},
 
@@ -554,9 +578,13 @@ export default function (Alpine) {
 	 * @param {boolean} fromPopState this will be set to true if called from window.onpopstate event
 	 * @param {boolean} firstLoad this will be set to true if this is the first page loaded, also from page reload
 	 */
-	async function navigate(path, fromPopState = false, firstLoad = false) {
+	async function navigate(
+		path,
+		fromPopState = false,
+		firstLoad = false,
+		navigationIndex = null,
+	) {
 		if (!path) path = '/'
-		PineconeRouter.context.path = path
 
 		// only add basePath if it was set
 		// if not using hash routing
@@ -576,6 +604,35 @@ export default function (Alpine) {
 			}
 		}
 
+		// if called from $router.back() or .front(), do not add the path to the stack
+		// but change the index accordingly
+		if (navigationIndex != null) {
+			PineconeRouter.context.navigationIndex = navigationIndex
+		} else if (path != PineconeRouter.context.path) {
+			// the above check makes sure soft-reloading doesnt add to the stack duplicate entries
+
+			// if navigated after using back(), remove all the elements of the stack from the current index to the end
+			// then add the current path at the end of the tack
+			if (
+				PineconeRouter.context.navigationIndex !==
+				PineconeRouter.context.navigationStack.length - 1
+			) {
+				PineconeRouter.context.navigationStack =
+					PineconeRouter.context.navigationStack.slice(
+						0,
+						PineconeRouter.context.navigationIndex + 1,
+					)
+				PineconeRouter.context.navigationStack.push(path)
+				PineconeRouter.context.navigationIndex =
+					PineconeRouter.context.navigationStack.length - 1
+			} else {
+				// if this is a regular navigation request, add the path to the stack
+				PineconeRouter.context.navigationStack.push(path)
+				PineconeRouter.context.navigationIndex =
+					PineconeRouter.context.navigationStack.length - 1
+			}
+		}
+
 		const route: Route =
 			PineconeRouter.routes.find((route: Route) => {
 				let m = match(path, route.path)
@@ -587,13 +644,11 @@ export default function (Alpine) {
 		// this is so templates wont render till then.
 		route.handlersDone = !route.handlers.length
 
-		if (route.handlers.length || route.templates) {
+		if (route.handlers.length || route.templates.length) {
 			startLoading()
 		}
 
-		let context = buildContext(route.path, path, route.params)
-
-		PineconeRouter.context = context
+		buildContext(route.path, path, route.params)
 
 		// the middleware may return 'stop' to stop execution of this function
 		if (
@@ -618,7 +673,6 @@ export default function (Alpine) {
 			else {
 				if (PineconeRouter.settings.hash) {
 					if (path == '/') {
-						PineconeRouter.context = context
 						return navigate('/', false, false)
 					}
 				}
@@ -627,7 +681,7 @@ export default function (Alpine) {
 
 		if (route && route.handlers.length) {
 			route.cancelHandlers = false
-			let ok = await handle(route.handlers, context)
+			let ok = await handle(route.handlers, PineconeRouter.context)
 			if (!ok) {
 				endLoading()
 				return
@@ -653,21 +707,12 @@ export default function (Alpine) {
 		middleware('onHandlersExecuted', route, path, firstLoad)
 	}
 
-	function buildContext(route: string, path: string, params: {}): Context {
-		return {
-			route: route,
-			path: path,
-			params: params,
-			query: window.location.search.substring(1), // query w/out leading '?'
-			hash: window.location.hash.substring(1), // hash without leading '#'
-			redirect(path) {
-				navigate(path)
-				return 'stop'
-			},
-			navigate(path) {
-				navigate(path)
-			},
-		}
+	function buildContext(route: string, path: string, params: {}) {
+		PineconeRouter.context.route = route
+		PineconeRouter.context.path = path
+		PineconeRouter.context.params = params
+		PineconeRouter.context.query = window.location.search.substring(1) // query w/out leading '?'
+		PineconeRouter.context.hash = window.location.hash.substring(1) // hash without leading '#'
 	}
 
 	function modifierValue(modifiers, key, fallback) {

@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [5.1.0] - 2025-01-22
+
+### Added
+
+-   Added Navigation Stack allowing for `$router.back()` method and more, see [README](/README.md#context-object--router-magic-helper) for more info. (Thanks @Blindmikey #46 for the suggestion)
+
 ## [5.0.0] - 2024-12-25
 
 ### Added
@@ -374,3 +380,4 @@ It's mostly backward compatible but need a few tweaks:
 [4.4.0]: https://github.com/pinecone-router/router/compare/4.3.2..4.4.0
 [4.4.1]: https://github.com/pinecone-router/router/compare/4.4.0..4.4.1
 [5.0.0]: https://github.com/pinecone-router/router/compare/4.4.1..5.0.0
+[5.1.0]: https://github.com/pinecone-router/router/compare/5.0.0..5.2.0

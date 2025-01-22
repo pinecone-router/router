@@ -13,8 +13,14 @@ export declare type Context = {
      * hash without leading '#'
      */
     hash: string;
-    redirect(path: string): any;
-    navigate(path: string): any;
+    redirect(path: string): 'stop';
+    navigate(path: string): void;
+    back(): void;
+    forward(): void;
+    canGoBack(): boolean;
+    canGoForward(): boolean;
+    navigationStack: String[];
+    navigationIndex: Number;
 };
 export type Handler = (context: Context) => 'stop' | void;
 export declare interface Middleware {

@@ -2,8 +2,8 @@
   <img src="https://github.com/pinecone-router/router/blob/main/.github/pinecone-router-social-card-alt-big.png?raw=true" title="Pinecone Router logo with the text: The extendable client-side router for Alpine.js">
 </p>
 
-[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?color=%2337C8AB&label=version&sort=semver)](https://github.com/pinecone-router/router/tree/5.0.0)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router?color=37C8AB)](https://bundlephobia.com/result?p=pinecone-router@5.0.0)
+[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?color=%2337C8AB&label=version&sort=semver)](https://github.com/pinecone-router/router/tree/5.1.0)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router?color=37C8AB)](https://bundlephobia.com/result?p=pinecone-router@5.1.0)
 [![Downloads from JSDelivr](https://data.jsdelivr.com/v1/package/npm/pinecone-router/badge?style=rounded)](https://www.jsdelivr.com/package/npm/pinecone-router)
 [![npm](https://img.shields.io/npm/dm/pinecone-router?color=37C8AB&label=npm&logo=npm&logoColor=37C8AB)](https://npmjs.com/package/pinecone-router)
 [![Changelog](https://img.shields.io/badge/change-log-%2337C8AB)](/CHANGELOG.md)
@@ -231,7 +231,7 @@ To prevent / stop the next handlers from executing and templates from rendering,
 
 ## Context object / $router magic helper
 
-Contains information about the current route. This is available at all times:
+Contains information about the current route and helper methods. This is available at all times:
 
 -   Using the `$router` magic helper in Alpine components
 -   From Javascript using `window.PineconeRouter.context`
@@ -247,6 +247,12 @@ Reference:
 -   _$router_.**redirect(path: string)** function that allow you to redirect to another page.
 -   -   **Note**: usage within [x-handler](#x-handler): `return context.redirect('/path');`
 -   _$router_.**navigate(path: string)** same as clicking a link
+-   _$router_.**back()** go back in the navigation stack
+-   _$router_.**forward()** go forward in the navigation stack
+-   _$router_.**canGoBack()** check if you can go back in the navigation stack
+-   _$router_.**canGoForward()** check if you can go forward in the navigation stack
+-   _$router_.**navigationStack** the navigation array
+-   _$router_.**navigationIndex** the current index in the navigation stack, usually navigationStack.length-1 unless you use `back()`
 
 > **Inside `x-handler`:** `context.params.id`, `context.route`, etc
 
@@ -293,6 +299,19 @@ Create your own middlewares [using this template](https://github.com/pinecone-ro
 ```
 
 ## Advanced
+
+### Navigation Stack
+
+as of V5.1.0, Pinecone Router now has a navigation stack, keeping track of route visits, and allowing you to do client side back() and forward() operations using the $router magic helper.
+to access the stack and index you can use the [context object](#context-object--router-magic-helper)
+
+The way it works is by keeping all paths visited, excluding duplicates; meaning if you're on '/home' and you click a link that goes to '/home', it wont affect the stack.
+using `back()` and `forward()` calls `navigate()` with navigationIndex-1 or navigationIndex+1 respectively and changes navigationIndex.
+
+if you click a link after using `back()`, meaning the `navigationindex` is not `navigationstack.length-1`, it will remove all elements from the stack starting from the navigationIndex
+to the end, then adds the current path at the end.
+
+you can use `canGoBack()` or `canGoForward()` to check if the operation is possible.
 
 ### Bypass link handling
 
