@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [5.2.1] - 2025-01-30
+
+### Fixed
+
+    - Update types.
+
 ## [5.2.0] - 2025-01-30
 
 ### Added
@@ -390,3 +396,4 @@ It's mostly backward compatible but need a few tweaks:
 [5.0.0]: https://github.com/pinecone-router/router/compare/4.4.1..5.0.0
 [5.1.0]: https://github.com/pinecone-router/router/compare/5.0.0..5.1.0
 [5.2.0]: https://github.com/pinecone-router/router/compare/5.1.0..5.2.0
+[5.2.1]: https://github.com/pinecone-router/router/compare/5.2.0..5.2.1

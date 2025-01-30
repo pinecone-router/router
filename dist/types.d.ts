@@ -15,8 +15,8 @@ export declare type Context = {
     hash: string;
     redirect(path: string, includeQuery?: boolean): 'stop';
     navigate(path: string, includeQuery?: boolean): void;
-    back(): void;
-    forward(): void;
+    back(includeQuery?: boolean): void;
+    forward(includeQuery?: boolean): void;
     canGoBack(): boolean;
     canGoForward(): boolean;
     navigationStack: String[];
