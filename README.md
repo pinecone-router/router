@@ -314,14 +314,6 @@ to the end, then adds the current path at the end.
 
 you can use `canGoBack()` or `canGoForward()` to check if the operation is possible.
 
-### Bypass link handling
-
-Adding a `native` / `data-native` attribute to a link will prevent Pinecone Router from handling it:
-
-```html
-<a href="/foo" native>Foo</a>
-```
-
 ### Clearing Search Query on navigation
 
 This can be done in two ways:
@@ -329,6 +321,14 @@ This can be done in two ways:
 1. Per navigation using `$router.navigate(path: string, includeQuery?: boolean)`, by default includeQuery is true. set it to false to clear the query.
    this also works for `$router.redirect(path: string, includeQuery?: boolean)`, `$router.back(includeQuery?: boolean)` and `router.forward(includeQuery?: boolean)`
 2. Globally using the setting `PineconeRouter.settings.includeQuery`, which is also on by default.
+
+### Bypass link handling
+
+Adding a `native` / `data-native` attribute to a link will prevent Pinecone Router from handling it:
+
+```html
+<a href="/foo" native>Foo</a>
+```
 
 ### Disable link handling globally
 
