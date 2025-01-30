@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [5.2.0] - 2025-01-30
+
+### Added
+
+-   Added `includeQuery` option for `navigate()`, `redirect()`, `back()`, and `forward()` and the setting `PineconeRouter.settings.includeQuery` to clear search query when navigating and clicking links.
+    -   See [README section](/README.md#clearing-search-query-on-navigation) for documentation.
+    -   Thanks @yllumi #47 for the suggestion
+
 ## [5.1.0] - 2025-01-22
 
 ### Added
@@ -381,3 +389,4 @@ It's mostly backward compatible but need a few tweaks:
 [4.4.1]: https://github.com/pinecone-router/router/compare/4.4.0..4.4.1
 [5.0.0]: https://github.com/pinecone-router/router/compare/4.4.1..5.0.0
 [5.1.0]: https://github.com/pinecone-router/router/compare/5.0.0..5.1.0
+[5.2.0]: https://github.com/pinecone-router/router/compare/5.1.0..5.2.0

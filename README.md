@@ -2,8 +2,8 @@
   <img src="https://github.com/pinecone-router/router/blob/main/.github/pinecone-router-social-card-alt-big.png?raw=true" title="Pinecone Router logo with the text: The extendable client-side router for Alpine.js">
 </p>
 
-[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?color=%2337C8AB&label=version&sort=semver)](https://github.com/pinecone-router/router/tree/5.1.0)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router?color=37C8AB)](https://bundlephobia.com/result?p=pinecone-router@5.1.0)
+[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?color=%2337C8AB&label=version&sort=semver)](https://github.com/pinecone-router/router/tree/5.2.0)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router?color=37C8AB)](https://bundlephobia.com/result?p=pinecone-router@5.2.0)
 [![Downloads from JSDelivr](https://data.jsdelivr.com/v1/package/npm/pinecone-router/badge?style=rounded)](https://www.jsdelivr.com/package/npm/pinecone-router)
 [![npm](https://img.shields.io/npm/dm/pinecone-router?color=37C8AB&label=npm&logo=npm&logoColor=37C8AB)](https://npmjs.com/package/pinecone-router)
 [![Changelog](https://img.shields.io/badge/change-log-%2337C8AB)](/CHANGELOG.md)
@@ -244,15 +244,15 @@ Reference:
 -   _$router_.**params** _({var: something})_ Object that contains route parameters if any.
 -   _$router_.**hash** hash fragment without the #
 -   _$router_.**query** search query without the ?
--   _$router_.**redirect(path: string)** function that allow you to redirect to another page.
+-   _$router_.**navigate(path: string, includeQuery?: boolean)** same as clicking a link
+-   _$router_.**redirect(path: string, includeQuery?: boolean): 'stop'** function that allow you to redirect to another page.
 -   -   **Note**: usage within [x-handler](#x-handler): `return context.redirect('/path');`
--   _$router_.**navigate(path: string)** same as clicking a link
--   _$router_.**back()** go back in the navigation stack
--   _$router_.**forward()** go forward in the navigation stack
--   _$router_.**canGoBack()** check if you can go back in the navigation stack
--   _$router_.**canGoForward()** check if you can go forward in the navigation stack
--   _$router_.**navigationStack** the navigation array
--   _$router_.**navigationIndex** the current index in the navigation stack, usually navigationStack.length-1 unless you use `back()`
+-   _$router_.**back(includeQuery?: boolean)** go back in the navigation stack
+-   _$router_.**forward(includeQuery?: boolean)** go forward in the navigation stack
+-   _$router_.**canGoBack(): boolean** check if you can go back in the navigation stack
+-   _$router_.**canGoForward(): boolean** check if you can go forward in the navigation stack
+-   _$router_.**navigationStack: String\[\]** the navigation array
+-   _$router_.**navigationIndex: int** the current index in the navigation stack, usually navigationStack.length-1 unless you use `back()`
 
 > **Inside `x-handler`:** `context.params.id`, `context.route`, etc
 
@@ -293,7 +293,8 @@ Create your own middlewares [using this template](https://github.com/pinecone-ro
 		window.PineconeRouter.settings.hash = false // use hash routing
 		window.PineconeRouter.settings.basePath = '/' // set the base for the URL, doesn't work with hash routing
 		window.PineconeRouter.settings.templateTargetId = 'app' // Set an optional ID for where the internal & external templates will render by default.
-		window.PineconeRouter.settings.interceptLinks = true | false // Set to false to disable global handling of links by the router, see Disable link handling globally for more.
+		window.PineconeRouter.settings.interceptLinks = true // Set to false to disable global handling of links by the router, see Disable link handling globally for more.
+		window.PineconeRouter.settings.includeQuery = true // set to false to clear the query when navigating either using links or through $router.navigate()
 	})
 </script>
 ```
@@ -302,7 +303,7 @@ Create your own middlewares [using this template](https://github.com/pinecone-ro
 
 ### Navigation Stack
 
-as of V5.1.0, Pinecone Router now has a navigation stack, keeping track of route visits, and allowing you to do client side back() and forward() operations using the $router magic helper.
+as of V5.2.0, Pinecone Router now has a navigation stack, keeping track of route visits, and allowing you to do client side back() and forward() operations using the $router magic helper.
 to access the stack and index you can use the [context object](#context-object--router-magic-helper)
 
 The way it works is by keeping all paths visited, excluding duplicates; meaning if you're on '/home' and you click a link that goes to '/home', it wont affect the stack.
@@ -320,6 +321,14 @@ Adding a `native` / `data-native` attribute to a link will prevent Pinecone Rout
 ```html
 <a href="/foo" native>Foo</a>
 ```
+
+### Clearing Search Query on navigation
+
+This can be done in two ways:
+
+1. Per navigation using `$router.navigate(path: string, includeQuery?: boolean)`, by default includeQuery is true. set it to false to clear the query.
+   this also works for `$router.redirect(path: string, includeQuery?: boolean)`, `$router.back(includeQuery?: boolean)` and `router.forward(includeQuery?: boolean)`
+2. Globally using the setting `PineconeRouter.settings.includeQuery`, which is also on by default.
 
 ### Disable link handling globally
 

@@ -13,8 +13,8 @@ export declare type Context = {
      * hash without leading '#'
      */
     hash: string;
-    redirect(path: string): 'stop';
-    navigate(path: string): void;
+    redirect(path: string, includeQuery?: boolean): 'stop';
+    navigate(path: string, includeQuery?: boolean): void;
     back(): void;
     forward(): void;
     canGoBack(): boolean;
@@ -93,5 +93,10 @@ export declare interface Settings {
      * @summary Set to false if you don't want to intercept links by default.
      */
     interceptLinks: boolean;
+    /**
+     * @default true
+     * @summaryt Set to false to make it so search query is cleared when navigating
+     */
+    includeQuery: boolean;
 }
 //# sourceMappingURL=types.d.ts.map

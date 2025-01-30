@@ -27,7 +27,7 @@ declare global {
 
 export default function (Alpine) {
 	const PineconeRouter = Alpine.reactive(<Window['PineconeRouter']>{
-		version: '5.1.0',
+		version: '5.2.0',
 		name: 'pinecone-router',
 
 		settings: <Settings>{
@@ -35,6 +35,7 @@ export default function (Alpine) {
 			basePath: '/',
 			templateTargetId: null,
 			interceptLinks: true,
+			includeQuery: true,
 		},
 
 		/**
@@ -60,33 +61,35 @@ export default function (Alpine) {
 			hash: window.location.hash.substring(1),
 			navigationStack: [],
 			navigationIndex: 0,
-			redirect(path) {
-				navigate(path)
+			redirect(path, includeQuery = true) {
+				this.navigate(path, includeQuery)
 				return 'stop'
 			},
-			navigate(path) {
-				navigate(path)
+			navigate(path, includeQuery = true) {
+				navigate(path, false, false, null, includeQuery)
 			},
 			canGoBack() {
 				return this.navigationIndex > 0
 			},
-			back() {
+			back(includeQuery = true) {
 				navigate(
 					this.navigationStack[this.navigationIndex - 1],
 					false,
 					false,
 					this.navigationIndex - 1,
+					includeQuery,
 				)
 			},
 			canGoForward() {
 				return this.navigationIndex < this.navigationStack.length - 1
 			},
-			forward() {
+			forward(includeQuery = true) {
 				navigate(
 					this.navigationStack[this.navigationIndex + 1],
 					false,
 					false,
 					this.navigationIndex + 1,
+					includeQuery,
 				)
 			},
 		},
@@ -583,6 +586,7 @@ export default function (Alpine) {
 		fromPopState = false,
 		firstLoad = false,
 		navigationIndex = null,
+		includeQuery = true,
 	) {
 		if (!path) path = '/'
 
@@ -664,9 +668,14 @@ export default function (Alpine) {
 			let fullPath = ''
 			if (PineconeRouter.settings.hash) {
 				fullPath = '#'
-				fullPath += window.location.search + path
+				if (includeQuery && PineconeRouter.settings.includeQuery)
+					fullPath += window.location.search
+				fullPath += path
 			} else {
-				fullPath = path + window.location.search + window.location.hash
+				fullPath = path
+				if (includeQuery && PineconeRouter.settings.includeQuery)
+					fullPath += window.location.search
+				fullPath += window.location.hash
 			}
 			// don't create duplicate history entry on first page load
 			if (!firstLoad) history.pushState({ path: fullPath }, '', fullPath)
