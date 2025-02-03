@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [5.2.2] - 2025-02-03
+
+### Added
+
+    - Added `preload` option to `PineconeRouter.add()`
+    	- Suggested by @boustanihani #48
+
 ## [5.2.1] - 2025-01-30
 
 ### Fixed
@@ -397,3 +404,4 @@ It's mostly backward compatible but need a few tweaks:
 [5.1.0]: https://github.com/pinecone-router/router/compare/5.0.0..5.1.0
 [5.2.0]: https://github.com/pinecone-router/router/compare/5.1.0..5.2.0
 [5.2.1]: https://github.com/pinecone-router/router/compare/5.2.0..5.2.1
+[5.2.2]: https://github.com/pinecone-router/router/compare/5.2.1..5.2.2

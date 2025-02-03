@@ -17,6 +17,7 @@ class Route {
 	templateTargetId: string = ''
 	programmaticTemplates: boolean = false
 	handlersDone: boolean = false
+	preload: boolean = false
 	cancelHandlers: boolean
 }
 

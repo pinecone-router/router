@@ -27,7 +27,7 @@ declare global {
 
 export default function (Alpine) {
 	const PineconeRouter = Alpine.reactive(<Window['PineconeRouter']>{
-		version: '5.2.1',
+		version: '5.2.2',
 		name: 'pinecone-router',
 
 		settings: <Settings>{
@@ -97,12 +97,14 @@ export default function (Alpine) {
 		/**
 		 * Add a new route
 		 */
-		add(path: string, options?: {}) {
+		add(path: string, options?: { [key: string]: any }) {
 			// check if the route was registered on the same router.
 			if (this.routes.find((r: Route) => r.path == path) != null) {
 				throw new Error('Pinecone Router: route already exist')
 			}
-
+			if (options?.templates && options?.preload) {
+				loadAll(null, options.templates, true)
+			}
 			return this.routes.push(new Route(path, options)) - 1
 		},
 		/**
@@ -206,7 +208,6 @@ export default function (Alpine) {
 		el: HTMLTemplateElement | HTMLElement,
 		urls: string[],
 		programmaticTemplates: boolean = false,
-		preload: boolean = false,
 	): Promise<string> => {
 		const loadPromises = urls.map((url) => {
 			if (loadingTemplates[url]) {
@@ -241,9 +242,11 @@ export default function (Alpine) {
 		})
 
 		return Promise.all(loadPromises).then((htmlArray) => {
+			// if el was not passed, means it was just preloading programmatic templates
 			const combinedHtml = htmlArray
 				.filter((html) => html !== null)
 				.join('')
+			if (!el) return combinedHtml
 			// don't add the wrapper on programmatically added templates
 			// since it doesn't use the <template> method thus its not needed
 			if (urls.length > 1 && !programmaticTemplates)
@@ -442,7 +445,7 @@ export default function (Alpine) {
 				)
 
 			if (modifiers.includes('preload')) {
-				loadAll(el, urls, false, true)
+				loadAll(el, urls, false)
 			}
 
 			// add template to the route

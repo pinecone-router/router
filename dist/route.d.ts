@@ -12,6 +12,7 @@ declare class Route {
     templateTargetId: string;
     programmaticTemplates: boolean;
     handlersDone: boolean;
+    preload: boolean;
     cancelHandlers: boolean;
 }
 export default Route;
