@@ -436,6 +436,7 @@ Please refer to [CONTRIBUTING.md](/CONTRIBUTING.md)
 ## Credits
 
 This library uses modified chunks of code from [this tutorial](https://medium.com/swlh/lets-code-a-client-side-router-for-your-no-framework-spa-19da93105e10) & from [page.js](https://github.com/visionmedia/page.js).
+New templating logic taken from [@shaun/alpinejs-router](https://github.com/shaunlee/alpinejs-router)
 
 ## Acknowledgment
 
