@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [5.3.0] - 2025-02-04
+
+### Changed
+
+-   Changed declarative templates so they replace the target's content rather than appending to it. (fix #49)
+
 ## [5.2.2] - 2025-02-03
 
 ### Added
@@ -405,3 +411,4 @@ It's mostly backward compatible but need a few tweaks:
 [5.2.0]: https://github.com/pinecone-router/router/compare/5.1.0..5.2.0
 [5.2.1]: https://github.com/pinecone-router/router/compare/5.2.0..5.2.1
 [5.2.2]: https://github.com/pinecone-router/router/compare/5.2.1..5.2.2
+[5.3.0]: https://github.com/pinecone-router/router/compare/5.2.2..5.3.0
