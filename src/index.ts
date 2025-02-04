@@ -27,7 +27,7 @@ declare global {
 
 export default function (Alpine) {
 	const PineconeRouter = Alpine.reactive(<Window['PineconeRouter']>{
-		version: '5.2.2',
+		version: '5.3.0',
 		name: 'pinecone-router',
 
 		settings: <Settings>{
@@ -149,7 +149,7 @@ export default function (Alpine) {
 
 		Alpine.mutateDom(() => {
 			if (targetEl != null) {
-				targetEl.appendChild(clone)
+				targetEl.replaceChildren(clone)
 			} else el.after(clone)
 			Alpine.initTree(clone)
 		})
@@ -248,7 +248,7 @@ export default function (Alpine) {
 				.join('')
 			if (!el) return combinedHtml
 			// don't add the wrapper on programmatically added templates
-			// since it doesn't use the <template> method thus its not needed
+			// since it doesn't use the <template> method it is not needed
 			if (urls.length > 1 && !programmaticTemplates)
 				el.innerHTML =
 					'<templates-wrapper>' +
