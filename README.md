@@ -13,21 +13,19 @@
 
 The extendable client-side router for Alpine.js v3.
 
-> #### v4 update brings new features with minor breaking changes, see [ChangeLog](/CHANGELOG.md#400---2023-11-26) for what to update!
-
 ## About
 
-An easy to use but feature-packed client-side router for use with Alpine.js.
+An easy to use but feature-packed router for Alpine.js.
 
 ## Features:
 
 -   :smile: Easy and familiar syntax well integrated with Alpine.js.
 -   :gear: [Handler functions](#x-handler) allow you to run code before content is displayed
--   :sparkles: [Magic **$router** helper](#context-object--router-magic-helper) to access current route, params, redirect, ect. from _all_ alpine components!
+-   :sparkles: [Magic **$router** helper](#context-object--router-magic-helper) to access current route and it's data. from inside Alpine components!
 -   :beginner: [Inline](#inline-templates) and [external](#x-template) templates.
--   :link: Automatically dispatch relative links and handle them.
+-   :link: Automatically dispatch relative links and handle them with [loading events](#events--loading-bar).
 -   :hash: [Hash routing](#settings).
--   :heavy_plus_sign: Extendable using tiny [Middlewares!](#middlewares).
+-   :heavy_plus_sign: Extend it using tiny [Middlewares!](#middlewares).
 
 **Demo**: [Pinecone example](https://pinecone-example.vercel.app/), [(source code)](https://github.com/pinecone-router/pinecone-example).
 
@@ -40,13 +38,13 @@ An easy to use but feature-packed client-side router for use with Alpine.js.
 Include the following `<script>` tag in the `<head>` of your document, **before Alpine.js**:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/pinecone-router@4.x.x/dist/router.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pinecone-router@5.3.0/dist/router.min.js"></script>
 ```
 
 **ES6 Module on the browser:**
 
 ```javascript
-import PineconeRouter from 'https://cdn.jsdelivr.net/npm/pinecone-router@4.x.x/dist/router.esm.js'
+import PineconeRouter from 'https://cdn.jsdelivr.net/npm/pinecone-router@5.3.0/dist/router.esm.js'
 import Alpine from 'https://esm.sh/alpinejs'
 Alpine.plugin(PineconeRouter)
 Alpine.start()
@@ -283,7 +281,7 @@ handler(context) {
 
 Pinecone Router is extendable through middlewares!
 
-Create your own middlewares [using this template](https://github.com/pinecone-router/middleware-template)!
+Create your own middlewares [using this template](https://github.com/pinecone-router/middleware-template)
 
 ## Settings:
 
@@ -303,16 +301,16 @@ Create your own middlewares [using this template](https://github.com/pinecone-ro
 
 ### Navigation Stack
 
-as of V5.3.0, Pinecone Router now has a navigation stack, keeping track of route visits, and allowing you to do client side back() and forward() operations using the $router magic helper.
-to access the stack and index you can use the [context object](#context-object--router-magic-helper)
+As of v5.3.0, Pinecone Router now has a navigation stack keeping track of route visits, and allowing you to do client side `back()` and `forward()` operations using the `$router` magic helper.
+To access the stack and index you can use the [context object](#context-object--router-magic-helper).
 
 The way it works is by keeping all paths visited, excluding duplicates; meaning if you're on '/home' and you click a link that goes to '/home', it wont affect the stack.
-using `back()` and `forward()` calls `navigate()` with navigationIndex-1 or navigationIndex+1 respectively and changes navigationIndex.
 
-if you click a link after using `back()`, meaning the `navigationindex` is not `navigationstack.length-1`, it will remove all elements from the stack starting from the navigationIndex
-to the end, then adds the current path at the end.
+Using `back()` and `forward()` calls `navigate()` with navigationIndex-1 or navigationIndex+1 respectively and changes navigationIndex.
 
-you can use `canGoBack()` or `canGoForward()` to check if the operation is possible.
+If you click a link after using `back()`, meaning the `navigationindex` is not `navigationstack.length-1`, it will remove all elements from the stack starting from the navigationIndex to the end, then appends current path.
+
+Use `canGoBack()` or `canGoForward()` to check if the operation is possible.
 
 ### Clearing Search Query on navigation
 
