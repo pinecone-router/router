@@ -318,7 +318,7 @@ This can be done in two ways:
 
 1. Per navigation using `$router.navigate(path: string, includeQuery?: boolean)`, by default includeQuery is true. set it to false to clear the query.
    this also works for `$router.redirect(path: string, includeQuery?: boolean)`, `$router.back(includeQuery?: boolean)` and `router.forward(includeQuery?: boolean)`
-2. Globally using the setting `PineconeRouter.settings.includeQuery`, which is also on by default.
+2. Globally using the setting `window.PineconeRouter.settings.includeQuery`, which is also on by default.
 
 ### Bypass link handling
 
@@ -330,7 +330,7 @@ Adding a `native` / `data-native` attribute to a link will prevent Pinecone Rout
 
 ### Disable link handling globally
 
-You can set `PineconeRouter.settings.interceptLinks` to false to disable handling links by the router, unless an `x-link` attribute is set on the link, or using `$router.navigate('/path')`.
+You can set `window.PineconeRouter.settings.interceptLinks` to false to disable handling links by the router, unless an `x-link` attribute is set on the link, or using `$router.navigate('/path')`.
 
 ```html
 <script>
