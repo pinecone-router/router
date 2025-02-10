@@ -27,7 +27,7 @@ declare global {
 
 export default function (Alpine) {
 	const PineconeRouter = Alpine.reactive(<Window['PineconeRouter']>{
-		version: '5.3.0',
+		version: '5.4.0',
 		name: 'pinecone-router',
 
 		settings: <Settings>{
@@ -282,6 +282,130 @@ export default function (Alpine) {
 	}
 
 	Alpine.directive(
+		'template',
+		(
+			el: HTMLTemplateElement,
+			{ modifiers, expression },
+			{ Alpine, effect, evaluate, cleanup },
+		) => {
+			if (!el._x_PineconeRouter_route)
+				throw new Error(
+					'Pinecone Router: x-template must be used on the same element as x-route.',
+				)
+
+			if (el.content.firstElementChild != null)
+				throw new Error(
+					'Pinecone Router: x-template cannot be used alongside an inline template (template element should not have a child).',
+				)
+
+			if (
+				!(expression.startsWith('[') && expression.endsWith(']')) &&
+				!(expression.startsWith('Array(') && expression.endsWith(')'))
+			) {
+				expression = `['${expression}']`
+			}
+
+			let evaluatedExpression = evaluate(expression)
+
+			let urls: string[]
+
+			if (typeof evaluatedExpression == 'object')
+				urls = evaluatedExpression
+			else {
+				throw new Error(
+					`Pinecone Router: Invalid template type: ${typeof evaluatedExpression}.`,
+				)
+			}
+
+			let target =
+				modifierValue(modifiers, 'target', null) ??
+				window.PineconeRouter.settings.templateTargetId
+			let targetEl = document.getElementById(target)
+
+			if (target && !targetEl)
+				throw new Error(
+					"Pinecone Router: Can't find an element with the suplied target ID: " +
+						target +
+						'',
+				)
+
+			if (modifiers.includes('preload')) {
+				loadAll(el, urls, false)
+			}
+
+			// add template to the route
+			let path = el._x_PineconeRouter_route
+			let route =
+				path == 'notfound'
+					? PineconeRouter.notfound
+					: PineconeRouter.routes[findRouteIndex(path)]
+			route.templates = urls
+
+			Alpine.nextTick(() => {
+				effect(() => {
+					let found =
+						route.handlersDone &&
+						PineconeRouter.context.route == route.path
+					found ? showAll(el, expression, urls, targetEl) : hide(el)
+				})
+			})
+
+			cleanup(() => {
+				el._x_PineconeRouter_undoTemplate &&
+					el._x_PineconeRouter_undoTemplate()
+			})
+		},
+	)
+
+	Alpine.directive('handler', (el, { expression }, { evaluate, cleanup }) => {
+		if (!el._x_PineconeRouter_route) {
+			throw new Error(
+				`Pinecone Router: x-handler must be set on the same element as x-route.`,
+			)
+		}
+
+		let handlers
+
+		// check if the handlers expression is an array
+		// if not make it one
+		if (
+			!(expression.startsWith('[') && expression.endsWith(']')) &&
+			!(expression.startsWith('Array(') && expression.endsWith(')'))
+		) {
+			expression = `[${expression}]`
+		}
+
+		let evaluatedExpression = evaluate(expression)
+
+		if (typeof evaluatedExpression == 'object')
+			handlers = evaluatedExpression
+		else {
+			throw new Error(
+				`Pinecone Router: Invalid handler type: ${typeof evaluatedExpression}.`,
+			)
+		}
+
+		// add `this` context for handlers inside an Alpine.component
+		for (let index = 0; index < handlers.length; index++) {
+			handlers[index] = handlers[index].bind(Alpine.$data(el))
+		}
+
+		// add handlers to the route
+		let path = el._x_PineconeRouter_route
+		let route =
+			path == 'notfound'
+				? PineconeRouter.notfound
+				: PineconeRouter.routes[findRouteIndex(path)]
+		route.handlers = handlers
+
+		cleanup(() => {
+			route.handlers = []
+			route.handlersDone = true
+			route.cancelHandlers = false
+		})
+	}).before('template')
+
+	Alpine.directive(
 		'route',
 		(
 			el: HTMLTemplateElement,
@@ -346,131 +470,7 @@ export default function (Alpine) {
 
 			middleware('onAfterRouteProcessed', el, path)
 		},
-	)
-
-	Alpine.directive('handler', (el, { expression }, { evaluate, cleanup }) => {
-		if (!el._x_PineconeRouter_route) {
-			throw new Error(
-				`Pinecone Router: x-handler must be set on the same element as x-route.`,
-			)
-		}
-
-		let handlers
-
-		// check if the handlers expression is an array
-		// if not make it one
-		if (
-			!(expression.startsWith('[') && expression.endsWith(']')) &&
-			!(expression.startsWith('Array(') && expression.endsWith(')'))
-		) {
-			expression = `[${expression}]`
-		}
-
-		let evaluatedExpression = evaluate(expression)
-
-		if (typeof evaluatedExpression == 'object')
-			handlers = evaluatedExpression
-		else {
-			throw new Error(
-				`Pinecone Router: Invalid handler type: ${typeof evaluatedExpression}.`,
-			)
-		}
-
-		// add `this` context for handlers inside an Alpine.component
-		for (let index = 0; index < handlers.length; index++) {
-			handlers[index] = handlers[index].bind(Alpine.$data(el))
-		}
-
-		// add handlers to the route
-		let path = el._x_PineconeRouter_route
-		let route =
-			path == 'notfound'
-				? PineconeRouter.notfound
-				: PineconeRouter.routes[findRouteIndex(path)]
-		route.handlers = handlers
-
-		cleanup(() => {
-			route.handlers = []
-			route.handlersDone = true
-			route.cancelHandlers = false
-		})
-	})
-
-	Alpine.directive(
-		'template',
-		(
-			el: HTMLTemplateElement,
-			{ modifiers, expression },
-			{ Alpine, effect, evaluate, cleanup },
-		) => {
-			if (!el._x_PineconeRouter_route)
-				throw new Error(
-					'Pinecone Router: x-template must be used on the same element as x-route.',
-				)
-
-			if (el.content.firstElementChild != null)
-				throw new Error(
-					'Pinecone Router: x-template cannot be used alongside an inline template (template element should not have a child).',
-				)
-
-			if (
-				!(expression.startsWith('[') && expression.endsWith(']')) &&
-				!(expression.startsWith('Array(') && expression.endsWith(')'))
-			) {
-				expression = `['${expression}']`
-			}
-
-			let evaluatedExpression = evaluate(expression)
-
-			let urls: string[]
-
-			if (typeof evaluatedExpression == 'object')
-				urls = evaluatedExpression
-			else {
-				throw new Error(
-					`Pinecone Router: Invalid handler type: ${typeof evaluatedExpression}.`,
-				)
-			}
-
-			let target =
-				modifierValue(modifiers, 'target', null) ??
-				window.PineconeRouter.settings.templateTargetId
-			let targetEl = document.getElementById(target)
-
-			if (target && !targetEl)
-				throw new Error(
-					"Pinecone Router: Can't find an element with the suplied target ID: " +
-						target +
-						'',
-				)
-
-			if (modifiers.includes('preload')) {
-				loadAll(el, urls, false)
-			}
-
-			// add template to the route
-			let path = el._x_PineconeRouter_route
-			let route =
-				path == 'notfound'
-					? PineconeRouter.notfound
-					: PineconeRouter.routes[findRouteIndex(path)]
-			route.templates = urls
-
-			Alpine.nextTick(() => {
-				effect(() => {
-					let found =
-						route.handlersDone &&
-						PineconeRouter.context.route == route.path
-					found ? showAll(el, expression, urls, targetEl) : hide(el)
-				})
-			})
-
-			cleanup(() => {
-				el._x_PineconeRouter_undoTemplate &&
-					el._x_PineconeRouter_undoTemplate()
-			})
-		},
-	)
+	).before('handler')
 
 	Alpine.$router = PineconeRouter.context
 	Alpine.magic('router', () => PineconeRouter.context)
