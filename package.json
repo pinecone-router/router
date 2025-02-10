@@ -27,7 +27,7 @@
 		"build": "node scripts/build.js && tsc --emitDeclarationOnly --declaration --project tsconfig.json"
 	},
 	"devDependencies": {
-		"esbuild": "^0.20.2",
+		"esbuild": "^0.25.0",
 		"typescript": "^5.4.3"
 	},
 	"types": "dist/index.d.ts"
