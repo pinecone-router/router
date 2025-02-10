@@ -301,7 +301,7 @@ Create your own middlewares [using this template](https://github.com/pinecone-ro
 
 ### Navigation Stack
 
-As of v5.3.0, Pinecone Router now has a navigation stack keeping track of route visits, and allowing you to do client side `back()` and `forward()` operations using the `$router` magic helper.
+Pinecone Router now has a navigation stack keeping track of route visits, and allowing you to do client side `back()` and `forward()` operations using the `$router` magic helper.
 To access the stack and index you can use the [context object](#context-object--router-magic-helper).
 
 The way it works is by keeping all paths visited, excluding duplicates; meaning if you're on '/home' and you click a link that goes to '/home', it wont affect the stack.
