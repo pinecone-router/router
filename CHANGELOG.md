@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [5.5.0] - 2025-02-11
+
+### Added
+
+-   Added `x-handler.global` modifier for handlers that will be run on every route.
+
 ## [5.4.0] - 2025-02-10
 
 ### Fixed
@@ -420,3 +426,4 @@ It's mostly backward compatible but need a few tweaks:
 [5.2.2]: https://github.com/pinecone-router/router/compare/5.2.1..5.2.2
 [5.3.0]: https://github.com/pinecone-router/router/compare/5.2.2..5.3.0
 [5.4.0]: https://github.com/pinecone-router/router/compare/5.3.0..5.4.0
+[5.5.0]: https://github.com/pinecone-router/router/compare/5.4.0..5.5.0

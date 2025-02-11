@@ -14,5 +14,4 @@ export declare function match(url: string, routePath: string): false | object;
  * @returns {boolean} false if the middleware function return false, i.e. it want to stop execution of the function and return.
  */
 export declare function middleware(func: string, ...args: any): string | undefined;
-export declare function fetchError(error: string): void;
 //# sourceMappingURL=utils.d.ts.map

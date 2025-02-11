@@ -1,6 +1,6 @@
 import Route from './route'
 import type { Settings, Context, Middleware, Handler } from './types'
-import { fetchError, match, middleware } from './utils'
+import { match, middleware } from './utils'
 
 declare global {
 	interface Window {
@@ -27,7 +27,7 @@ declare global {
 
 export default function (Alpine) {
 	const PineconeRouter = Alpine.reactive(<Window['PineconeRouter']>{
-		version: '5.4.0',
+		version: '5.5.0',
 		name: 'pinecone-router',
 
 		settings: <Settings>{
@@ -48,6 +48,7 @@ export default function (Alpine) {
 		 * @summary array of routes instantiated from the Route class.
 		 */
 		routes: <Route[]>[],
+		globalHandlers: <Handler[]>[],
 
 		/**
 		 * @type {Context}
@@ -267,6 +268,12 @@ export default function (Alpine) {
 		document.dispatchEvent(PineconeRouter.loadEnd)
 	}
 
+	function fetchError(error: string) {
+		document.dispatchEvent(
+			new CustomEvent('fetch-error', { detail: error }),
+		)
+	}
+
 	const addBasePath = (path) => {
 		if (
 			!PineconeRouter.settings.hash &&
@@ -357,53 +364,66 @@ export default function (Alpine) {
 		},
 	)
 
-	Alpine.directive('handler', (el, { expression }, { evaluate, cleanup }) => {
-		if (!el._x_PineconeRouter_route) {
-			throw new Error(
-				`Pinecone Router: x-handler must be set on the same element as x-route.`,
-			)
-		}
+	Alpine.directive(
+		'handler',
+		(el, { expression, modifiers }, { evaluate, cleanup }) => {
+			if (!modifiers.includes('global') && !el._x_PineconeRouter_route) {
+				throw new Error(
+					`Pinecone Router: x-handler must be set on the same element as x-route, or on the router element with the modifier .global.`,
+				)
+			}
 
-		let handlers
+			let handlers
 
-		// check if the handlers expression is an array
-		// if not make it one
-		if (
-			!(expression.startsWith('[') && expression.endsWith(']')) &&
-			!(expression.startsWith('Array(') && expression.endsWith(')'))
-		) {
-			expression = `[${expression}]`
-		}
+			// check if the handlers expression is an array
+			// if not make it one
+			if (
+				!(expression.startsWith('[') && expression.endsWith(']')) &&
+				!(expression.startsWith('Array(') && expression.endsWith(')'))
+			) {
+				expression = `[${expression}]`
+			}
 
-		let evaluatedExpression = evaluate(expression)
+			let evaluatedExpression = evaluate(expression)
 
-		if (typeof evaluatedExpression == 'object')
-			handlers = evaluatedExpression
-		else {
-			throw new Error(
-				`Pinecone Router: Invalid handler type: ${typeof evaluatedExpression}.`,
-			)
-		}
+			if (typeof evaluatedExpression == 'object')
+				handlers = evaluatedExpression
+			else {
+				throw new Error(
+					`Pinecone Router: Invalid handler type: ${typeof evaluatedExpression}.`,
+				)
+			}
 
-		// add `this` context for handlers inside an Alpine.component
-		for (let index = 0; index < handlers.length; index++) {
-			handlers[index] = handlers[index].bind(Alpine.$data(el))
-		}
+			// add `this` context for handlers inside an Alpine.component
+			for (let index = 0; index < handlers.length; index++) {
+				handlers[index] = handlers[index].bind(Alpine.$data(el))
+			}
 
-		// add handlers to the route
-		let path = el._x_PineconeRouter_route
-		let route =
-			path == 'notfound'
-				? PineconeRouter.notfound
-				: PineconeRouter.routes[findRouteIndex(path)]
-		route.handlers = handlers
+			let route
 
-		cleanup(() => {
-			route.handlers = []
-			route.handlersDone = true
-			route.cancelHandlers = false
-		})
-	}).before('template')
+			if (modifiers.includes('global')) {
+				PineconeRouter.globalHandlers = handlers
+			} else {
+				// add handlers to the route
+				let path = el._x_PineconeRouter_route
+				route =
+					path == 'notfound'
+						? PineconeRouter.notfound
+						: PineconeRouter.routes[findRouteIndex(path)]
+				route.handlers = handlers
+			}
+
+			cleanup(() => {
+				if (modifiers.includes('global')) {
+					PineconeRouter.globalHandlers = []
+				} else {
+					route.handlers = []
+					route.handlersDone = true
+					route.cancelHandlers = false
+				}
+			})
+		},
+	).before('template')
 
 	Alpine.directive(
 		'route',
@@ -647,11 +667,18 @@ export default function (Alpine) {
 				return m != false
 			}) ?? PineconeRouter.notfound
 
-		// if the route has handlres, it will mark them unhandled
-		// this is so templates wont render till then.
-		route.handlersDone = !route.handlers.length
+		// add global handlers before the route handlers, if any
 
-		if (route.handlers.length || route.templates.length) {
+		// if the route has handlers, it will mark them unhandled
+		// this is so templates wont render till then.
+		route.handlersDone =
+			!route.handlers.length && !PineconeRouter.globalHandlers.length
+
+		if (
+			route.handlers.length ||
+			PineconeRouter.globalHandlers.length ||
+			route.templates.length
+		) {
 			startLoading()
 		}
 
@@ -691,9 +718,15 @@ export default function (Alpine) {
 			}
 		}
 
-		if (route && route.handlers.length) {
+		if (
+			route &&
+			(route.handlers.length || PineconeRouter.globalHandlers.length)
+		) {
 			route.cancelHandlers = false
-			let ok = await handle(route.handlers, PineconeRouter.context)
+			let ok = await handle(
+				PineconeRouter.globalHandlers.concat(route.handlers),
+				PineconeRouter.context,
+			)
 			if (!ok) {
 				endLoading()
 				return
@@ -745,7 +778,7 @@ export default function (Alpine) {
 	/**
 	 * execute the handlers of routes that are given passing them the context.
 	 */
-	async function handle(handlers, context) {
+	async function handle(handlers: Handler[], context: Context) {
 		for (let i = 0; i < handlers.length; i++) {
 			if (typeof handlers[i] == 'function') {
 				// stop if the handlers were canceled for example the user clicked a link

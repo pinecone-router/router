@@ -26,7 +26,7 @@ export function match(url: string, routePath: string): false | object {
 		for (let i = 0; i < p.length; i++) {
 			let r = p[i].split('=')
 			matches[decodeURIComponent(r[0])] = decodeURIComponent(
-				r.slice(1).join('=')
+				r.slice(1).join('='),
 			)
 		}
 	}
@@ -77,10 +77,4 @@ export function middleware(func: string, ...args: any): string | undefined {
 		// if the middleware request stopping the navigate function.
 		if (ret == 'stop') return 'stop'
 	}
-}
-
-export function fetchError(error: string) {
-	document.dispatchEvent(
-		new CustomEvent('fetch-error', { detail: error })
-	)
 }
