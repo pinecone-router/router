@@ -230,7 +230,9 @@ See [Redirecting](#redirecting)
 ### Modifiers
 
 -   **`.global`**: define global handlers that will be run for every route, it is bound to the data of the element it is defined on
-    so it's best to add to the router component element (`<div x-data="router" x-handler.global="[]">`)
+    so it's best to add to the router component element (`<div x-data="router" x-handler.global="[]">`), or any element with a access
+    to the handlers you're using (doesn't have to be on the same element as x-data)
+    -   These global handlers always run before route specific handlers.
 
 ### Multiple Handlers for a single route
 
