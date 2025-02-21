@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [6.0.0] - 2025-02-21
+
+### Added
+
+-   Added `PineconeRouter.settings.alwaysSendLoadingEvents` to always dispatch loading events even when no external templates or handlers are present
+
+### Changed
+
+-   No longer passes query when navigating by default
+
+### Removed
+
+-   Removed the option to pass search query when navigating, it served no real purpose.
+    -   Removed `includeQuery` parameters from all methods that had it
+    -   Removed `PineconeRouter.settings.includeQuery` setting
+
+### Fixed
+
+-   Fixed loading event not sent for preloaded templates (Fixes #54).
+
 ## [5.5.0] - 2025-02-11
 
 ### Added
@@ -427,3 +447,4 @@ It's mostly backward compatible but need a few tweaks:
 [5.3.0]: https://github.com/pinecone-router/router/compare/5.2.2..5.3.0
 [5.4.0]: https://github.com/pinecone-router/router/compare/5.3.0..5.4.0
 [5.5.0]: https://github.com/pinecone-router/router/compare/5.4.0..5.5.0
+[6.0.0]: https://github.com/pinecone-router/router/compare/5.5.0..6.0.0

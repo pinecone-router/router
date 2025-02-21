@@ -13,10 +13,10 @@ export declare type Context = {
      * hash without leading '#'
      */
     hash: string;
-    redirect(path: string, includeQuery?: boolean): 'stop';
-    navigate(path: string, includeQuery?: boolean): void;
-    back(includeQuery?: boolean): void;
-    forward(includeQuery?: boolean): void;
+    redirect(path: string): 'stop';
+    navigate(path: string): void;
+    back(): void;
+    forward(): void;
     canGoBack(): boolean;
     canGoForward(): boolean;
     navigationStack: String[];
@@ -94,9 +94,9 @@ export declare interface Settings {
      */
     interceptLinks: boolean;
     /**
-     * @default true
-     * @summaryt Set to false to make it so search query is cleared when navigating
+     * @default false
+     * @summary Set to true to always send loading events, even if the template is inline and there are no handlers.
      */
-    includeQuery: boolean;
+    alwaysSendLoadingEvents: boolean;
 }
 //# sourceMappingURL=types.d.ts.map

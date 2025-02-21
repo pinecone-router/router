@@ -27,7 +27,7 @@ declare global {
 
 export default function (Alpine) {
 	const PineconeRouter = Alpine.reactive(<Window['PineconeRouter']>{
-		version: '5.5.0',
+		version: '6.0.0',
 		name: 'pinecone-router',
 
 		settings: <Settings>{
@@ -35,7 +35,7 @@ export default function (Alpine) {
 			basePath: '/',
 			templateTargetId: null,
 			interceptLinks: true,
-			includeQuery: true,
+			alwaysSendLoadingEvents: false,
 		},
 
 		/**
@@ -62,39 +62,38 @@ export default function (Alpine) {
 			hash: window.location.hash.substring(1),
 			navigationStack: [],
 			navigationIndex: 0,
-			redirect(path, includeQuery = true) {
-				this.navigate(path, includeQuery)
+			redirect(path) {
+				this.navigate(path)
 				return 'stop'
 			},
-			navigate(path, includeQuery = true) {
-				navigate(path, false, false, null, includeQuery)
+			navigate(path) {
+				navigate(path, false, false, null)
 			},
 			canGoBack() {
 				return this.navigationIndex > 0
 			},
-			back(includeQuery = true) {
+			back() {
 				navigate(
 					this.navigationStack[this.navigationIndex - 1],
 					false,
 					false,
 					this.navigationIndex - 1,
-					includeQuery,
 				)
 			},
 			canGoForward() {
 				return this.navigationIndex < this.navigationStack.length - 1
 			},
-			forward(includeQuery = true) {
+			forward() {
 				navigate(
 					this.navigationStack[this.navigationIndex + 1],
 					false,
 					false,
 					this.navigationIndex + 1,
-					includeQuery,
 				)
 			},
 		},
-
+		endEventDispatched: false,
+		startEventDispatched: false,
 		/**
 		 * Add a new route
 		 */
@@ -159,7 +158,6 @@ export default function (Alpine) {
 
 		el._x_PineconeRouter_undoTemplate = () => {
 			clone.remove()
-
 			delete el._x_PineconeRouter_CurrentTemplate
 		}
 
@@ -178,12 +176,14 @@ export default function (Alpine) {
 		expression: string,
 		urls?: Array<string>,
 		targetEl?: HTMLElement,
+		inlineTemplate: boolean = false,
 	) {
-		if (el._x_PineconeRouter_CurrentTemplate)
+		if (el._x_PineconeRouter_CurrentTemplate) {
 			return el._x_PineconeRouter_CurrentTemplate
+		}
 		if (el.content.firstElementChild) {
 			make(el, expression, targetEl)
-			endLoading()
+			if (!inlineTemplate) endLoading()
 		} else if (urls) {
 			// Since during loading, the content is automatically put inside the template
 			// This first case will only happen if the content of the template was cleared somehow
@@ -261,11 +261,15 @@ export default function (Alpine) {
 	}
 
 	const startLoading = () => {
-		document.dispatchEvent(PineconeRouter.loadStart)
+		if (!PineconeRouter.startEventDispatched)
+			document.dispatchEvent(PineconeRouter.loadStart)
+		PineconeRouter.startEventDispatched = true
 	}
 
 	const endLoading = () => {
-		document.dispatchEvent(PineconeRouter.loadEnd)
+		if (!PineconeRouter.endEventDispatched)
+			document.dispatchEvent(PineconeRouter.loadEnd)
+		PineconeRouter.endEventDispatched = true
 	}
 
 	function fetchError(error: string) {
@@ -475,7 +479,7 @@ export default function (Alpine) {
 							route.handlersDone &&
 							PineconeRouter.context.route == path
 						found
-							? showAll(el, expression, null, targetEl)
+							? showAll(el, expression, null, targetEl, true)
 							: hide(el)
 					})
 				})
@@ -498,12 +502,9 @@ export default function (Alpine) {
 	document.addEventListener('alpine:initialized', () => {
 		middleware('init')
 		// virtually navigate the path on the first page load
-		// this will register the path in history and sets the pathvariable
-		// navigate(window.location.pathname, false, true)
+		// this will register the path in history and sets the path variable
 		if (PineconeRouter.settings.hash == false) {
-			// navigate to the current page to handle it
-			// ONLY if we not using hash routing for the default router
-			navigate(location.pathname, false, true)
+			navigate(location.pathname + location.search, false, true)
 		} else {
 			navigate(location.hash.substring(1), false, true)
 		}
@@ -603,14 +604,17 @@ export default function (Alpine) {
 	 * @param {string} path the path with no hash even if using hash routing
 	 * @param {boolean} fromPopState this will be set to true if called from window.onpopstate event
 	 * @param {boolean} firstLoad this will be set to true if this is the first page loaded, also from page reload
+	 * @param {number} navigationIndex the index of the navigation stack to go to
 	 */
 	async function navigate(
 		path,
 		fromPopState = false,
 		firstLoad = false,
 		navigationIndex = null,
-		includeQuery = true,
 	) {
+		PineconeRouter.startEventDispatched = false
+		PineconeRouter.endEventDispatched = false
+
 		if (!path) path = '/'
 
 		// only add basePath if it was set
@@ -675,9 +679,11 @@ export default function (Alpine) {
 			!route.handlers.length && !PineconeRouter.globalHandlers.length
 
 		if (
-			route.handlers.length ||
-			PineconeRouter.globalHandlers.length ||
-			route.templates.length
+			PineconeRouter.settings.alwaysSendLoadingEvents ||
+			((route.handlers.length ||
+				PineconeRouter.globalHandlers.length ||
+				route.templates.length) &&
+				PineconeRouter.context.path != path)
 		) {
 			startLoading()
 		}
@@ -698,13 +704,10 @@ export default function (Alpine) {
 			let fullPath = ''
 			if (PineconeRouter.settings.hash) {
 				fullPath = '#'
-				if (includeQuery && PineconeRouter.settings.includeQuery)
-					fullPath += window.location.search
+
 				fullPath += path
 			} else {
 				fullPath = path
-				if (includeQuery && PineconeRouter.settings.includeQuery)
-					fullPath += window.location.search
 				fullPath += window.location.hash
 			}
 			// don't create duplicate history entry on first page load
@@ -748,7 +751,13 @@ export default function (Alpine) {
 				},
 			)
 		}
-
+		// if PineconeRouter.settings.alwaysSendLoadingEvents is true
+		// and no end event was dispatched, end the loading
+		if (
+			PineconeRouter.settings.alwaysSendLoadingEvents &&
+			!PineconeRouter.endEventDispatched
+		)
+			endLoading()
 		middleware('onHandlersExecuted', route, path, firstLoad)
 	}
 

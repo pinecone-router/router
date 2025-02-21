@@ -2,8 +2,8 @@
   <img src="https://github.com/pinecone-router/router/blob/main/.github/pinecone-router-social-card-alt-big.png?raw=true" title="Pinecone Router logo with the text: The extendable client-side router for Alpine.js">
 </p>
 
-[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?color=%2337C8AB&label=version&sort=semver)](https://github.com/pinecone-router/router/tree/5.5.0)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router?color=37C8AB)](https://bundlephobia.com/result?p=pinecone-router@5.5.0)
+[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?color=%2337C8AB&label=version&sort=semver)](https://github.com/pinecone-router/router/tree/6.0.0)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router?color=37C8AB)](https://bundlephobia.com/result?p=pinecone-router@6.0.0)
 [![Downloads from JSDelivr](https://data.jsdelivr.com/v1/package/npm/pinecone-router/badge?style=rounded)](https://www.jsdelivr.com/package/npm/pinecone-router)
 [![npm](https://img.shields.io/npm/dm/pinecone-router?color=37C8AB&label=npm&logo=npm&logoColor=37C8AB)](https://npmjs.com/package/pinecone-router)
 [![Changelog](https://img.shields.io/badge/change-log-%2337C8AB)](/CHANGELOG.md)
@@ -38,13 +38,13 @@ An easy to use but feature-packed router for Alpine.js.
 Include the following `<script>` tag in the `<head>` of your document, **before Alpine.js**:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/pinecone-router@5.5.0/dist/router.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pinecone-router@6.0.0/dist/router.min.js"></script>
 ```
 
 **ES6 Module on the browser:**
 
 ```javascript
-import PineconeRouter from 'https://cdn.jsdelivr.net/npm/pinecone-router@5.5.0/dist/router.esm.js'
+import PineconeRouter from 'https://cdn.jsdelivr.net/npm/pinecone-router@6.0.0/dist/router.esm.js'
 import Alpine from 'https://esm.sh/alpinejs'
 Alpine.plugin(PineconeRouter)
 Alpine.start()
@@ -232,13 +232,13 @@ See [Redirecting](#redirecting)
 -   **`.global`**: define global handlers that will be run for every route, it is bound to the data of the element it is defined on
     so it's best to add to the router component element (`<div x-data="router" x-handler.global="[]">`), or any element with a access
     to the handlers you're using (doesn't have to be on the same element as x-data)
-    - These global handlers always run before route specific handlers.
+    -   These global handlers always run before route specific handlers.
 
 You can also define global handlers programmatically:
 
 ```js
 document.addEventListener('alpine:init', () => {
-  window.PineconeRouter.globalHandlers = []
+	window.PineconeRouter.globalHandlers = []
 })
 ```
 
@@ -261,11 +261,11 @@ Reference:
 -   _$router_.**params** _({var: something})_ Object that contains route parameters if any.
 -   _$router_.**hash** hash fragment without the #
 -   _$router_.**query** search query without the ?
--   _$router_.**navigate(path: string, includeQuery?: boolean)** same as clicking a link
--   _$router_.**redirect(path: string, includeQuery?: boolean): 'stop'** function that allow you to redirect to another page.
+-   _$router_.**navigate(path: string)** same as clicking a link
+-   _$router_.**redirect(path: string): 'stop'** function that allow you to redirect to another page.
 -   -   **Note**: usage within [x-handler](#x-handler): `return context.redirect('/path');`
--   _$router_.**back(includeQuery?: boolean)** go back in the navigation stack
--   _$router_.**forward(includeQuery?: boolean)** go forward in the navigation stack
+-   _$router_.**back()** go back in the navigation stack
+-   _$router_.**forward()** go forward in the navigation stack
 -   _$router_.**canGoBack(): boolean** check if you can go back in the navigation stack
 -   _$router_.**canGoForward(): boolean** check if you can go forward in the navigation stack
 -   _$router_.**navigationStack: String\[\]** the navigation array
@@ -311,7 +311,7 @@ Create your own middlewares [using this template](https://github.com/pinecone-ro
 		window.PineconeRouter.settings.basePath = '/' // set the base for the URL, doesn't work with hash routing
 		window.PineconeRouter.settings.templateTargetId = 'app' // Set an optional ID for where the internal & external templates will render by default.
 		window.PineconeRouter.settings.interceptLinks = true // Set to false to disable global handling of links by the router, see Disable link handling globally for more.
-		window.PineconeRouter.settings.includeQuery = true // set to false to clear the query when navigating either using links or through $router.navigate()
+		window.PineconeRouter.settings.alwaysSendLoadingEvents = false // set to true to always dispatch loading events even when no external templates or handlers are present
 	})
 </script>
 ```
@@ -330,14 +330,6 @@ Using `back()` and `forward()` calls `navigate()` with navigationIndex-1 or navi
 If you click a link after using `back()`, meaning the `navigationindex` is not `navigationstack.length-1`, it will remove all elements from the stack starting from the navigationIndex to the end, then appends current path.
 
 Use `canGoBack()` or `canGoForward()` to check if the operation is possible.
-
-### Clearing Search Query on navigation
-
-This can be done in two ways:
-
-1. Per navigation using `$router.navigate(path: string, includeQuery?: boolean)`, by default includeQuery is true. set it to false to clear the query.
-   this also works for `$router.redirect(path: string, includeQuery?: boolean)`, `$router.back(includeQuery?: boolean)` and `router.forward(includeQuery?: boolean)`
-2. Globally using the setting `window.PineconeRouter.settings.includeQuery`, which is also on by default.
 
 ### Bypass link handling
 
@@ -377,6 +369,9 @@ document.addEventListener('fetch-error', (err) => console.error(err))
 | **pinecone-start** | document  | when the template start fetching             |
 | **pinecone-end**   | document  | when the fetching ends successfuly           |
 | **fetch-error**    | document  | when the fetching of external templates fail |
+
+By default, these events only fire when there are external templates and/or handlers.
+To make it so they are always dispatched you can use the setting `window.PineconeRouter.settings.alwaysSendLoadingEvents = true`
 
 ### Adding and Removing routes & templates programmatically with Javascript
 
