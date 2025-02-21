@@ -25,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
--   Fixed loading events dispatching (Fixes #54).
+-   Fixed loading events dispatching (Fix #54).
 
 ## [5.5.0] - 2025-02-11
 
