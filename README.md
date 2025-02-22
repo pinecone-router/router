@@ -165,7 +165,12 @@ This directive allows you to specify external template files to be fetched from 
 ## `x-handler`
 
 This powerful directive can be used alone or alongisde `x-template`, it allow you to excute one or more methods when a route is matched.
-This runs **before inline templates and `x-template`** allowing you to redirect before showing any content, detect implement authentication / authorization, or fetch any data you need.
+This runs **before inline templates and `x-template`** allowing you to redirect before showing any content, implement authentication / authorization, or fetch any data you need.
+
+`x-handler` takes a method, or an array of methods, that will be called in order.
+
+A sole `context` argument is passed to each handler and they do not accept any additional arguments. Thus function calls such as `x-handler="handler('argument')"  are _not_ valid handlers.
+
 
 ```html
 <div x-data="router()" x-handler.global="[globalHandler]">
