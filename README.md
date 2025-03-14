@@ -463,8 +463,6 @@ New templating logic taken from [@shaun/alpinejs-router](https://github.com/shau
 
 [@KevinBatdorf](https://twitter.com/KevinBatdorf) for many ideas and early feedback!
 
-> **Disclaimer**: Not affiliated with the Alpine.js team, developed independently.
-
 ## Versioning
 
 This projects follow the [Semantic Versioning](https://semver.org/) guidelines.
