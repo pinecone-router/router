@@ -138,6 +138,8 @@ This directive allows you to specify external template files to be fetched from 
 <template x-route="/" x-template="['/header.html', '/home.html']"></template>
 ```
 
+> ### Note : `<script>` tags inside external templates are _not_ executed.
+
 ### Modifiers
 
 -   **`.preload`**: Fetches the template on page load, without waiting for the route to be matched.
