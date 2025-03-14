@@ -459,7 +459,7 @@ New templating logic taken from [@shaun/alpinejs-router](https://github.com/shau
 
 ## Acknowledgment
 
-[@shaun/alpinejs-router](https://github.com/shaunlee/alpinejs-router/) for the entire template system implementation! I copied the code and adjusted it for this router including adding the target modifier and using a separate directive for `x-template` instead. Code is licensed under MIT.
+[@shaun/alpinejs-router](https://github.com/shaunlee/alpinejs-router/) for the template system implementation!
 
 [@KevinBatdorf](https://twitter.com/KevinBatdorf) for many ideas and early feedback!
 
