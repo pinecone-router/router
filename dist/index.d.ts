@@ -22,5 +22,13 @@ declare global {
         _x_PineconeRouter_route: string;
     }
 }
+declare module 'alpinejs' {
+    interface Alpine {
+        $router: Context;
+    }
+    interface Magics<T> {
+        $router: Context;
+    }
+}
 export default function (Alpine: any): void;
 //# sourceMappingURL=index.d.ts.map

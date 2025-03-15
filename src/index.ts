@@ -22,6 +22,7 @@ declare global {
 		_x_PineconeRouter_undoTemplate: Function
 		_x_PineconeRouter_CurrentTemplate: Element
 		_x_PineconeRouter_route: string
+		_x_PineconeRouter_CurrentTemplateScript: HTMLScriptElement
 	}
 }
 
@@ -149,24 +150,62 @@ export default function (Alpine) {
 		if (inMakeProgress.has(expression)) return
 		inMakeProgress.add(expression)
 
-		const clone = (el.content.cloneNode(true) as HTMLElement)
-			.firstElementChild
+		const contentNode = el.content.firstElementChild as HTMLElement
+		const scriptNode = el.content.children[1] as HTMLElement
 
-		if (!clone) return
+		if (!contentNode) return
 
-		Alpine.addScopeToNode(clone, {}, el)
+		const clone = contentNode.cloneNode(true) as HTMLElement
+
+		Alpine.addScopeToNode(contentNode, {}, el)
 
 		Alpine.mutateDom(() => {
 			if (targetEl != null) {
 				targetEl.replaceChildren(clone)
 			} else el.after(clone)
+
+			// Execute any scripts in the cloned content
+			clone.querySelectorAll('script').forEach((oldScript) => {
+				const newScript = document.createElement('script')
+
+				// Copy attributes and content in one loop
+				Array.from(oldScript.attributes).forEach((attr) =>
+					newScript.setAttribute(attr.name, attr.value),
+				)
+				newScript.textContent = oldScript.textContent
+
+				// Replace and track
+				oldScript.parentNode.replaceChild(newScript, oldScript)
+			})
+
+			// Handle the second child if it's a script tag
+			if (scriptNode?.tagName?.toLowerCase() === 'script') {
+				const newScript = document.createElement('script')
+
+				// Copy attributes and content
+				Array.from(scriptNode.attributes).forEach((attr) =>
+					newScript.setAttribute(attr.name, attr.value),
+				)
+				newScript.textContent = scriptNode.textContent
+
+				// Add to document and track
+				document.body.appendChild(newScript)
+				el._x_PineconeRouter_CurrentTemplateScript = newScript
+			}
+
 			Alpine.initTree(clone)
 		})
 
 		el._x_PineconeRouter_CurrentTemplate = clone
 
 		el._x_PineconeRouter_undoTemplate = () => {
-			clone.remove()
+			// Remove clone element
+			el._x_PineconeRouter_CurrentTemplate?.remove()
+			// Remove script
+			el._x_PineconeRouter_CurrentTemplateScript?.parentNode?.removeChild(
+				el._x_PineconeRouter_CurrentTemplateScript,
+			)
+
 			delete el._x_PineconeRouter_CurrentTemplate
 		}
 
