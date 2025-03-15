@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
--   Added support for `<script>` tags inside templates ([see docs](/README.md#embeded-scripts)).
+-   Added support for `<script>` tags inside templates ([see docs](https://github.com/pinecone-router/router/blob/6.1.0/README.md#embeded-scripts)).
 
 ## [6.0.0] - 2025-02-21
 
