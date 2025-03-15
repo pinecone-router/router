@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@types/alpinejs':
+        specifier: ^3.13.11
+        version: 3.13.11
       esbuild:
         specifier: ^0.25.0
         version: 0.25.0
@@ -167,6 +170,9 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  '@types/alpinejs@3.13.11':
+    resolution: {integrity: sha512-3KhGkDixCPiLdL3Z/ok1GxHwLxEWqQOKJccgaQL01wc0EVM2tCTaqlC3NIedmxAXkVzt/V6VTM8qPgnOHKJ1MA==}
+
   esbuild@0.25.0:
     resolution: {integrity: sha512-BXq5mqc8ltbaN34cDqWuYKyNhX8D/Z0J1xdtdQ8UcIIIyJyz+ZMKUt58tF3SrZ85jcfN/PZYhjR5uDQAYNVbuw==}
     engines: {node: '>=18'}
@@ -253,6 +259,8 @@ snapshots:
 
   '@esbuild/win32-x64@0.25.0':
     optional: true
+
+  '@types/alpinejs@3.13.11': {}
 
   esbuild@0.25.0:
     optionalDependencies:

@@ -25,9 +25,18 @@ declare global {
 	}
 }
 
+declare module 'alpinejs' {
+	interface Alpine {
+		$router: Context
+	}
+	interface Magics<T> {
+		$router: Context
+	}
+}
+
 export default function (Alpine) {
 	const PineconeRouter = Alpine.reactive(<Window['PineconeRouter']>{
-		version: '6.0.0',
+		version: '6.1.0',
 		name: 'pinecone-router',
 
 		settings: <Settings>{
@@ -164,20 +173,20 @@ export default function (Alpine) {
 		Alpine.nextTick(() => inMakeProgress.delete(expression))
 	}
 
-	function hide(el: HTMLTemplateElement) {
+	const hide = (el: HTMLTemplateElement) => {
 		if (el._x_PineconeRouter_undoTemplate) {
 			el._x_PineconeRouter_undoTemplate()
 			delete el._x_PineconeRouter_undoTemplate
 		}
 	}
 
-	function showAll(
+	const showAll = (
 		el: HTMLTemplateElement,
 		expression: string,
 		urls?: Array<string>,
 		targetEl?: HTMLElement,
 		inlineTemplate: boolean = false,
-	) {
+	) => {
 		if (el._x_PineconeRouter_CurrentTemplate) {
 			return el._x_PineconeRouter_CurrentTemplate
 		}
