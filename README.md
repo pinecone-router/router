@@ -2,8 +2,8 @@
   <img src="https://github.com/pinecone-router/router/blob/main/.github/pinecone-router-social-card-alt-big.png?raw=true" title="Pinecone Router logo with the text: The extendable client-side router for Alpine.js">
 </p>
 
-[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?color=%2337C8AB&label=version&sort=semver)](https://github.com/pinecone-router/router/tree/6.0.0)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router?color=37C8AB)](https://bundlephobia.com/result?p=pinecone-router@6.0.0)
+[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?color=%2337C8AB&label=version&sort=semver)](https://github.com/pinecone-router/router/tree/6.1.0)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router?color=37C8AB)](https://bundlephobia.com/result?p=pinecone-router@6.1.0)
 [![Downloads from JSDelivr](https://data.jsdelivr.com/v1/package/npm/pinecone-router/badge?style=rounded)](https://www.jsdelivr.com/package/npm/pinecone-router)
 [![npm](https://img.shields.io/npm/dm/pinecone-router?color=37C8AB&label=npm&logo=npm&logoColor=37C8AB)](https://npmjs.com/package/pinecone-router)
 [![Changelog](https://img.shields.io/badge/change-log-%2337C8AB)](/CHANGELOG.md)
@@ -38,13 +38,13 @@ An easy to use but feature-packed router for Alpine.js.
 Include the following `<script>` tag in the `<head>` of your document, **before Alpine.js**:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/pinecone-router@6.0.0/dist/router.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pinecone-router@6.1.0/dist/router.min.js"></script>
 ```
 
 **ES6 Module on the browser:**
 
 ```javascript
-import PineconeRouter from 'https://cdn.jsdelivr.net/npm/pinecone-router@6.0.0/dist/router.esm.js'
+import PineconeRouter from 'https://cdn.jsdelivr.net/npm/pinecone-router@6.1.0/dist/router.esm.js'
 import Alpine from 'https://esm.sh/alpinejs'
 Alpine.plugin(PineconeRouter)
 Alpine.start()
@@ -114,6 +114,8 @@ If you add a child to the `<template>` element, Pinecone Router will render it w
 
 In this example it will add the `div` with "Hello World" to the document the same way `x-if` does: after the `template` tag.
 
+> **Note**: _only the first child will be rendered, similar to `x-if`_
+
 ### Modifiers
 
 -   **`.target`**: Takes an ID paramater for example `.target.app` will render the inline template inside the element with the `app` ID:
@@ -138,7 +140,7 @@ This directive allows you to specify external template files to be fetched from 
 <template x-route="/" x-template="['/header.html', '/home.html']"></template>
 ```
 
-> ### Note : `<script>` tags inside external templates are _not_ executed.
+> **Note**: same as inline templates and `x-if`, _only the first child element of the template will be rendered._
 
 ### Modifiers
 
@@ -164,6 +166,35 @@ This directive allows you to specify external template files to be fetched from 
 </div>
 ```
 
+### Embeded Scripts
+
+You can embed a script inside the template file which will run when the route is matched.
+
+/template.html:
+
+```html
+<div x-data="hello">
+	<h1>Homepage</h1>
+	<p x-text="message"></p>
+</div>
+<script>
+	Alpine.data('hello', () => ({
+		message: 'Hello world',
+		init() {
+			console.log('hello from init()')
+		},
+	}))
+</script>
+```
+
+In this example, the script tag is added to the document when the route is matched, and removed when the route changes.
+
+Currently, only the second element will be checked as a script.
+
+> **Note**: _The order matters_, first element is the content, second is the script (optional).
+
+In addition, any `<script>` tags inside the content element (first one), will also be executed.
+
 ## `x-handler`
 
 This powerful directive can be used alone or alongisde `x-template`, it allow you to excute one or more methods when a route is matched.
@@ -171,8 +202,7 @@ This runs **before inline templates and `x-template`** allowing you to redirect 
 
 `x-handler` takes a method, or an array of methods, that will be called in order.
 
-A sole `context` argument is passed to each handler and they do not accept any additional arguments. Thus function calls such as `x-handler="handler('argument')"  are _not_ valid handlers.
-
+A sole `context` argument is passed to each handler and they do not accept any additional arguments. Thus function calls such as `x-handler="handler('argument')" are _not_ valid handlers.
 
 ```html
 <div x-data="router()" x-handler.global="[globalHandler]">

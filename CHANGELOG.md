@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [6.1.0] - 2025-03-15
+
 ### Added
 
 -   Added support for <script> tags inside templates
@@ -403,7 +405,7 @@ It's mostly backward compatible but need a few tweaks:
 
 -   Let go of multi-router support for simpler codebase.
 
-[unreleased]: https://github.com/pinecone-router/router/compare/6.0.0...HEAD
+[unreleased]: https://github.com/pinecone-router/router/compare/6.1.0...HEAD
 [0.0.3]: https://github.com/pinecone-router/router/compare/0.0.2...0.0.3
 [0.0.4]: https://github.com/pinecone-router/router/compare/0.0.3...0.0.4
 [0.0.5]: https://github.com/pinecone-router/router/compare/0.0.4...0.0.5
