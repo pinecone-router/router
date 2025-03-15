@@ -231,7 +231,7 @@ export default function (Alpine) {
 		}
 		if (el.content.firstElementChild) {
 			make(el, expression, targetEl)
-			if (!inlineTemplate) endLoading()
+			if (PineconeRouter.startEventDispatched) endLoading()
 		} else if (urls) {
 			// Since during loading, the content is automatically put inside the template
 			// This first case will only happen if the content of the template was cleared somehow
