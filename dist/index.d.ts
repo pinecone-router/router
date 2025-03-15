@@ -20,6 +20,7 @@ declare global {
         _x_PineconeRouter_undoTemplate: Function;
         _x_PineconeRouter_CurrentTemplate: Element;
         _x_PineconeRouter_route: string;
+        _x_PineconeRouter_CurrentTemplateScript: HTMLScriptElement;
     }
 }
 declare module 'alpinejs' {
