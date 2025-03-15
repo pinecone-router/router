@@ -454,3 +454,4 @@ It's mostly backward compatible but need a few tweaks:
 [5.4.0]: https://github.com/pinecone-router/router/compare/5.3.0..5.4.0
 [5.5.0]: https://github.com/pinecone-router/router/compare/5.4.0..5.5.0
 [6.0.0]: https://github.com/pinecone-router/router/compare/5.5.0..6.0.0
+[6.1.0]: https://github.com/pinecone-router/router/compare/6.0.0..6.1.0
