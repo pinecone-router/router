@@ -38,7 +38,7 @@ declare module 'alpinejs' {
 
 export default function (Alpine) {
 	const PineconeRouter = Alpine.reactive(<Window['PineconeRouter']>{
-		version: '6.2.0',
+		version: '6.2.1',
 		name: 'pinecone-router',
 
 		settings: <Settings>{
@@ -408,7 +408,7 @@ export default function (Alpine) {
 				)
 
 			if (modifiers.includes('preload')) {
-				if (modifiers.include('interpolate'))
+				if (modifiers.includes('interpolate'))
 					throw new Error(
 						"Pinecone Router: Can't use the 'interpolate' modifier with the 'preload' modifier.",
 					)
@@ -434,7 +434,7 @@ export default function (Alpine) {
 								expression,
 								urls,
 								targetEl,
-								modifiers.include('interpolate'),
+								modifiers.includes('interpolate'),
 						  )
 						: hide(el)
 				})
