@@ -408,6 +408,10 @@ export default function (Alpine) {
 				)
 
 			if (modifiers.includes('preload')) {
+				if (modifiers.include('interpolate'))
+					throw new Error(
+						"Pinecone Router: Can't use the 'interpolate' modifier with the 'preload' modifier.",
+					)
 				loadAll(el, urls, false)
 			}
 
