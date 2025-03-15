@@ -2,8 +2,8 @@
   <img src="https://github.com/pinecone-router/router/blob/main/.github/pinecone-router-social-card-alt-big.png?raw=true" title="Pinecone Router logo with the text: The extendable client-side router for Alpine.js">
 </p>
 
-[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?color=%2337C8AB&label=version&sort=semver)](https://github.com/pinecone-router/router/tree/6.1.0)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router?color=37C8AB)](https://bundlephobia.com/result?p=pinecone-router@6.1.0)
+[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?color=%2337C8AB&label=version&sort=semver)](https://github.com/pinecone-router/router/tree/6.2.0)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router?color=37C8AB)](https://bundlephobia.com/result?p=pinecone-router@6.2.0)
 [![Downloads from JSDelivr](https://data.jsdelivr.com/v1/package/npm/pinecone-router/badge?style=rounded)](https://www.jsdelivr.com/package/npm/pinecone-router)
 [![npm](https://img.shields.io/npm/dm/pinecone-router?color=37C8AB&label=npm&logo=npm&logoColor=37C8AB)](https://npmjs.com/package/pinecone-router)
 [![Changelog](https://img.shields.io/badge/change-log-%2337C8AB)](/CHANGELOG.md)
@@ -38,13 +38,13 @@ An easy to use but feature-packed router for Alpine.js.
 Include the following `<script>` tag in the `<head>` of your document, **before Alpine.js**:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/pinecone-router@6.1.0/dist/router.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pinecone-router@6.2.0/dist/router.min.js"></script>
 ```
 
 **ES6 Module on the browser:**
 
 ```javascript
-import PineconeRouter from 'https://cdn.jsdelivr.net/npm/pinecone-router@6.1.0/dist/router.esm.js'
+import PineconeRouter from 'https://cdn.jsdelivr.net/npm/pinecone-router@6.2.0/dist/router.esm.js'
 import Alpine from 'https://esm.sh/alpinejs'
 Alpine.plugin(PineconeRouter)
 Alpine.start()
@@ -146,8 +146,11 @@ This directive allows you to specify external template files to be fetched from 
 
 -   **`.preload`**: Fetches the template on page load, without waiting for the route to be matched.
 -   **`.target`**: Takes an ID paramater for example `.target.app` will render the template inside the element with the `app` ID
+-   **`.interpolate`**: Enable named params in template urls, ie. fetching templates based on route params.
 
-> Can be used simulateneously: `x-template.preload.target.app`
+> Modifiers can be used simulateneously: `x-template.preload.target.app`
+
+> For obvious reasons, `.preload` cannot be used with `.interpolate`.
 
 > Default Target ID can be set globally in [settings](#settings)
 
@@ -161,10 +164,21 @@ This directive allows you to specify external template files to be fetched from 
 	x-template.target.app="/profile.html"
 ></template>
 
+<!-- this will fetch templates according to the current route params -->
+<!-- on /dyamic/foo it it will fetch /api/dynamic/foo.html, and so on -->
+<!-- this can be helpful when using ssg on certain routes -->
+<template
+	x-route="/dynamic/:name"
+	x-template.interpolate.target.app="/api/dynamic/:name.html"
+>
+</template>
+
 <div id="app">
 	<!-- profile.html content will be displayed here -->
 </div>
 ```
+
+> **Note:** when fetching a template using a named param fails, it dispatches a [`fetch-error`](https://github.com/pinecone-router/router/#events--loading-bar) event.
 
 ### Embeded Scripts
 

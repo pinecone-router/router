@@ -21,6 +21,7 @@ declare global {
 	interface HTMLTemplateElement {
 		_x_PineconeRouter_undoTemplate: Function
 		_x_PineconeRouter_CurrentTemplate: Element
+		_x_PineconeRouter_CurrentTemplateUrls: string[]
 		_x_PineconeRouter_route: string
 		_x_PineconeRouter_CurrentTemplateScript: HTMLScriptElement
 	}
@@ -37,7 +38,7 @@ declare module 'alpinejs' {
 
 export default function (Alpine) {
 	const PineconeRouter = Alpine.reactive(<Window['PineconeRouter']>{
-		version: '6.1.0',
+		version: '6.2.0',
 		name: 'pinecone-router',
 
 		settings: <Settings>{
@@ -145,6 +146,7 @@ export default function (Alpine) {
 	const make = (
 		el: HTMLTemplateElement,
 		expression: string,
+		templateUrls: string[],
 		targetEl?: HTMLElement,
 	) => {
 		if (inMakeProgress.has(expression)) return
@@ -197,6 +199,7 @@ export default function (Alpine) {
 		})
 
 		el._x_PineconeRouter_CurrentTemplate = clone
+		el._x_PineconeRouter_CurrentTemplateUrls = templateUrls
 
 		el._x_PineconeRouter_undoTemplate = () => {
 			// Remove clone element
@@ -205,6 +208,7 @@ export default function (Alpine) {
 			el._x_PineconeRouter_CurrentTemplateScript?.parentNode?.removeChild(
 				el._x_PineconeRouter_CurrentTemplateScript,
 			)
+			el._x_PineconeRouter_CurrentTemplateUrls = null
 
 			delete el._x_PineconeRouter_CurrentTemplate
 		}
@@ -224,30 +228,45 @@ export default function (Alpine) {
 		expression: string,
 		urls?: Array<string>,
 		targetEl?: HTMLElement,
-		inlineTemplate: boolean = false,
+		interpolate?: boolean,
 	) => {
+		if (interpolate) {
+			urls = urls.map((url) => {
+				// Replace :param format (e.g., /users/:id/profile)
+				url = url.replace(/:([a-zA-Z0-9_]+)/g, (match, paramName) => {
+					return PineconeRouter.context.params[paramName] || match
+				})
+
+				return url
+			})
+		}
+		if (
+			el._x_PineconeRouter_CurrentTemplate &&
+			el._x_PineconeRouter_CurrentTemplateUrls != urls
+		) {
+			hide(el)
+			el.content.firstElementChild?.remove()
+		}
 		if (el._x_PineconeRouter_CurrentTemplate) {
 			return el._x_PineconeRouter_CurrentTemplate
 		}
 		if (el.content.firstElementChild) {
-			make(el, expression, targetEl)
+			make(el, expression, urls, targetEl)
 			if (PineconeRouter.startEventDispatched) endLoading()
 		} else if (urls) {
-			// Since during loading, the content is automatically put inside the template
-			// This first case will only happen if the content of the template was cleared somehow
-			// Likely manually
+			// this occurs when the params change in the same route when using interpolated template urls
 			if (urls.every((url) => cachedTemplates[url])) {
 				if (urls.length > 1) el.innerHTML = '<templates-wrapper>'
 				urls.forEach((url) => {
 					el.innerHTML += cachedTemplates[url]
 				})
 				if (urls.length > 1) el.innerHTML = '</templates-wrapper>'
-				make(el, expression, targetEl)
+				make(el, expression, urls, targetEl)
 				endLoading()
 			} else {
 				// This second case is that it didn't finish loading
 				loadAll(el, urls)
-					.then(() => make(el, expression, targetEl))
+					.then(() => make(el, expression, urls, targetEl))
 					.finally(() => endLoading())
 			}
 		}
@@ -405,7 +424,15 @@ export default function (Alpine) {
 					let found =
 						route.handlersDone &&
 						PineconeRouter.context.route == route.path
-					found ? showAll(el, expression, urls, targetEl) : hide(el)
+					found
+						? showAll(
+								el,
+								expression,
+								urls,
+								targetEl,
+								modifiers.include('interpolate'),
+						  )
+						: hide(el)
 				})
 			})
 
@@ -527,7 +554,7 @@ export default function (Alpine) {
 							route.handlersDone &&
 							PineconeRouter.context.route == path
 						found
-							? showAll(el, expression, null, targetEl, true)
+							? showAll(el, expression, null, targetEl)
 							: hide(el)
 					})
 				})
