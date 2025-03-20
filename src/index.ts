@@ -38,7 +38,7 @@ declare module 'alpinejs' {
 
 export default function (Alpine) {
 	const PineconeRouter = Alpine.reactive(<Window['PineconeRouter']>{
-		version: '6.2.3',
+		version: '6.2.4',
 		name: 'pinecone-router',
 
 		settings: <Settings>{

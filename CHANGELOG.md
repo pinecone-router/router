@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [6.2.4] - 2025-03-20
+
+### Fixed
+
+- Fixed interpolating templates not clearing when changing route
+
 ## [6.2.3] - 2025-03-20
 
 ### Fixed
@@ -429,7 +435,7 @@ It's mostly backward compatible but need a few tweaks:
 
 - Let go of multi-router support for simpler codebase.
 
-[unreleased]: https://github.com/pinecone-router/router/compare/6.2.3...HEAD
+[unreleased]: https://github.com/pinecone-router/router/compare/6.2.4...HEAD
 [0.0.3]: https://github.com/pinecone-router/router/compare/0.0.2...0.0.3
 [0.0.4]: https://github.com/pinecone-router/router/compare/0.0.3...0.0.4
 [0.0.5]: https://github.com/pinecone-router/router/compare/0.0.4...0.0.5
@@ -483,3 +489,4 @@ It's mostly backward compatible but need a few tweaks:
 [6.2.1]: https://github.com/pinecone-router/router/compare/6.2.0..6.2.1
 [6.2.2]: https://github.com/pinecone-router/router/compare/6.2.1..6.2.2
 [6.2.3]: https://github.com/pinecone-router/router/compare/6.2.2..6.2.3
+[6.2.4]: https://github.com/pinecone-router/router/compare/6.2.3..6.2.4
