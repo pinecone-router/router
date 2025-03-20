@@ -1,80 +1,48 @@
-/**
- * taken from preact-router
- * https://github.com/preactjs/preact-router
- * @param url url to segmentize
- * @returns
- */
-function segmentize(url: string): string[] {
-	return url.replace(/(^\/+|\/+$)/g, '').split('/')
+import { TARGET_ID_NOT_FOUND, PineconeRouterError } from '~/errors'
+import Route from '~/route'
+
+export const findRouteIndex = (path: string, routes: Route[]) =>
+	routes.findIndex((r) => r.path == path)
+
+export const modifierValue = (
+	modifiers: string[],
+	key: string,
+	fallback?: string,
+): string | undefined => {
+	// If the modifier isn't present, use the default.
+	if (modifiers.indexOf(key) === -1) return fallback
+
+	// If it IS present, grab the value after it
+	const rawValue = modifiers[modifiers.indexOf(key) + 1]
+
+	if (!rawValue) return fallback
+
+	if (key === 'target') {
+		let match = rawValue.match(/([a-z0-9_-]+)/)
+		if (match) return match[1]
+	}
+	return rawValue
 }
 
-/**
- * check if a path match with this route
- * taken from preact-router
- * https://github.com/preactjs/preact-router
- * @param path {string}
- * @param routePath {string}
- * @returns {false|object}
- */
-export function match(url: string, routePath: string): false | object {
-	let reg = /(?:\?([^#]*))?(#.*)?$/,
-		c = url.match(reg),
-		matches: any = {},
-		ret
-	if (c && c[1]) {
-		let p = c[1].split('&')
-		for (let i = 0; i < p.length; i++) {
-			let r = p[i].split('=')
-			matches[decodeURIComponent(r[0])] = decodeURIComponent(
-				r.slice(1).join('='),
-			)
-		}
+export const addBasePath = (path: string, basePath: string) => {
+	if (basePath != '/' && !path.startsWith(basePath)) {
+		path = basePath + path
 	}
-	let urlSeg = segmentize(url.replace(reg, '')),
-		route: string[] = segmentize(routePath || ''),
-		max = Math.max(urlSeg.length, route.length)
-	for (let i = 0; i < max; i++) {
-		if (route[i] && route[i].charAt(0) === ':') {
-			let param: string = route[i].replace(/(^:|[+*?]+$)/g, ''),
-				flags: string = (route[i].match(/[+*?]+$/) || {}).toString()[0],
-				plus = ~flags.indexOf('+'),
-				star = ~flags.indexOf('*'),
-				val = urlSeg[i] || ''
-			if (!val && !star && (flags.indexOf('?') < 0 || plus)) {
-				ret = false
-				break
-			}
-			matches[param] = decodeURIComponent(val)
-			if (plus || star) {
-				matches[param] = urlSeg
-					.slice(i)
-					.map(decodeURIComponent)
-					.join('/')
-				break
-			}
-		} else if (route[i] !== urlSeg[i]) {
-			ret = false
-			break
-		}
+	if (path == basePath && !path.endsWith('/')) {
+		path += '/'
 	}
-	if (ret === false) return false
-	return matches
+	return path
 }
 
-/**
- * Call a function on all middlewares loaded, if any.
- * @param {string} func middleware function to call.
- * @param {any} args arguments to pass to the function.
- * @returns {boolean} false if the middleware function return false, i.e. it want to stop execution of the function and return.
- */
-export function middleware(func: string, ...args: any): string | undefined {
-	if (!window.PineconeRouterMiddlewares) return
-	for (const i in window.PineconeRouterMiddlewares) {
-		let plugin: any = window.PineconeRouterMiddlewares[i]
-		if (plugin[func] == null) return
-		let ret = plugin[func](...args)
-		// the return of the function will only be 'stop'
-		// if the middleware request stopping the navigate function.
-		if (ret == 'stop') return 'stop'
-	}
+export const getTargetELement = (
+	targetId?: string,
+	globalTargetId?: string,
+): HTMLElement | undefined => {
+	let target = targetId ?? globalTargetId ?? ''
+	let targetEl = document.getElementById(target) ?? undefined
+
+	if (target.length && targetEl == undefined)
+		throw new PineconeRouterError(TARGET_ID_NOT_FOUND(target))
+
+	return targetEl
 }

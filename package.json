@@ -3,11 +3,12 @@
 	"description": "The extendable client-side router for Alpine.js.",
 	"license": "MIT",
 	"author": "Rafik El Hadi Houari <rehhouari@gmail.com>",
-	"version": "6.2.1",
+	"version": "7.0.0",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/pinecone-router/router"
 	},
+	"type": "module",
 	"keywords": [
 		"alpinejs",
 		"alpine",
@@ -24,12 +25,18 @@
 	"umd:main": "dist/router.min.js",
 	"module": "dist/router.esm.js",
 	"scripts": {
-		"build": "node scripts/build.js && tsc --emitDeclarationOnly --declaration --project tsconfig.json"
+		"build": "node scripts/build.js && tsc --emitDeclarationOnly --declaration --project tsconfig.json --outfile dist/index.d.ts",
+		"bun": "bun scripts/bun.js && tsc --emitDeclarationOnly --declaration --project tsconfig.json --outfile dist/index.d.ts",
+		"bunjs": "bun scripts/bun.js",
+		"test": "vitest"
 	},
 	"devDependencies": {
 		"@types/alpinejs": "^3.13.11",
-		"esbuild": "^0.25.0",
-		"typescript": "^5.4.3"
+		"@types/bun": "^1.2.5",
+		"esbuild": "^0.25.1",
+		"prettier": "^3.5.3",
+		"typescript": "^4.9.5",
+		"vitest": "^3.0.9"
 	},
 	"types": "dist/index.d.ts",
 	"packageManager": "pnpm@10.5.2+sha512.da9dc28cd3ff40d0592188235ab25d3202add8a207afbedc682220e4a0029ffbff4562102b9e6e46b4e3f9e8bd53e6d05de48544b0c57d4b0179e22c76d1199b"

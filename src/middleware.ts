@@ -1,33 +1,10 @@
-import Route from './route'
-
-export declare type Context = {
-	route: string
-	path: string
-	params: { [key: string]: any }
-	/**
-	 * query without leading '?'
-	 */
-	query: string
-	/**
-	 * hash without leading '#'
-	 */
-	hash: string
-	redirect(path: string): 'stop'
-	navigate(path: string): void
-	back(): void
-	forward(): void
-	canGoBack(): boolean
-	canGoForward(): boolean
-	navigationStack: String[]
-	navigationIndex: Number
-}
-
-export type Handler = (context: Context) => 'stop' | void
+import { type Route } from './route'
+import { type Settings } from './router'
 
 export declare interface Middleware {
 	name: string
 	version?: string
-	settings?: { [key: string]: any }
+	settings?: Record<string, any>
 	/**
 	 * This will be called at router initialization.
 	 * used for detecting router settings.
@@ -80,32 +57,20 @@ export declare interface Middleware {
 	[key: string]: any
 }
 
-export declare interface Settings {
-	/**
-	 * @default false
-	 * @summary enable hash routing
-	 */
-	hash: boolean
-	/**
-	 * @default `/`
-	 * @summary The base path of the site, for example /blog
-	 * Note: do not use with using hash routing!
-	 */
-	basePath: string
-	/**
-	 * @default null
-	 * @summmary Set an optional ID for where the templates will render by default
-	 * This can be overriden by the .target modifier
-	 */
-	templateTargetId: string
-	/**
-	 * @default true
-	 * @summary Set to false if you don't want to intercept links by default.
-	 */
-	interceptLinks: boolean
-	/**
-	 * @default false
-	 * @summary Set to true to always send loading events, even if the template is inline and there are no handlers.
-	 */
-	alwaysSendLoadingEvents: boolean
+/**
+ * Call a function on all middlewares loaded, if any.
+ * @param {string} func middleware function to call.
+ * @param {any} args arguments to pass to the function.
+ * @returns {boolean} false if the middleware function return false, i.e. it want to stop execution of the function and return.
+ */
+export function middleware(func: string, ...args: any): string | undefined {
+	if (!window.PineconeRouterMiddlewares) return
+	for (const i in window.PineconeRouterMiddlewares) {
+		let plugin: Middleware = window.PineconeRouterMiddlewares[i]
+		if (plugin[func] == null) return
+		let ret = plugin[func](...args)
+		// the return of the function will only be 'stop'
+		// if the middleware request stopping the navigate function.
+		if (ret == 'stop') return 'stop'
+	}
 }

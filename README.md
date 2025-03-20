@@ -19,13 +19,13 @@ An easy to use but feature-packed router for Alpine.js.
 
 ## Features:
 
--   :smile: Easy and familiar syntax well integrated with Alpine.js.
--   :gear: [Handler functions](#x-handler) allow you to run code before content is displayed
--   :sparkles: [Magic **$router** helper](#context-object--router-magic-helper) to access current route and it's data. from inside Alpine components!
--   :beginner: [Inline](#inline-templates) and [external](#x-template) templates.
--   :link: Automatically dispatch relative links and handle them with [loading events](#events--loading-bar).
--   :hash: [Hash routing](#settings).
--   :heavy_plus_sign: Extend it using tiny [Middlewares!](#middlewares).
+- :smile: Easy and familiar syntax well integrated with Alpine.js.
+- :gear: [Handler functions](#x-handler) allow you to run code before content is displayed
+- :sparkles: [Magic **$router** helper](#context-object--router-magic-helper) to access current route and it's data. from inside Alpine components!
+- :beginner: [Inline](#inline-templates) and [external](#x-template) templates.
+- :link: Automatically dispatch relative links and handle them with [loading events](#events--loading-bar).
+- :hash: [Hash routing](#settings).
+- :heavy_plus_sign: Extend it using tiny [Middlewares!](#middlewares).
 
 **Demo**: [Pinecone example](https://pinecone-example.vercel.app/), [(source code)](https://github.com/pinecone-router/pinecone-example).
 
@@ -118,7 +118,7 @@ In this example it will add the `div` with "Hello World" to the document the sam
 
 ### Modifiers
 
--   **`.target`**: Takes an ID paramater for example `.target.app` will render the inline template inside the element with the `app` ID:
+- **`.target`**: Takes an ID paramater for example `.target.app` will render the inline template inside the element with the `app` ID:
 
 ```html
 <template x-route.target.app="/">
@@ -144,9 +144,9 @@ This directive allows you to specify external template files to be fetched from 
 
 ### Modifiers
 
--   **`.preload`**: Fetches the template on page load, without waiting for the route to be matched.
--   **`.target`**: Takes an ID paramater for example `.target.app` will render the template inside the element with the `app` ID
--   **`.interpolate`**: Enable named params in template urls, ie. fetching templates based on route params.
+- **`.preload`**: Fetches the template on page load, without waiting for the route to be matched.
+- **`.target`**: Takes an ID paramater for example `.target.app` will render the template inside the element with the `app` ID
+- **`.interpolate`**: Enable named params in template urls, ie. fetching templates based on route params.
 
 > Modifiers can be used simulateneously: `x-template.preload.target.app`
 
@@ -166,7 +166,7 @@ This directive allows you to specify external template files to be fetched from 
 
 <!-- this will fetch templates according to the current route params -->
 <!-- on /dyamic/foo it it will fetch /api/dynamic/foo.html, and so on -->
-<!-- this can be helpful when using ssg on certain routes -->
+<!-- this can be helpful when using ssr on certain routes -->
 <template
 	x-route="/dynamic/:name"
 	x-template.interpolate.target.app="/api/dynamic/:name.html"
@@ -257,9 +257,8 @@ function router() {
 			}
 		},
 		hello(context) {
-			document.querySelector(
-				'#app',
-			).innerHTML = `<h1>Hello, ${context.params.name}</h1>`
+			document.querySelector('#app').innerHTML =
+				`<h1>Hello, ${context.params.name}</h1>`
 		},
 		notfound(context) {
 			document.querySelector('#app').innerHTML = `<h1>Not Found</h1>`
@@ -280,10 +279,10 @@ See [Redirecting](#redirecting)
 
 ### Modifiers
 
--   **`.global`**: define global handlers that will be run for every route, it is bound to the data of the element it is defined on
-    so it's best to add to the router component element (`<div x-data="router" x-handler.global="[]">`), or any element with a access
-    to the handlers you're using (doesn't have to be on the same element as x-data)
-    -   These global handlers always run before route specific handlers.
+- **`.global`**: define global handlers that will be run for every route, it is bound to the data of the element it is defined on
+  so it's best to add to the router component element (`<div x-data="router" x-handler.global="[]">`), or any element with a access
+  to the handlers you're using (doesn't have to be on the same element as x-data)
+  - These global handlers always run before route specific handlers.
 
 You can also define global handlers programmatically:
 
@@ -301,26 +300,26 @@ To prevent / stop the next handlers from executing and templates from rendering,
 
 Contains information about the current route and helper methods. This is available at all times:
 
--   Using the `$router` magic helper in Alpine components
--   From Javascript using `window.PineconeRouter.context`
--   Every `handler` method takes the context object as the only argument
+- Using the `$router` magic helper in Alpine components
+- From Javascript using `window.PineconeRouter.context`
+- Every `handler` method takes the context object as the only argument
 
 Reference:
 
--   _$router_.**route** _(/path/:var)_ The route set with `x-route`.
--   _$router_.**path** _(/path/something)_ The path visited by the client.
--   _$router_.**params** _({var: something})_ Object that contains route parameters if any.
--   _$router_.**hash** hash fragment without the #
--   _$router_.**query** search query without the ?
--   _$router_.**navigate(path: string)** same as clicking a link
--   _$router_.**redirect(path: string): 'stop'** function that allow you to redirect to another page.
--   -   **Note**: usage within [x-handler](#x-handler): `return context.redirect('/path');`
--   _$router_.**back()** go back in the navigation stack
--   _$router_.**forward()** go forward in the navigation stack
--   _$router_.**canGoBack(): boolean** check if you can go back in the navigation stack
--   _$router_.**canGoForward(): boolean** check if you can go forward in the navigation stack
--   _$router_.**navigationStack: String\[\]** the navigation array
--   _$router_.**navigationIndex: int** the current index in the navigation stack, usually navigationStack.length-1 unless you use `back()`
+- _$router_.**route** _(/path/:var)_ The route set with `x-route`.
+- _$router_.**path** _(/path/something)_ The path visited by the client.
+- _$router_.**params** _({var: something})_ Object that contains route parameters if any.
+- _$router_.**hash** hash fragment without the #
+- _$router_.**query** search query without the ?
+- _$router_.**navigate(path: string)** same as clicking a link
+- _$router_.**redirect(path: string): 'stop'** function that allow you to redirect to another page.
+- - **Note**: usage within [x-handler](#x-handler): `return context.redirect('/path');`
+- _$router_.**back()** go back in the navigation stack
+- _$router_.**forward()** go forward in the navigation stack
+- _$router_.**canGoBack(): boolean** check if you can go back in the navigation stack
+- _$router_.**canGoForward(): boolean** check if you can go forward in the navigation stack
+- _$router_.**navigationStack: string\[\]** the navigation array
+- _$router_.**navigationIndex: int** the current index in the navigation stack, usually navigationStack.length-1 unless you use `back()`
 
 > **Inside `x-handler`:** `context.params.id`, `context.route`, etc
 
@@ -328,7 +327,7 @@ Reference:
 
 **From an Alpine component**:
 
--   use [`$router` magic helper](#magic-helper): `$router.navigate(path)`, `$router.redirect(path)`.
+- use [`$router` magic helper](#magic-helper): `$router.navigate(path)`, `$router.redirect(path)`.
 
 **Redirecting from a handler**:
 
@@ -434,11 +433,16 @@ you can add routes & remove them anytime programmatically using Javascript.
 window.PineconeRouter.add(path, options)
 ```
 
--   path: string, the route's path.
--   options: array of options:
+- path: string, the route's path.
+- options: array of route options:
 
-```js
-{handlers: [], templates: [], templateTargetId: 'app', preload: false}
+```ts
+type RouteOptions = {
+	templateTargetId?: string
+	handlers?: Handler[]
+	templates?: string[]
+	preload?: boolean
+}
 ```
 
 Note that by adding handlers this way you wont have access to the `this` of the alpine.js component if the handler is part of one.
@@ -459,15 +463,15 @@ You must set a templateTargetId in [settings](#settings):
 </script>
 ```
 
-> Note: The template won't be cleared automatically until you access another route with a template, so make sure all your routes have one if you use this method.
+> Note: The template added through this method won't be cleared automatically until you access another route with a template, so make sure all your routes have one if you use this method.
 
-**Removing a route**:
+> Note: A templateTargetId is required, whether globally through settings or on a per rotue basis when creating a route using `add('/path', {templates: [...], templateTargetId: 'app'})` > **Removing a route**:
 
 ```js
 window.PineconeRouter.remove(path)
 ```
 
--   path: string, the path of the route you want to remove.
+- path: string, the path of the route you want to remove.
 
 **Navigating from Javascript**:
 

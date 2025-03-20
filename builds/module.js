@@ -1,3 +1,3 @@
-import magic from '../src/index.js'
+import plugin from '../src/index.js'
 
-export default magic
+export default plugin
