@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [6.2.3] - 2025-03-20
+
+### Fixed
+
+- Changed template url interpolataion regex to `[^/.]+`
+
 ## [6.2.2] - 2025-03-20
 
 ### Fixed
@@ -44,8 +50,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - Removed the option to pass search query when navigating, it served no real purpose.
-    - Removed `includeQuery` parameters from all methods that had it
-    - Removed `PineconeRouter.settings.includeQuery` setting
+  - Removed `includeQuery` parameters from all methods that had it
+  - Removed `PineconeRouter.settings.includeQuery` setting
 
 ### Fixed
 
@@ -62,7 +68,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed run order of directives, x-route > x-handler > x-template. no longer dependent on attribute order.
-    - This fixes errors due to automatic attribute ordering when doing an astro build.
+  - This fixes errors due to automatic attribute ordering when doing an astro build.
 
 ## [5.3.0] - 2025-02-04
 
@@ -75,7 +81,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added `preload` option to `PineconeRouter.add()`
-    - Suggested by @boustanihani #48
+  - Suggested by @boustanihani #48
 
 ## [5.2.1] - 2025-01-30
 
@@ -88,8 +94,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added `includeQuery` option for `navigate()`, `redirect()`, `back()`, and `forward()` and the setting `PineconeRouter.settings.includeQuery` to clear search query when navigating and clicking links.
-    - See [README section](/README.md#clearing-search-query-on-navigation) for documentation.
-    - Thanks @yllumi #47 for the suggestion
+  - See [README section](/README.md#clearing-search-query-on-navigation) for documentation.
+  - Thanks @yllumi #47 for the suggestion
 
 ## [5.1.0] - 2025-01-22
 
@@ -156,17 +162,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Support custom target element ID for inline templates: `x-route.target.app`.
-    - This means now inline templates also use [global template target id from settings](https://github.com/pinecone-router/router?tab=readme-ov-file#settings).
+  - This means now inline templates also use [global template target id from settings](https://github.com/pinecone-router/router?tab=readme-ov-file#settings).
 - Added an error when trying to use `x-template` on a template element that have a child, meaning trying to mix inline and external templates.
-    - It is impossible to have both as they both put the content inside the template, x-template does after fetching it from a link. (no one tried this afaik but just in case).
+  - It is impossible to have both as they both put the content inside the template, x-template does after fetching it from a link. (no one tried this afaik but just in case).
 
 ### Changed
 
 - No longer use the same variable names as `x-if` for showing and hiding inline or external templates:
-    - `el._x_undoIf` -> `el._x_PineconeRouter_undoTemplate`
-    - `el._x_currentIfEl` -> `el._x_PineconeRouter_CurrentTemplate`
+  - `el._x_undoIf` -> `el._x_PineconeRouter_undoTemplate`
+  - `el._x_currentIfEl` -> `el._x_PineconeRouter_CurrentTemplate`
 - Now `x-route` adds an `el._x_PineconeRouter_route` with the full route as its value (including base path in settings)
-    > These changes are just for internal use.
+  > These changes are just for internal use.
 
 ## [4.1.1] - 2024-01-06
 
@@ -423,7 +429,7 @@ It's mostly backward compatible but need a few tweaks:
 
 - Let go of multi-router support for simpler codebase.
 
-[unreleased]: https://github.com/pinecone-router/router/compare/6.2.2...HEAD
+[unreleased]: https://github.com/pinecone-router/router/compare/6.2.3...HEAD
 [0.0.3]: https://github.com/pinecone-router/router/compare/0.0.2...0.0.3
 [0.0.4]: https://github.com/pinecone-router/router/compare/0.0.3...0.0.4
 [0.0.5]: https://github.com/pinecone-router/router/compare/0.0.4...0.0.5
@@ -476,3 +482,4 @@ It's mostly backward compatible but need a few tweaks:
 [6.2.0]: https://github.com/pinecone-router/router/compare/6.1.0..6.2.0
 [6.2.1]: https://github.com/pinecone-router/router/compare/6.2.0..6.2.1
 [6.2.2]: https://github.com/pinecone-router/router/compare/6.2.1..6.2.2
+[6.2.3]: https://github.com/pinecone-router/router/compare/6.2.2..6.2.3

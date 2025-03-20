@@ -38,7 +38,7 @@ declare module 'alpinejs' {
 
 export default function (Alpine) {
 	const PineconeRouter = Alpine.reactive(<Window['PineconeRouter']>{
-		version: '6.2.2',
+		version: '6.2.3',
 		name: 'pinecone-router',
 
 		settings: <Settings>{
@@ -233,7 +233,8 @@ export default function (Alpine) {
 		if (interpolate) {
 			urls = urls.map((url) => {
 				// Replace :param format (e.g., /users/:id/profile)
-				url = url.replace(/:([^/]+)/g, (match, paramName) => {
+				url = url.replace(/:([^/.]+)/g, (match, paramName) => {
+					console.log({ paramName })
 					return PineconeRouter.context.params[paramName] || match
 				})
 
