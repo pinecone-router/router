@@ -208,8 +208,6 @@ export default function (Alpine) {
 			el._x_PineconeRouter_CurrentTemplateScript?.parentNode?.removeChild(
 				el._x_PineconeRouter_CurrentTemplateScript,
 			)
-			el._x_PineconeRouter_CurrentTemplateUrls = null
-
 			delete el._x_PineconeRouter_CurrentTemplate
 		}
 
@@ -234,7 +232,6 @@ export default function (Alpine) {
 			urls = urls.map((url) => {
 				// Replace :param format (e.g., /users/:id/profile)
 				url = url.replace(/:([^/.]+)/g, (match, paramName) => {
-					console.log({ paramName })
 					return PineconeRouter.context.params[paramName] || match
 				})
 
@@ -242,7 +239,7 @@ export default function (Alpine) {
 			})
 		}
 		if (
-			el._x_PineconeRouter_CurrentTemplate &&
+			el._x_PineconeRouter_CurrentTemplateUrls != undefined &&
 			el._x_PineconeRouter_CurrentTemplateUrls != urls
 		) {
 			hide(el)
