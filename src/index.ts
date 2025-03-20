@@ -38,7 +38,7 @@ declare module 'alpinejs' {
 
 export default function (Alpine) {
 	const PineconeRouter = Alpine.reactive(<Window['PineconeRouter']>{
-		version: '6.2.1',
+		version: '6.2.2',
 		name: 'pinecone-router',
 
 		settings: <Settings>{
@@ -233,7 +233,7 @@ export default function (Alpine) {
 		if (interpolate) {
 			urls = urls.map((url) => {
 				// Replace :param format (e.g., /users/:id/profile)
-				url = url.replace(/:([a-zA-Z0-9_]+)/g, (match, paramName) => {
+				url = url.replace(/:([^/]+)/g, (match, paramName) => {
 					return PineconeRouter.context.params[paramName] || match
 				})
 
@@ -311,17 +311,13 @@ export default function (Alpine) {
 
 		return Promise.all(loadPromises).then((htmlArray) => {
 			// if el was not passed, means it was just preloading programmatic templates
-			const combinedHtml = htmlArray
-				.filter((html) => html !== null)
-				.join('')
+			const combinedHtml = htmlArray.filter((html) => html !== null).join('')
 			if (!el) return combinedHtml
 			// don't add the wrapper on programmatically added templates
 			// since it doesn't use the <template> method it is not needed
 			if (urls.length > 1 && !programmaticTemplates)
 				el.innerHTML =
-					'<templates-wrapper>' +
-					combinedHtml +
-					'</templates-wrapper>'
+					'<templates-wrapper>' + combinedHtml + '</templates-wrapper>'
 			else el.innerHTML = combinedHtml
 			return el.innerHTML
 		})
@@ -340,9 +336,7 @@ export default function (Alpine) {
 	}
 
 	function fetchError(error: string) {
-		document.dispatchEvent(
-			new CustomEvent('fetch-error', { detail: error }),
-		)
+		document.dispatchEvent(new CustomEvent('fetch-error', { detail: error }))
 	}
 
 	const addBasePath = (path) => {
@@ -387,8 +381,7 @@ export default function (Alpine) {
 
 			let urls: string[]
 
-			if (typeof evaluatedExpression == 'object')
-				urls = evaluatedExpression
+			if (typeof evaluatedExpression == 'object') urls = evaluatedExpression
 			else {
 				throw new Error(
 					`Pinecone Router: Invalid template type: ${typeof evaluatedExpression}.`,
@@ -426,8 +419,7 @@ export default function (Alpine) {
 			Alpine.nextTick(() => {
 				effect(() => {
 					let found =
-						route.handlersDone &&
-						PineconeRouter.context.route == route.path
+						route.handlersDone && PineconeRouter.context.route == route.path
 					found
 						? showAll(
 								el,
@@ -435,14 +427,13 @@ export default function (Alpine) {
 								urls,
 								targetEl,
 								modifiers.includes('interpolate'),
-						  )
+							)
 						: hide(el)
 				})
 			})
 
 			cleanup(() => {
-				el._x_PineconeRouter_undoTemplate &&
-					el._x_PineconeRouter_undoTemplate()
+				el._x_PineconeRouter_undoTemplate && el._x_PineconeRouter_undoTemplate()
 			})
 		},
 	)
@@ -469,8 +460,7 @@ export default function (Alpine) {
 
 			let evaluatedExpression = evaluate(expression)
 
-			if (typeof evaluatedExpression == 'object')
-				handlers = evaluatedExpression
+			if (typeof evaluatedExpression == 'object') handlers = evaluatedExpression
 			else {
 				throw new Error(
 					`Pinecone Router: Invalid handler type: ${typeof evaluatedExpression}.`,
@@ -545,8 +535,7 @@ export default function (Alpine) {
 				routeIndex = PineconeRouter.add(path)
 			}
 
-			let route =
-				PineconeRouter.routes[routeIndex] ?? PineconeRouter.notfound
+			let route = PineconeRouter.routes[routeIndex] ?? PineconeRouter.notfound
 
 			// set the path in the element so it is used by other directives
 			el._x_PineconeRouter_route = path
@@ -555,18 +544,14 @@ export default function (Alpine) {
 				Alpine.nextTick(() => {
 					effect(() => {
 						let found =
-							route.handlersDone &&
-							PineconeRouter.context.route == path
-						found
-							? showAll(el, expression, null, targetEl)
-							: hide(el)
+							route.handlersDone && PineconeRouter.context.route == path
+						found ? showAll(el, expression, null, targetEl) : hide(el)
 					})
 				})
 			}
 
 			cleanup(() => {
-				el._x_PineconeRouter_undoTemplate &&
-					el._x_PineconeRouter_undoTemplate()
+				el._x_PineconeRouter_undoTemplate && el._x_PineconeRouter_undoTemplate()
 				PineconeRouter.remove(path)
 				delete el._x_PineconeRouter_route
 			})
@@ -639,9 +624,8 @@ export default function (Alpine) {
 				return
 
 			let currentRoute =
-				PineconeRouter.routes[
-					findRouteIndex(PineconeRouter.context.route)
-				] ?? PineconeRouter.notfound
+				PineconeRouter.routes[findRouteIndex(PineconeRouter.context.route)] ??
+				PineconeRouter.notfound
 
 			// stop handlers in progress before navigating to the next page
 			if (!currentRoute.handlersDone) {
@@ -654,21 +638,16 @@ export default function (Alpine) {
 			do {
 				if (node.localName === 'a' && node.getAttribute('href')) {
 					if (
-						window.PineconeRouter.settings.interceptLinks ==
-							false &&
+						window.PineconeRouter.settings.interceptLinks == false &&
 						!node.hasAttribute('x-link')
 					)
 						return
-					if (
-						node.hasAttribute('data-native') ||
-						node.hasAttribute('native')
-					)
+					if (node.hasAttribute('data-native') || node.hasAttribute('native'))
 						return
 					let href = validateLink(node)
 					if (href) {
 						navigate(href)
-						if (e.stopImmediatePropagation)
-							e.stopImmediatePropagation()
+						if (e.stopImmediatePropagation) e.stopImmediatePropagation()
 						if (e.stopPropagation) e.stopPropagation()
 						e.preventDefault()
 					}
@@ -706,10 +685,7 @@ export default function (Alpine) {
 			) {
 				path = PineconeRouter.settings.basePath + path
 			}
-			if (
-				path == PineconeRouter.settings.basePath &&
-				!path.endsWith('/')
-			) {
+			if (path == PineconeRouter.settings.basePath && !path.endsWith('/')) {
 				path += '/'
 			}
 		}
@@ -771,8 +747,7 @@ export default function (Alpine) {
 
 		// the middleware may return 'stop' to stop execution of this function
 		if (
-			middleware('onBeforeHandlersExecuted', route, path, firstLoad) ==
-			'stop'
+			middleware('onBeforeHandlersExecuted', route, path, firstLoad) == 'stop'
 		) {
 			endLoading()
 			return
@@ -821,14 +796,10 @@ export default function (Alpine) {
 		if (route.templates.length && route.programmaticTemplates) {
 			let target = route.templateTargetId
 				? document.getElementById(route.templateTargetId)
-				: document.getElementById(
-						PineconeRouter.settings.templateTargetId,
-				  )
-			loadAll(target, route.templates, route.programmaticTemplates).then(
-				() => {
-					endLoading()
-				},
-			)
+				: document.getElementById(PineconeRouter.settings.templateTargetId)
+			loadAll(target, route.templates, route.programmaticTemplates).then(() => {
+				endLoading()
+			})
 		}
 		// if PineconeRouter.settings.alwaysSendLoadingEvents is true
 		// and no end event was dispatched, end the loading
