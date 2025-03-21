@@ -14,15 +14,17 @@ export const fetchError = (error: string, url: string) => {
 
 export const make = (
 	Alpine: Alpine,
-	el: ElementWithXAttributes<HTMLTemplateElement>,
+	template: ElementWithXAttributes<HTMLTemplateElement>,
 	expression: string,
 	targetEl?: HTMLElement,
 	urls?: string[],
 ) => {
-	if (inMakeProgress.has(expression)) return
-	inMakeProgress.add(expression)
+	const unique_id = (template.id ?? '') + expression
 
-	const contentNode = el.content
+	if (inMakeProgress.has(unique_id)) return
+	inMakeProgress.add(unique_id)
+
+	const contentNode = template.content
 
 	if (!contentNode) return
 
@@ -40,30 +42,31 @@ export const make = (
 
 	// Clone all children and add the x-data scope
 	Array.from(contentNode.children).forEach((child) => {
-		const clone = child.cloneNode(true) as HTMLElement
+		const clone = child.cloneNode(true) as ElementWithXAttributes<HTMLElement>
 		clones.push(clone)
-		Alpine.addScopeToNode(clone, {}, el)
+		Alpine.addScopeToNode(clone, {}, template)
+		template.id && clone.setAttribute('template-id', template.id)
 	})
 
 	Alpine.mutateDom(() => {
 		if (targetEl != undefined) {
 			targetEl.replaceChildren(...clones)
-		} else el.after(...clones)
+		} else template.after(...clones)
 		clones.forEach((clone) => {
 			Alpine.initTree(clone)
 		})
 	})
 
-	el._x_PineconeRouter_Template = clones
-	el._x_PineconeRouter_TemplateUrls = urls
+	template._x_PineconeRouter_Template = clones
+	template._x_PineconeRouter_TemplateUrls = urls
 
-	el._x_PineconeRouter_undoTemplate = () => {
+	template._x_PineconeRouter_undoTemplate = () => {
 		// Remove clone element
-		el._x_PineconeRouter_Template?.forEach((clone) => clone.remove())
-		delete el._x_PineconeRouter_Template
+		template._x_PineconeRouter_Template?.forEach((clone) => clone.remove())
+		delete template._x_PineconeRouter_Template
 	}
 
-	Alpine.nextTick(() => inMakeProgress.delete(expression))
+	Alpine.nextTick(() => inMakeProgress.delete(unique_id))
 }
 
 // Hide content of a template element
@@ -77,7 +80,8 @@ export const hide = (el: ElementWithXAttributes<HTMLTemplateElement>) => {
 export const show = (
 	Alpine: Alpine,
 	Router: PineconeRouter,
-	el: ElementWithXAttributes<HTMLTemplateElement>,
+	// template element
+	template: ElementWithXAttributes<HTMLTemplateElement>,
 	expression: string,
 	urls?: Array<string>,
 	targetEl?: HTMLElement,
@@ -86,34 +90,34 @@ export const show = (
 	// if the template element has content but the parameters have changed
 	// remove the content inside the template
 	if (
-		el._x_PineconeRouter_TemplateUrls != undefined &&
-		el._x_PineconeRouter_TemplateUrls != urls
+		template._x_PineconeRouter_TemplateUrls != undefined &&
+		template._x_PineconeRouter_TemplateUrls != urls
 	) {
-		hide(el)
-		el.innerHTML = ''
+		hide(template)
+		template.innerHTML = ''
 	}
 
-	// if the template element has content, show it
-	if (el._x_PineconeRouter_Template) {
+	// the template is already inserted into the page
+	if (template._x_PineconeRouter_Template) {
 		return
 	}
 
-	if (el.content.childElementCount) {
-		make(Alpine, el, expression, targetEl, urls)
+	if (template.content.childElementCount) {
+		make(Alpine, template, expression, targetEl, urls)
 		if (Router.startEventDispatched) Router.endLoading()
 	} else if (urls) {
 		// this occurs when the params change in the same route when using interpolated template urls
 		if (urls.every((url) => cachedTemplates[url])) {
-			el.innerHTML = ''
+			template.innerHTML = ''
 			urls.forEach((url) => {
-				el.innerHTML += cachedTemplates[url]
+				template.innerHTML += cachedTemplates[url]
 			})
-			make(Alpine, el, expression, targetEl, urls)
+			make(Alpine, template, expression, targetEl, urls)
 			Router.endLoading()
 		} else {
 			// This second case is that templates didn't finish loading
-			load(urls, el)
-				.then(() => make(Alpine, el, expression, targetEl, urls))
+			load(urls, template)
+				.then(() => make(Alpine, template, expression, targetEl, urls))
 				.finally(() => Router.endLoading())
 		}
 	}

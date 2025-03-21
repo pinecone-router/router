@@ -114,8 +114,6 @@ If you add a child to the `<template>` element, Pinecone Router will render it w
 
 In this example it will add the `div` with "Hello World" to the document the same way `x-if` does: after the `template` tag.
 
-> **Note**: _only the first child will be rendered, similar to `x-if`_
-
 ### Modifiers
 
 - **`.target`**: Takes an ID paramater for example `.target.app` will render the inline template inside the element with the `app` ID:
@@ -140,13 +138,12 @@ This directive allows you to specify external template files to be fetched from 
 <template x-route="/" x-template="['/header.html', '/home.html']"></template>
 ```
 
-> **Note**: same as inline templates and `x-if`, _only the first child element of the template will be rendered._
-
 ### Modifiers
 
 - **`.preload`**: Fetches the template on page load, without waiting for the route to be matched.
 - **`.target`**: Takes an ID paramater for example `.target.app` will render the template inside the element with the `app` ID
 - **`.interpolate`**: Enable named params in template urls, ie. fetching templates based on route params.
+- **`.component`**: Load the template automatically a reusuable component without the need of a route.
 
 > Modifiers can be used simulateneously: `x-template.preload.target.app`
 
@@ -411,14 +408,14 @@ You can easily use [nProgress](http://ricostacruz.com/nprogress) with `x-templat
 ```js
 document.addEventListener('pinecone-start', () => NProgress.start())
 document.addEventListener('pinecone-end', () => NProgress.done())
-document.addEventListener('fetch-error', (err) => console.error(err))
+document.addEventListener('pinecone-fetch-error', (err) => console.error(err))
 ```
 
-| name               | recipient | when it is dispatched                        |
-| ------------------ | --------- | -------------------------------------------- |
-| **pinecone-start** | document  | when the template start fetching             |
-| **pinecone-end**   | document  | when the fetching ends successfuly           |
-| **fetch-error**    | document  | when the fetching of external templates fail |
+| name                     | recipient | when it is dispatched                        |
+| ------------------------ | --------- | -------------------------------------------- |
+| **pinecone-start**       | document  | when the template start fetching             |
+| **pinecone-end**         | document  | when the fetching ends successfuly           |
+| **pinecone-fetch-error** | document  | when the fetching of external templates fail |
 
 By default, these events only fire when there are external templates and/or handlers.
 To make it so they are always dispatched you can use the setting `window.PineconeRouter.settings.alwaysSendLoadingEvents = true`

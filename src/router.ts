@@ -7,7 +7,6 @@ import {
 import { buildContext, type Context } from './context'
 import createRoute, { type Route, type RouteOptions } from './route'
 import { load, preload } from './templates'
-// import { middleware } from './middleware'
 import { addBasePath } from './utils'
 
 export type Settings = {
@@ -227,7 +226,9 @@ export const createPineconeRouter = (version: string): PineconeRouter => {
 			if (!path) path = '/'
 
 			// if specified add the basePath
-			addBasePath(path, this.settings.basePath)
+			// TODO
+			path = addBasePath(path, this.settings.basePath)
+			// console.log({ path })
 
 			// if called from this.back() or .forward(), do not add the path to the stack
 			// but change the index accordingly
@@ -285,15 +286,6 @@ export const createPineconeRouter = (version: string): PineconeRouter => {
 				this.context.navigationIndex,
 			)
 
-			// TODO: implement hooks
-			// the middleware may return 'stop' to stop execution of this function
-			// if (
-			// 	middleware('onBeforeHandlersExecuted', route, path, firstLoad) == 'stop'
-			// ) {
-			// 	this.endLoading()
-			// 	return
-			// }
-
 			// do not call pushstate from popstate event https://stackoverflow.com/a/50830905
 			if (!fromPopState) {
 				let fullPath = ''
@@ -332,9 +324,6 @@ export const createPineconeRouter = (version: string): PineconeRouter => {
 				route.handlersDone = true
 				if (!route.templates) this.endLoading()
 			}
-
-			// TOOD: implement hooks
-			// middleware('onHandlersExecuted', route, path, firstLoad)
 
 			// show templates added programmatically
 			if (route.programmaticTemplates) {

@@ -6,11 +6,9 @@ import { HandlerDirective } from '~/directives/x-handler'
 import { RouteDirective } from '~/directives/x-route'
 import { interceptLinks } from '~/links'
 import { type Context } from '~/context'
-import { Middleware } from './middleware'
 
 declare global {
 	interface Window {
-		PineconeRouterMiddlewares: Array<Middleware> // implement hooks
 		PineconeRouter: PineconeRouter
 	}
 }
@@ -38,9 +36,6 @@ const PineconeRouterPlugin: PluginCallback = function (Alpine: Alpine) {
 
 	// Initialize event listeners (equivalent to constructor)
 	document.addEventListener('alpine:initialized', () => {
-		// TODO: implement hooks
-		// middleware('init')
-
 		// virtually navigate to the path on the first page load
 		// this will register the path in history and sets the path variable
 		if (Router.settings.hash == false) {

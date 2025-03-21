@@ -30,6 +30,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Now $router.redirect returns HandlerResult.HALT `0`
   - To halt the execution of handlers without redirecting you could import HandlerResult from 'pinecone-router' or simply return 0
 
+#### x-template
+
+- No longer limited to one child per template
+- All root elements inside a template including scripts will be rendered.
+- Added new `.component` modifier. This works as a regular template but doesn't require an `x-route`, creating the possibility of defining reusable components with the possibility of setting x-data through the template element itself.
+
+### Events
+
+- Changed `fetch-error` event to `pinecone-fetch-error` to avoid possible conflicts
+
 ## [6.2.4] - 2025-03-20
 
 ### Fixed

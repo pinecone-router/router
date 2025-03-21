@@ -18,22 +18,19 @@ export const HandlerDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 			{ expression, modifiers },
 			{ evaluate, cleanup },
 		) => {
-			if (!modifiers.includes('global') && !el._x_PineconeRouter_route) {
-				throw new PineconeRouterError(HANDLER_REQUIRES_ROUTE)
-			}
-
 			let handlers: Handler[]
 
 			// check if the handlers expression is an array
 			// if not make it one
+			expression = expression.trim()
 			if (
 				!(expression.startsWith('[') && expression.endsWith(']')) &&
-				!(expression.startsWith('Array(') && expression.endsWith(')'))
+				!(expression.startsWith('Array') && expression.endsWith(')'))
 			) {
 				expression = `[${expression}]`
 			}
 
-			let evaluatedExpression = evaluate(expression)
+			const evaluatedExpression = evaluate(expression)
 
 			if (typeof evaluatedExpression == 'object')
 				handlers = evaluatedExpression as Handler[]
@@ -43,8 +40,8 @@ export const HandlerDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 				)
 
 			// add `this` context for handlers inside an Alpine.component
-			for (let index = 0; index < handlers.length; index++) {
-				handlers[index] = handlers[index].bind(Alpine.$data(el))
+			for (let i = 0; i < handlers.length; i++) {
+				handlers[i] = handlers[i].bind(Alpine.$data(el))
 			}
 
 			let route: Route
@@ -52,8 +49,11 @@ export const HandlerDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 			if (modifiers.includes('global')) {
 				Router.globalHandlers = handlers
 			} else {
+				if (!el._x_PineconeRouter_route) {
+					throw new PineconeRouterError(HANDLER_REQUIRES_ROUTE)
+				}
 				// add handlers to the route
-				let path = el._x_PineconeRouter_route!
+				let path = el._x_PineconeRouter_route
 				route =
 					path == 'notfound'
 						? Router.notfound

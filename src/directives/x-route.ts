@@ -5,8 +5,8 @@ import { PineconeRouter } from '~/router'
 import { show, hide } from '~/templates'
 import {
 	DIRECTIVE_REQUIRES_TEMPLATE_ELEMENT,
-	PineconeRouterError,
 	ROUTE_WITH_HASH,
+	PineconeRouterError,
 } from '~/errors'
 
 export const RouteDirective = (Alpine: Alpine, Router: PineconeRouter) => {
@@ -18,9 +18,6 @@ export const RouteDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 			{ cleanup, effect },
 		) => {
 			let path = expression
-
-			// TODO implement hooks
-			// middleware('onBeforeRouteProcessed', el, path)
 
 			if (!(el instanceof HTMLTemplateElement)) {
 				throw new PineconeRouterError(DIRECTIVE_REQUIRES_TEMPLATE_ELEMENT)
@@ -52,7 +49,7 @@ export const RouteDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 			// set the path in the element so it is used by other directives
 			template._x_PineconeRouter_route = path
 
-			if (template.content.firstElementChild != null) {
+			if (template.content.childElementCount) {
 				Alpine.nextTick(() => {
 					effect(() => {
 						const found =
@@ -72,9 +69,6 @@ export const RouteDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 				}
 				delete template._x_PineconeRouter_route
 			})
-
-			// TODO implement hooks
-			// middleware('onAfterRouteProcessed', el, path)
 		},
 	).before('handler')
 }

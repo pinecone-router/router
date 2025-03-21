@@ -1,5 +1,5 @@
 import { TARGET_ID_NOT_FOUND, PineconeRouterError } from '~/errors'
-import Route from '~/route'
+import { type Route } from '~/route'
 
 export const findRouteIndex = (path: string, routes: Route[]) =>
 	routes.findIndex((r) => r.path == path)
@@ -45,4 +45,16 @@ export const getTargetELement = (
 		throw new PineconeRouterError(TARGET_ID_NOT_FOUND(target))
 
 	return targetEl
+}
+
+export const normalizeExpression = (expression: string): string => {
+	// check if the handlers expression is an array
+	// if not make it one
+	if (
+		!(expression.startsWith('[') && expression.endsWith(']')) &&
+		!(expression.startsWith('Array(') && expression.endsWith(')'))
+	) {
+		expression = `[${expression}]`
+	}
+	return expression
 }

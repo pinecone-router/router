@@ -1,6 +1,5 @@
 import { expect, test } from 'vitest'
 import { interpolate } from './templates'
-import { PineconeRouterError, TEMPLATE_PARAM_NOT_FOUND } from './errors'
 
 test('interpolate', () => {
 	const urls = ['/', '/users/:id.html']
