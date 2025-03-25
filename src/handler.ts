@@ -1,7 +1,7 @@
 import { type Context } from './context'
 import { type PineconeRouter } from './router'
 
-export type Handler = (context: Context) => HandlerResult | void
+export type Handler = (context: Context) => HandlerResult | void | Promise<HandlerResult | void>
 
 export enum HandlerResult {
 	HALT,

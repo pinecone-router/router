@@ -107,6 +107,7 @@ export interface PineconeRouter {
 	 * Go to the next route in the navigation stack
 	 */
 	forward: () => void
+	navigateToHistoryPosition: (index: number) => void
 	/**
 	 *  Navigate to the specified path
 	 *
@@ -178,7 +179,7 @@ export const createPineconeRouter = (version: string): PineconeRouter => {
 
 		add: function (path: string, options: RouteOptions): number {
 			// check if the route was registered on the same router.
-			if (this.routes.find((r: Route) => r.path == path) != null) {
+			if (this.routes.find((r: Route) => r.path == path)) {
 				throw new PineconeRouterError(ROUTE_EXISTS(path))
 			}
 			if (options.templates && options.preload) {
@@ -202,12 +203,7 @@ export const createPineconeRouter = (version: string): PineconeRouter => {
 		},
 
 		back: function (): void {
-			this.navigate(
-				this.context.navigationStack[this.context.navigationIndex - 1],
-				false,
-				false,
-				this.context.navigationIndex - 1,
-			)
+			this.navigateToHistoryPosition(this.context.navigationIndex - 1)
 		},
 
 		canGoForward: function (): boolean {
@@ -217,12 +213,19 @@ export const createPineconeRouter = (version: string): PineconeRouter => {
 		},
 
 		forward: function (): void {
-			this.navigate(
-				this.context.navigationStack[this.context.navigationIndex + 1],
-				false,
-				false,
-				this.context.navigationIndex + 1,
-			)
+			this.navigateToHistoryPosition(this.context.navigationIndex + 1)
+		},
+
+		// Extract method for navigate to history position
+		navigateToHistoryPosition: function(index: number): void {
+			if (index >= 0 && index < this.context.navigationStack.length) {
+				this.navigate(
+					this.context.navigationStack[index],
+					false,
+					false,
+					index,
+				)
+			}
 		},
 
 		navigate: async function (
@@ -237,7 +240,7 @@ export const createPineconeRouter = (version: string): PineconeRouter => {
 				this.cancelHandlers = true
 			}
 
-			if (!path) path = '/'
+			path = path || '/'
 
 			// if specified add the basePath
 			// TODO

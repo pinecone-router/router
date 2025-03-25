@@ -1,7 +1,7 @@
 import { Context } from './context'
 import type { Handler } from './handler'
 
-export type Route = {
+export interface Route {
 	match: (path: string) => MatchResult
 	programmaticTemplates: boolean
 	templateTargetId: string
@@ -12,12 +12,12 @@ export type Route = {
 	path: string
 }
 
-export type MatchResult = {
+export interface MatchResult {
 	match: boolean
 	params?: Context['params']
 }
 
-export type RouteOptions = {
+export interface RouteOptions {
 	templateTargetId?: string
 	handlers?: Handler[]
 	templates?: string[]
@@ -42,7 +42,7 @@ export default function createRoute(
 	// Create the route object
 	const route: Route = {
 		pattern: path.indexOf(':') !== -1 ? buildRegexp(path) : undefined,
-		programmaticTemplates: !!templates.length,
+		programmaticTemplates: templates.length > 0,
 		templateTargetId,
 		templates,
 		handlers,

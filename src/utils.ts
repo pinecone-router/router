@@ -39,22 +39,10 @@ export const getTargetELement = (
 	globalTargetId?: string,
 ): HTMLElement | undefined => {
 	let target = targetId ?? globalTargetId ?? ''
-	let targetEl = document.getElementById(target) ?? undefined
+	let targetEl = document.getElementById(target)
 
-	if (target.length && targetEl == undefined)
+	if (!targetEl)
 		throw new PineconeRouterError(TARGET_ID_NOT_FOUND(target))
 
 	return targetEl
-}
-
-export const normalizeExpression = (expression: string): string => {
-	// check if the handlers expression is an array
-	// if not make it one
-	if (
-		!(expression.startsWith('[') && expression.endsWith(']')) &&
-		!(expression.startsWith('Array(') && expression.endsWith(')'))
-	) {
-		expression = `[${expression}]`
-	}
-	return expression
 }
