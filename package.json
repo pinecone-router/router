@@ -25,19 +25,22 @@
 	"umd:main": "dist/router.min.js",
 	"module": "dist/router.esm.js",
 	"scripts": {
-		"build": "node scripts/build.js && tsc --emitDeclarationOnly --declaration --project tsconfig.json --outfile dist/index.d.ts",
-		"bun": "bun scripts/bun.js && tsc --emitDeclarationOnly --declaration --project tsconfig.json --outfile dist/index.d.ts",
-		"bunjs": "bun scripts/bun.js",
-		"test": "vitest"
+		"dist": "bun build-esm && bun build-cdn && bun build-tsc",
+		"build-cdn": "bun build src/index.ts --minify --sourcemap=\"linked\" --entry-naming=\"router.min.[ext]\" --format \"iife\" --outdir=\"./dist\"",
+		"build-esm": "bun build src/index.ts --minify --sourcemap=\"linked\" --entry-naming=\"router.esm.[ext]\" --format \"esm\" --outdir=\"./dist\"",
+		"build-tsc": "tsc  --emitDeclarationOnly --declaration --project tsconfig.json --outfile dist/index.d.ts",
+		"dev": "bun build src/index.ts --watch --minify --sourcemap=\"linked\" --entry-naming=\"router.esm.[ext]\" --outdir=\"./example\"",
+		"example": "cd example && bun dev"
 	},
 	"devDependencies": {
+		"@happy-dom/global-registrator": "^17.4.4",
 		"@types/alpinejs": "^3.13.11",
 		"@types/bun": "^1.2.5",
-		"esbuild": "^0.25.1",
+		"alpinejs": "^3.14.9",
 		"prettier": "^3.5.3",
-		"typescript": "^4.9.5",
-		"vitest": "^3.0.9"
+		"typescript": "^5"
 	},
 	"types": "dist/index.d.ts",
-	"packageManager": "pnpm@10.5.2+sha512.da9dc28cd3ff40d0592188235ab25d3202add8a207afbedc682220e4a0029ffbff4562102b9e6e46b4e3f9e8bd53e6d05de48544b0c57d4b0179e22c76d1199b"
+	"packageManager": "pnpm@10.5.2+sha512.da9dc28cd3ff40d0592188235ab25d3202add8a207afbedc682220e4a0029ffbff4562102b9e6e46b4e3f9e8bd53e6d05de48544b0c57d4b0179e22c76d1199b",
+	"private": true
 }

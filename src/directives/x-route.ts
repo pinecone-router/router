@@ -1,13 +1,12 @@
 import { type ElementWithXAttributes, type Alpine } from 'alpinejs'
 
-import { getTargetELement, modifierValue, addBasePath } from '~/utils'
-import { PineconeRouter } from '~/router'
-import { show, hide } from '~/templates'
+import { getTargetELement, modifierValue, addBasePath } from '../utils'
+import { PineconeRouter } from '../router'
+import { show, hide } from '../templates'
 import {
 	DIRECTIVE_REQUIRES_TEMPLATE_ELEMENT,
-	ROUTE_WITH_HASH,
 	PineconeRouterError,
-} from '~/errors'
+} from '../errors'
 
 export const RouteDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 	Alpine.directive(
@@ -24,10 +23,6 @@ export const RouteDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 			}
 
 			const template = el as ElementWithXAttributes<HTMLTemplateElement>
-
-			if (path.indexOf('#') > -1) {
-				throw new PineconeRouterError(ROUTE_WITH_HASH)
-			}
 
 			const targetEl = getTargetELement(
 				modifierValue(modifiers, 'target'),
@@ -52,8 +47,8 @@ export const RouteDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 			if (template.content.childElementCount) {
 				Alpine.nextTick(() => {
 					effect(() => {
-						const found =
-							route.handlersDone && Router.context.route?.path == path
+						const found = Router.handlersDone && Router.context.route == route
+
 						found
 							? show(Alpine, Router, template, expression, undefined, targetEl)
 							: hide(template)

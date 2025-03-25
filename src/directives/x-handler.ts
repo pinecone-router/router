@@ -1,14 +1,14 @@
 import { type Alpine, type ElementWithXAttributes } from 'alpinejs'
-import { PineconeRouter } from '~/router'
-import { findRouteIndex } from '~/utils'
+import { PineconeRouter } from '../router'
+import { findRouteIndex } from '../utils'
 import {
-	HANDLER_REQUIRES_ROUTE,
+	DIRECTIVE_REQUIRES_ROUTE,
 	INVALID_HANDLER_TYPE,
 	PineconeRouterError,
-} from '~/errors'
+} from '../errors'
 
-import { type Route } from '~/route'
-import type { Handler } from '~/handler'
+import { type Route } from '../route'
+import type { Handler } from '../handler'
 
 export const HandlerDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 	Alpine.directive(
@@ -18,8 +18,6 @@ export const HandlerDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 			{ expression, modifiers },
 			{ evaluate, cleanup },
 		) => {
-			let handlers: Handler[]
-
 			// check if the handlers expression is an array
 			// if not make it one
 			expression = expression.trim()
@@ -32,12 +30,12 @@ export const HandlerDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 
 			const evaluatedExpression = evaluate(expression)
 
-			if (typeof evaluatedExpression == 'object')
-				handlers = evaluatedExpression as Handler[]
-			else
+			if (typeof evaluatedExpression != 'object')
 				throw new PineconeRouterError(
 					INVALID_HANDLER_TYPE(typeof evaluatedExpression),
 				)
+
+			let handlers = evaluatedExpression as Handler[]
 
 			// add `this` context for handlers inside an Alpine.component
 			for (let i = 0; i < handlers.length; i++) {
@@ -49,15 +47,16 @@ export const HandlerDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 			if (modifiers.includes('global')) {
 				Router.globalHandlers = handlers
 			} else {
-				if (!el._x_PineconeRouter_route) {
-					throw new PineconeRouterError(HANDLER_REQUIRES_ROUTE)
-				}
+				if (!el._x_PineconeRouter_route)
+					throw new PineconeRouterError(DIRECTIVE_REQUIRES_ROUTE('handler'))
+
 				// add handlers to the route
 				let path = el._x_PineconeRouter_route
 				route =
 					path == 'notfound'
 						? Router.notfound
 						: Router.routes[findRouteIndex(path, Router.routes)]
+
 				route.handlers = handlers
 			}
 
@@ -66,8 +65,6 @@ export const HandlerDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 					Router.globalHandlers = []
 				} else {
 					route.handlers = []
-					route.handlersDone = true
-					route.cancelHandlers = false
 				}
 			})
 		},

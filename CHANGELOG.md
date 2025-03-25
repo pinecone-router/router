@@ -7,38 +7,65 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-#### Context object:
+This release focuses on refactoring the codebase and the public API, thus it contains some changes to the way you use Pinecone Router.
+The changes focus on consistency, as in not having multiple ways to do the same thing when not necessary.
+Also, with this release, I've sunset the Middlewares feature which proved to be not as useful as I thought it would be long back in 2021!. Their purpose is very well accomplished with handlers.
+This is indefinite unless there is a need for them as to not bloat the router.
+I continue to support Pinecone Router with implementing feature requests which I deem to be helpful and not possible to do otherwise.
+
+### Navigation:
+
+- All navigation requests now cancel ongoing handlers, meaning no need to return $router.redirect(), but returning inside a handler after redirecting is still expected as the current handler will finish executing.
+
+### Context object:
 
 - Context.route is now a Route object instead of a string.
-- The methods navigate|redirect|goBack|goForward etc. are no longer part of the context object
-  - To call the above functions from a handler use `this.$router.navigate` if inside an Alpine component, or use `window.PineconeRouter.navigate` or `Alpine.$router.navigate` etc.
+- The navigation methods navigate|redirect|goBack|goForward etc. are no longer part of the context object.
+  - Instead use `$router.navigate`, `this.$router.navigate`, `window.PineconeRouter.navigate`, or `Alpine.$router.navigate`.
+- Context.params was removed, params now reside inside the Route object, ie `context.route.params`
 
-#### $router magic helper:
+### PineconeRouter object
+
+- Added new readonly boolean property `PineconeRouter.loading` to replace two properties `startEventDispatched` and `endEventDispatched` which were removed.
+
+### $router magic helper:
 
 - Instead of providing the previous context object now it does what it says and provides `PineconeRouter` object.
 - To access params you must use `$router.context.params`
 
-#### x-route
+### $params magic helper
+
+- Since params now are nested deeply inside context.route.params, you can use the new `$params` magic helper.
+
+### x-route
 
 - Removed support for + modifier as its always been the default.
 - Added support for regex between parantheses as a modifier:
   - `/shop/:productId(\d+)` will only match where productId is a number
 
-#### x-handler
+### x-handler
 
 - New enum HandlerResult with values HandlerResult.HALT `0` and HandlerResult.CONTINUE `1`
   - Now $router.redirect returns HandlerResult.HALT `0`
   - To halt the execution of handlers without redirecting you could import HandlerResult from 'pinecone-router' or simply return 0
 
-#### x-template
+### x-template
 
-- No longer limited to one child per template
-- All root elements inside a template including scripts will be rendered.
-- Added new `.component` modifier. This works as a regular template but doesn't require an `x-route`, creating the possibility of defining reusable components with the possibility of setting x-data through the template element itself.
+- No longer limited to one child per template! you can include as many root elements inside the template file
+- No longer limited to one root script element per template
+- Routes that share the same `x-template` value ie. the same template urls, used to be ignored after the first one
+  This can now be solved by adding an `id` to the template element.
+- Fixed a bug where x-effect/$watch callback inside a template still run after the route changes.
 
-### Events
+<!-- - Added new `.component` modifier. This works as a regular template but doesn't require an `x-route`, creating the possibility of defining reusable components with the possibility of setting x-data through the template element itself. -->
 
-- Changed `fetch-error` event to `pinecone-fetch-error` to avoid possible conflicts
+## Events
+
+- Changed `pinecone-start`, `pinecone-end`, and `fetch-error` into `pinecone:start`, `pinecone:end`, and `pinecone:fetch-error` respectively
+- Added new `pinecone:navigate` event dispatched on every navigation after handlers were executed.
+- Added new `pinecone:change` event dispatched when the route changes.
+- Added new `pinecone:update` event dispatched when the route stays the same but the path/params change.
+- Added new `pinecone:refresh` event dispatched when navigating to the same path.
 
 ## [6.2.4] - 2025-03-20
 

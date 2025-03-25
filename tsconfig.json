@@ -4,9 +4,6 @@
     "src/**/*"
   ],
   "compilerOptions": {
-    // Tells TypeScript to read JS files, as
-    // normally they are ignored as source files
-    "allowJs": true,
     // Generate d.ts files
     "declaration": true,
     // This compiler run should
@@ -19,16 +16,29 @@
     // go to js file when using IDE functions like
     // "Go to Definition" in VSCode
     "declarationMap": true,
-    "target": "ES6",
-    "moduleResolution": "bundler",
-    "skipLibCheck": true,
-    "strict": true,
     "noImplicitAny": true,
-    "paths": {
-      "~/*": [
-        "src/*"
-      ]
-    },
-    "baseUrl": "./"
+    // Enable latest features
+    "lib": [
+      "ESNext",
+      "dom"
+    ],
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleDetection": "force",
+    "jsx": "react-jsx",
+    "allowJs": true,
+    // Bundler mode
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    // "verbatimModuleSyntax": true,
+    // Best practices
+    "strict": true,
+    "skipLibCheck": true,
+    "noFallthroughCasesInSwitch": true,
+    // Some stricter flags
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "allowSyntheticDefaultImports": true
   }
 }

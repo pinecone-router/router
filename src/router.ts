@@ -1,13 +1,14 @@
-import { handle, HandlerResult, type Handler } from './handler'
-import {
-	ROUTE_EXISTS,
-	PineconeRouterError,
-	TARGET_ID_NOT_SPECIFIED,
-} from './errors'
-import { buildContext, type Context } from './context'
 import createRoute, { type Route, type RouteOptions } from './route'
+import { handle, HandlerResult, type Handler } from './handler'
+import { buildContext, type Context } from './context'
 import { load, preload } from './templates'
 import { addBasePath } from './utils'
+import {
+	TARGET_ID_NOT_SPECIFIED,
+	PineconeRouterError,
+	ROUTE_NOT_FOUND,
+	ROUTE_EXISTS,
+} from './errors'
 
 export type Settings = {
 	/**
@@ -45,6 +46,8 @@ export interface PineconeRouter {
 	notfound: Route
 	routes: Route[]
 	globalHandlers: Handler[]
+	cancelHandlers: boolean
+	handlersDone: boolean
 
 	context: Context
 	settings: Settings
@@ -52,8 +55,7 @@ export interface PineconeRouter {
 	loadStart: Event
 	loadEnd: Event
 
-	endEventDispatched: boolean
-	startEventDispatched: boolean
+	loading: boolean
 
 	// Methods
 	/**
@@ -122,22 +124,30 @@ export interface PineconeRouter {
 }
 
 export const createPineconeRouter = (version: string): PineconeRouter => {
+	const notfound = createRoute('notfound', {
+		handlers: [
+			(ctx) =>
+				console.error(new PineconeRouterError(ROUTE_NOT_FOUND(ctx.path))),
+		],
+	})
+
+	const context = buildContext('', {
+		route: notfound,
+		params: {},
+		navigationStack: [],
+		navigationIndex: 0,
+	})
+
 	const router: PineconeRouter = {
 		version,
 		name: 'pinecone-router',
-		notfound: createRoute('notfound', {}),
+		notfound: notfound,
 		routes: [],
 		globalHandlers: [],
+		cancelHandlers: false,
+		handlersDone: false,
 
-		context: {
-			route: undefined,
-			path: '',
-			params: {},
-			query: window.location.search.substring(1),
-			hash: window.location.hash.substring(1),
-			navigationStack: [],
-			navigationIndex: 0,
-		},
+		context,
 
 		settings: {
 			hash: false,
@@ -147,21 +157,23 @@ export const createPineconeRouter = (version: string): PineconeRouter => {
 			alwaysSendLoadingEvents: false,
 		},
 
-		loadStart: new Event('pinecone-start'),
-		loadEnd: new Event('pinecone-end'),
+		loadStart: new Event('pinecone:start'),
+		loadEnd: new Event('pinecone:end'),
 
-		endEventDispatched: false,
-		startEventDispatched: false,
+		loading: false,
 
 		startLoading: function (): void {
-			if (!this.startEventDispatched) document.dispatchEvent(this.loadStart)
-			this.startEventDispatched = true
+			if (!this.loading) {
+				document.dispatchEvent(this.loadStart)
+				this.loading = true
+			}
 		},
 
 		endLoading: function (): void {
-			if (this.startEventDispatched && !this.endEventDispatched)
+			if (this.loading) {
 				document.dispatchEvent(this.loadEnd)
-			this.endEventDispatched = true
+				this.loading = false
+			}
 		},
 
 		add: function (path: string, options: RouteOptions): number {
@@ -219,53 +231,35 @@ export const createPineconeRouter = (version: string): PineconeRouter => {
 			firstLoad: boolean = false,
 			navigationIndex?: number,
 		): Promise<void> {
-			// reset the loading events
-			this.startEventDispatched = false
-			this.endEventDispatched = false
+			// if a navigation request was made before previous route handlers were done, cancel them
+			// this include link clicks, back/forward, etc
+			if (!this.handlersDone) {
+				this.cancelHandlers = true
+			}
 
 			if (!path) path = '/'
 
 			// if specified add the basePath
 			// TODO
 			path = addBasePath(path, this.settings.basePath)
-			// console.log({ path })
+			// console.debug({ path })
 
-			// if called from this.back() or .forward(), do not add the path to the stack
-			// but change the index accordingly
-			if (navigationIndex != null) {
-				this.context.navigationIndex = navigationIndex
-			} else if (path != this.context.path) {
-				// the above check makes sure soft-reloading doesnt add to the stack duplicate entries
-
-				// if navigated after using back(), remove all the elements of the stack from the current index to the end
-				// then add the current path at the end of the stack
-				if (
-					this.context.navigationIndex !==
-					this.context.navigationStack.length - 1
-				) {
-					this.context.navigationStack = this.context.navigationStack.slice(
-						0,
-						this.context.navigationIndex + 1,
-					)
-					this.context.navigationStack.push(path)
-					this.context.navigationIndex = this.context.navigationStack.length - 1
-				} else {
-					// if this is a regular navigation request, add the path to the stack
-					this.context.navigationStack.push(path)
-					this.context.navigationIndex++
-				}
-			}
+			// create a new local context
+			// this is to prevent editing the global context
+			// which trigger Alpine effects
+			// which causes them to run before this function has done its work.
+			const context = buildContext(path, { ...this.context })
 
 			const route: Route =
-				this.routes.find((route: Route) => route.match(path)) ?? this.notfound
+				this.routes.find((route: Route) => {
+					const r = route.match(path)
+					if (r.params) context.params = r.params
+					return r.match
+				}) ?? this.notfound
 
-			// add global handlers before the route handlers, if any
+			context.route = route
 
-			// if the route has handlers, it will mark them unhandled
-			// this is so templates won't render till then.
-			route.handlersDone = !route.handlers.length && !this.globalHandlers.length
-
-			// alwaysSendLoadingEvents is true
+			// if alwaysSendLoadingEvents is true
 			// or there are handlers or templates to render and the path changed (not soft reload)
 			// then dispatch the loading start event
 			if (
@@ -278,52 +272,74 @@ export const createPineconeRouter = (version: string): PineconeRouter => {
 				this.startLoading()
 			}
 
-			// create a new context object based on the route
-			this.context = buildContext(
-				route,
-				path,
-				this.context.navigationStack,
-				this.context.navigationIndex,
-			)
-
 			// do not call pushstate from popstate event https://stackoverflow.com/a/50830905
 			if (!fromPopState) {
-				let fullPath = ''
-				if (this.settings.hash) {
-					fullPath = '#'
+				// build the full path based on settings
+				const fullPath = this.settings.hash
+					? '#' + path
+					: path + window.location.hash
 
-					fullPath += path
-				} else {
-					fullPath = path
-					fullPath += window.location.hash
-				}
-				// don't create duplicate history entry on first page load
-				if (!firstLoad) history.pushState({ path: fullPath }, '', fullPath)
-				else {
-					if (this.settings.hash) {
-						if (path == '/') {
-							return this.navigate('/', false, false)
-						}
-					}
+				// handle history state management
+				if (!firstLoad) {
+					history.pushState({ path: fullPath }, '', fullPath)
+				} else if (this.settings.hash && path === '/') {
+					// special case: first load with hash routing and root path
+					return this.navigate('/', false, false)
 				}
 			}
 
-			if (route && (route.handlers.length || this.globalHandlers.length)) {
-				route.cancelHandlers = false
-				let ok = await handle(
+			if (route.handlers.length || this.globalHandlers.length) {
+				const ok = await handle(
+					this,
 					this.globalHandlers.concat(route.handlers),
-					this.context,
-					route,
+					context,
 				)
+
 				// if a handler halted execution, for example through returning PineconeRouter.redirect(),
 				//  return without displaying a template
 				if (ok == HandlerResult.HALT) {
 					this.endLoading()
 					return
 				}
-				route.handlersDone = true
-				if (!route.templates) this.endLoading()
+				if (!route.templates) {
+					this.endLoading()
+				}
+			} else {
+				this.handlersDone = true
 			}
+
+			// if called from this.back() or .forward(), do not add the path to the stack
+			if (navigationIndex != null) {
+				context.navigationIndex = navigationIndex
+			} else if (path != this.context.path) {
+				// Only update stack if navigating to a different path
+				if (context.navigationIndex < context.navigationStack.length - 1) {
+					// Trim navigation stack if we're not at the end
+					context.navigationStack = context.navigationStack.slice(
+						0,
+						context.navigationIndex + 1,
+					)
+				}
+				// Add current path and update index
+				context.navigationStack.push(path)
+				context.navigationIndex = context.navigationStack.length - 1
+			}
+
+			this.context = context
+
+			const dispatch = (name: string) =>
+				document.dispatchEvent(
+					new CustomEvent(`pinecone:${name}`, {
+						detail: { context },
+					}),
+				)
+
+			dispatch('navigate')
+			if (this.context.route.path === route.path) {
+				// if the route is the same, but the path has changed (ie. param change)
+				if (this.context.path != context.path) dispatch('update')
+				else dispatch('refresh')
+			} else dispatch('change')
 
 			// show templates added programmatically
 			if (route.programmaticTemplates) {
@@ -333,9 +349,7 @@ export const createPineconeRouter = (version: string): PineconeRouter => {
 
 				if (!target) throw new PineconeRouterError(TARGET_ID_NOT_SPECIFIED)
 
-				load(route.templates, target).then(() => {
-					this.endLoading()
-				})
+				load(route.templates, target).finally(() => this.endLoading())
 			}
 
 			if (this.settings.alwaysSendLoadingEvents) this.endLoading()

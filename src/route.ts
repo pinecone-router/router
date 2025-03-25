@@ -1,17 +1,20 @@
-import type { Handler } from '~/handler'
+import { Context } from './context'
+import type { Handler } from './handler'
 
 export type Route = {
-	match: (path: string) => boolean
-	params: Record<string, string>
+	match: (path: string) => MatchResult
 	programmaticTemplates: boolean
 	templateTargetId: string
-	cancelHandlers: boolean
-	handlersDone: boolean
 	handlers: Handler[]
 	templates: string[]
 	preload: boolean
 	pattern?: RegExp
 	path: string
+}
+
+export type MatchResult = {
+	match: boolean
+	params?: Context['params']
 }
 
 export type RouteOptions = {
@@ -40,10 +43,7 @@ export default function createRoute(
 	const route: Route = {
 		pattern: path.indexOf(':') !== -1 ? buildRegexp(path) : undefined,
 		programmaticTemplates: !!templates.length,
-		cancelHandlers: false,
-		handlersDone: false,
 		templateTargetId,
-		params: {},
 		templates,
 		handlers,
 		preload,
@@ -51,19 +51,16 @@ export default function createRoute(
 
 		/**
 		 * Check whether a path matches against this route
-		 * If it matches and the route has parameters, store them in route.params
 		 * @param {string} path - path to match against
-		 * @returns {boolean} - whether the path matches the route
+		 * @returns {MatchResult}
 		 */
-		match(path: string): boolean {
-			this.params = {}
+		match(path: string): MatchResult {
 			if (this.pattern) {
 				const found = path.match(this.pattern)
-				if (!found) return false
-				this.params = { ...found.groups }
-				return true
+				if (!found) return { match: false }
+				return { match: true, params: found.groups }
 			}
-			return path === this.path
+			return { match: path === this.path }
 		},
 	}
 

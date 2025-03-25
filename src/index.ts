@@ -1,32 +1,34 @@
 import { type PluginCallback, type Alpine } from 'alpinejs'
 
-import { createPineconeRouter, PineconeRouter } from '~/router'
-import { TemplateDirective } from '~/directives/x-template'
-import { HandlerDirective } from '~/directives/x-handler'
-import { RouteDirective } from '~/directives/x-route'
-import { interceptLinks } from '~/links'
-import { type Context } from '~/context'
+import { createPineconeRouter, type PineconeRouter } from './router'
+import { TemplateDirective } from './directives/x-template'
+import { HandlerDirective } from './directives/x-handler'
+import { RouteDirective } from './directives/x-route'
+import { interceptLinks } from './links'
+import { type Context } from './context'
 
 declare global {
 	interface Window {
 		PineconeRouter: PineconeRouter
+		Alpine: Alpine
 	}
 }
 
 declare module 'alpinejs' {
 	interface XAttributes {
-		_x_PineconeRouter_TemplateUrls: string[]
-		_x_PineconeRouter_Template: HTMLElement[]
+		_x_PineconeRouter_templateUrls: string[]
+		_x_PineconeRouter_template: HTMLElement[]
+		_x_PineconeRouter_scripts: HTMLScriptElement[]
 		_x_PineconeRouter_undoTemplate: () => void
 		_x_PineconeRouter_route: string
 	}
 	interface Alpine {
 		$router: PineconeRouter
-		$params: Record<string, string>
+		$params: Context['params']
 	}
 	interface Magics<T> {
-		$router: Context
-		$params: Record<string, string>
+		$router: PineconeRouter
+		$params: Context['params']
 	}
 }
 
@@ -61,9 +63,9 @@ const PineconeRouterPlugin: PluginCallback = function (Alpine: Alpine) {
 	RouteDirective(Alpine, Router)
 
 	Alpine.$router = Router
-	Alpine.$params = Router.context.params || {}
+	Alpine.$params = Router.context.params
 	Alpine.magic('router', () => Router)
-	Alpine.magic('params', (_, { Alpine }) => Alpine.$params)
+	Alpine.magic('params', () => Router.context.params)
 
 	// intercept click event in links
 	interceptLinks(Router)

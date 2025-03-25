@@ -1,0 +1,44 @@
+<div class="flex flex-col max-w-sm space-y-8" x-data="hello">
+	<h1 class="prose-xl font-bold">
+		<span x-text="greeting"></span>
+		<!-- the parameter name is optional so we check fi it-->
+		<span x-text="$params.name || 'World'"></span>!
+	</h1>
+	<!-- Every time the input change, use the $router magic helper to redirect
+		to /hello/input where input is the user input. -->
+	<input
+		id="input-bar"
+		type="text"
+		@change="$router.navigate('/hello/'+$event.target.value)"
+		@input="$dispatch('typed')"
+		:value="$params.name ?? ''"
+		placeholder="Write your name"
+		class="p-3 rounded-3xl font-bold text-center"
+	/>
+
+	<p class="tracking-tighter text-sm font-bold">
+		Tip: write 'home' to go to the home page.<br />(uses x-handler)
+	</p>
+</div>
+<script>
+	Alpine.data('hello', () => ({
+		greeting: 'Hello,',
+		init() {
+			// console.log('hello from init()');
+		},
+	}));
+</script>
+<script type="module">
+	import confetti from 'https://cdn.skypack.dev/canvas-confetti';
+	window.addEventListener('typed', () => {
+		const inputElement = document.getElementById('input-bar');
+
+		confetti({
+			particleCount: 2,
+			ticks: 100,
+			spread: 10,
+			startVelocity: 20,
+		});
+	});
+</script>
+<style></style>

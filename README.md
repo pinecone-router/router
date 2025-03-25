@@ -92,13 +92,10 @@ Parameters can be made optional by adding a ?, or turned into a wildcard match b
 <template x-route="/a/:id"></template>
 <template x-route="/b/:optional?/:params?"></template>
 <template x-route="/c/:remaining_path*"></template>
-<template x-route="/d/:remaining_path+"></template>
 <template x-route="notfound"></template>
 ```
 
-Then you access paramaters with `$router.params.X`.
-
-> Borrowed from [Preact Router](https://github.com/preactjs/preact-router)
+Then you access paramaters with `$params.X`.
 
 > Note: alternatively you can [use Javascript to add routes](#adding--removing-routes-with-javascript)
 
@@ -293,7 +290,9 @@ document.addEventListener('alpine:init', () => {
 
 To prevent / stop the next handlers from executing and templates from rendering, `return 'stop'` from the current handler or `return ctx.redirect('/some/path')`.
 
-## Context object / $router magic helper
+## $router magic helper
+
+## Context object
 
 Contains information about the current route and helper methods. This is available at all times:
 
@@ -370,11 +369,14 @@ Create your own middlewares [using this template](https://github.com/pinecone-ro
 Pinecone Router now has a navigation stack keeping track of route visits, and allowing you to do client side `back()` and `forward()` operations using the `$router` magic helper.
 To access the stack and index you can use the [context object](#context-object--router-magic-helper).
 
-The way it works is by keeping all paths visited, excluding duplicates; meaning if you're on '/home' and you click a link that goes to '/home', it wont affect the stack.
+The way it works is by keeping all paths visited, excluding:
 
-Using `back()` and `forward()` calls `navigate()` with navigationIndex-1 or navigationIndex+1 respectively and changes navigationIndex.
+- duplicates; meaning if you're on '/home' and you click a link that goes to '/home', it wont affect the stack.
+- redirects: if you're on /home and you visit /profile/old which has a handler that redirects you to /profile/new, it will not add /profile/old to the stack, only /profile/new.
 
-If you click a link after using `back()`, meaning the `navigationindex` is not `navigationstack.length-1`, it will remove all elements from the stack starting from the navigationIndex to the end, then appends current path.
+Using `back()` and `forward()` changes `navigationIndex`.
+
+If you click a link after using `back()`, meaning the `navigationindex` is not `navigationstack.length-1`, it will remove all elements from the stack starting from the navigationIndex to the end, then appends the current path.
 
 Use `canGoBack()` or `canGoForward()` to check if the operation is possible.
 
@@ -406,16 +408,16 @@ You can set `window.PineconeRouter.settings.interceptLinks` to false to disable 
 You can easily use [nProgress](http://ricostacruz.com/nprogress) with `x-template`:
 
 ```js
-document.addEventListener('pinecone-start', () => NProgress.start())
-document.addEventListener('pinecone-end', () => NProgress.done())
-document.addEventListener('pinecone-fetch-error', (err) => console.error(err))
+document.addEventListener('pinecone:start', () => NProgress.start())
+document.addEventListener('pinecone:end', () => NProgress.done())
+document.addEventListener('pinecone:fetch-error', (err) => console.error(err))
 ```
 
 | name                     | recipient | when it is dispatched                        |
 | ------------------------ | --------- | -------------------------------------------- |
-| **pinecone-start**       | document  | when the template start fetching             |
-| **pinecone-end**         | document  | when the fetching ends successfuly           |
-| **pinecone-fetch-error** | document  | when the fetching of external templates fail |
+| **pinecone:start**       | document  | when the template start fetching             |
+| **pinecone:end**         | document  | when the fetching ends successfuly           |
+| **pinecone:fetch-error** | document  | when the fetching of external templates fail |
 
 By default, these events only fire when there are external templates and/or handlers.
 To make it so they are always dispatched you can use the setting `window.PineconeRouter.settings.alwaysSendLoadingEvents = true`
@@ -490,7 +492,7 @@ This way if a user click a link while data is being fetched, the redirection han
 
 | Version | Alpine.js Version |
 | ------- | ----------------- |
-| ^v2.x   | ^v3               |
+| ^v2.x   | v3                |
 | v1.x    | v2                |
 
 ## Contributing:

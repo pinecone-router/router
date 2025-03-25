@@ -29,12 +29,6 @@ export const interceptLinks = (Router: PineconeRouter) => {
 		)
 			return
 
-		// stop handlers in progress before navigating to the next page
-		if (Router.context.route && !Router.context.route?.handlersDone) {
-			Router.context.route.cancelHandlers = true
-			Router.endLoading()
-		}
-
 		let node = e.target as HTMLElement
 
 		do {

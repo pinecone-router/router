@@ -1,5 +1,5 @@
-import { TARGET_ID_NOT_FOUND, PineconeRouterError } from '~/errors'
-import { type Route } from '~/route'
+import { TARGET_ID_NOT_FOUND, PineconeRouterError } from './errors'
+import { type Route } from './route'
 
 export const findRouteIndex = (path: string, routes: Route[]) =>
 	routes.findIndex((r) => r.path == path)

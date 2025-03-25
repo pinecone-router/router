@@ -1,7 +1,7 @@
 import { type Context } from './context'
-import { type Route } from './route'
+import { type PineconeRouter } from './router'
 
-export type Handler = (context: Context) => HandlerResult.HALT | void
+export type Handler = (context: Context) => HandlerResult | void
 
 export enum HandlerResult {
 	HALT,
@@ -9,32 +9,42 @@ export enum HandlerResult {
 }
 
 /**
- * execute the handlers of routes that are given passing them the context.
- * @param {Handler[]} handlers the handlers to execute
- * @param {Context} context the context object
- * @param {Route} route the route object
- * @returns {boolean} true if the handlers were executed successfully, false if one if them halted execution.
+ * Execute route handlers sequentially, with cancellation support
+ * @param {PineconeRouter} Router - Router instance
+ * @param {Handler[]} handlers - Handlers to execute
+ * @param {Context} context - Current routing context
+ * @returns {Promise<HandlerResult>} - CONTINUE if all handlers completed, HALT otherwise
  */
 export async function handle(
+	Router: PineconeRouter,
 	handlers: Handler[],
 	context: Context,
-	route: Route,
 ): Promise<HandlerResult> {
-	for (let i = 0; i < handlers.length; i++) {
-		if (typeof handlers[i] == 'function') {
-			// stop if the handlers were canceled for example the user clicked a link
+	Router.handlersDone = false
+	Router.cancelHandlers = false
 
-			if (route.cancelHandlers) {
-				route.cancelHandlers = false
-				return HandlerResult.HALT
-			}
-			let result
-			if (handlers[i].constructor.name === 'AsyncFunction')
-				result = await handlers[i](context)
-			else result = handlers[i](context)
-			// if the handler halted execution, return
-			if (result == HandlerResult.HALT) return HandlerResult.HALT
+	for (const handler of handlers) {
+		if (Router.cancelHandlers) {
+			Router.cancelHandlers = false
+			return HandlerResult.HALT
+		}
+
+		// Execute handler (with await if async)
+		const result =
+			handler.constructor.name === 'AsyncFunction'
+				? await handler(context)
+				: handler(context)
+
+		// Stop execution if handler returned HALT
+		if (result === HandlerResult.HALT) {
+			return HandlerResult.HALT
 		}
 	}
-	return HandlerResult.CONTINUE
+
+	if (!Router.cancelHandlers) {
+		Router.handlersDone = true
+		return HandlerResult.CONTINUE
+	}
+
+	return HandlerResult.HALT
 }
