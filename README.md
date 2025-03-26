@@ -131,7 +131,7 @@ In this example it will add the `div` with "Hello World" to the document the sam
 
 ## `x-template`
 
-This directive allows you to specify external template files to be fetched from a URL
+This directive allows you to specify external template files to be fetched from a URL.
 
 ```html
 <!-- when the route is matched, this will fetch the content of home.html -->
@@ -141,6 +141,7 @@ This directive allows you to specify external template files to be fetched from 
 ```
 
 > **Note**: same as inline templates and `x-if`, _only the first child element of the template will be rendered._
+> Init functions inside the template will only be run when the route changes, ie. if the params change it will not be run again.
 
 ### Modifiers
 
