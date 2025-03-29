@@ -1,15 +1,17 @@
 import { type ElementWithXAttributes, type Alpine } from 'alpinejs'
 
-import { type PineconeRouter } from './router'
-import { Context } from './context'
+import { loadingState } from './router'
+import { settings } from './settings'
+import { type Context } from './context'
+import { addBasePath } from './utils'
 
-const loadingTemplates: Record<string, Promise<string>> = {}
-const cachedTemplates: Record<string, string> = {}
+const cache = new Map<string, string>()
+const loading = new Map<string, Promise<string>>()
 const inMakeProgress = new Set()
 
 export const fetchError = (error: string, url: string) => {
 	document.dispatchEvent(
-		new CustomEvent('pinecone:fetch-error', { detail: { error, url } }),
+		new CustomEvent('pinecone:fetch-error', { detail: { error, url } })
 	)
 }
 
@@ -18,7 +20,7 @@ export const make = (
 	template: ElementWithXAttributes<HTMLTemplateElement>,
 	expression: string, // the expression on the x-template directive
 	targetEl?: HTMLElement,
-	urls?: string[],
+	urls?: string[]
 ) => {
 	// having a unique id ensures the same template can be used multiple times inside the same page
 	// this is for when routes share a template
@@ -36,7 +38,7 @@ export const make = (
 	contentNode.querySelectorAll('script').forEach((oldScript) => {
 		const newScript = document.createElement('script')
 		Array.from(oldScript.attributes).forEach((attr) =>
-			newScript.setAttribute(attr.name, attr.value),
+			newScript.setAttribute(attr.name, attr.value)
 		)
 		newScript.textContent = oldScript.textContent
 		oldScript.parentNode?.replaceChild(newScript, oldScript)
@@ -52,7 +54,7 @@ export const make = (
 	})
 
 	Alpine.mutateDom(() => {
-		if (targetEl != undefined) {
+		if (targetEl) {
 			targetEl.replaceChildren(...clones)
 		} else template.after(...clones)
 		clones.forEach((clone) => {
@@ -74,6 +76,7 @@ export const make = (
 		})
 
 		delete template._x_PineconeRouter_template
+		delete template._x_PineconeRouter_templateUrls
 	}
 
 	Alpine.nextTick(() => inMakeProgress.delete(unique_id))
@@ -89,14 +92,13 @@ export const hide = (template: ElementWithXAttributes<HTMLTemplateElement>) => {
 
 export const show = (
 	Alpine: Alpine,
-	Router: PineconeRouter,
 	template: ElementWithXAttributes<HTMLTemplateElement>,
 	expression: string,
 	urls?: Array<string>,
-	targetEl?: HTMLElement,
+	targetEl?: HTMLElement
 ): void => {
 	// if the template is rendered but the template url parameters have changed
-	// remove the content inside the template
+	// hide the content and remove the content inside the template
 	if (
 		template._x_PineconeRouter_templateUrls != undefined &&
 		template._x_PineconeRouter_templateUrls != urls
@@ -108,59 +110,61 @@ export const show = (
 	// the template is already inserted into the page
 	// leave it as is and end loading
 	if (template._x_PineconeRouter_template) {
-		Router.endLoading()
+		loadingState.endLoading()
 		return
 	}
 
 	if (template.content.childElementCount) {
 		make(Alpine, template, expression, targetEl, urls)
-		Router.endLoading()
-	} else if (urls) {
-		// If templates are not loaded, load them
+		loadingState.endLoading()
+		return
+	}
 
+	if (urls) {
+		// if templates are not loaded, load them
 		load(urls, template)
 			.then(() => make(Alpine, template, expression, targetEl, urls))
-			.finally(() => Router.endLoading())
+			.finally(() => loadingState.endLoading())
 	}
 }
 
 export const interpolate = (
 	urls: string[],
-	params: Context['params'],
+	params: Context['params']
 ): string[] => {
 	return urls.map((url) => {
 		// Replace :param format (e.g., /users/:id/profile.html)
-		return url.replace(/:([^/.]+)/g, (_, paramName) => {
-			return params[paramName] || paramName
+		return url.replace(/:([^/.]+)/g, (_, name) => {
+			return params[name] || name
 		})
 	})
 }
 
 // Load a template from a url and put its content into cachedTemplates
 const loadUrl = async (url: string): Promise<string> => {
-	// if the url is already being loaded, return the promise
-	if (loadingTemplates.hasOwnProperty(url)) {
-		return loadingTemplates[url]
-	} else if (cachedTemplates[url]) {
-		return cachedTemplates[url]
-	} else {
-		// if the url is neither loading nor cached, start loading
-		loadingTemplates[url] = fetch(url)
-			.then((r) => {
-				if (!r.ok) {
-					fetchError(r.statusText, url)
-					return
-				}
-				return r.text()
-			})
-			.then((html) => {
-				if (!html) return ''
-				cachedTemplates[url] = html
-				delete loadingTemplates[url]
-				return html
-			})
-		return loadingTemplates[url]
-	}
+	url = addBasePath(url, settings.basePath)
+	// Return from cache if available
+	if (cache.has(url)) return cache.get(url)!
+
+	// Return existing promise if already loading
+	if (loading.has(url)) return loading.get(url)!
+
+	const fetchPromise = fetch(url)
+		.then((r) => {
+			if (!r.ok) {
+				fetchError(r.statusText, url)
+				return ''
+			}
+			return r.text()
+		})
+		.then((html) => {
+			if (html) cache.set(url, html)
+			loading.delete(url)
+			return html || ''
+		})
+
+	loading.set(url, fetchPromise)
+	return fetchPromise
 }
 
 // Preload templates from urls
@@ -176,10 +180,8 @@ export const preload = (urls: string[]): void => {
  */
 export const load = (
 	urls: string[],
-	el: HTMLTemplateElement | HTMLElement,
-): Promise<string> => {
-	return Promise.all(urls.map(loadUrl)).then((htmlArray) => {
+	el: HTMLTemplateElement | HTMLElement
+): Promise<void> =>
+	Promise.all(urls.map(loadUrl)).then((htmlArray) => {
 		el.innerHTML = htmlArray.join('')
-		return el.innerHTML
 	})
-}

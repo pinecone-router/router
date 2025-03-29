@@ -1,24 +1,11 @@
 import { type PineconeRouter } from './router'
 
 /**
- * @description Add a handler to click events on all valid links
+ * @description Add a handler to click events on valid links
  */
-export const interceptLinks = (Router: PineconeRouter) => {
-	function validateLink(node: HTMLAnchorElement): string | undefined {
-		// only valid elements
-		if (!node || !node.getAttribute) return
-
-		let href = node.getAttribute('href')!,
-			target = node.getAttribute('target')
-
-		// ignore links with targets and non-path URLs
-		if (!href || !href.match(/^\//g) || (target && !target.match(/^_?self$/i)))
-			return
-
-		return href
-	}
-
-	window.document.body.addEventListener('click', function (e: MouseEvent) {
+export const handleClicks = (Router: PineconeRouter) => {
+	window.document.body.addEventListener('click', (e: MouseEvent) => {
+		// Ignore modified clicks or non-primary buttons
 		if (
 			e.ctrlKey ||
 			e.metaKey ||
@@ -26,29 +13,35 @@ export const interceptLinks = (Router: PineconeRouter) => {
 			e.shiftKey ||
 			e.button ||
 			e.defaultPrevented
-		)
+		) {
 			return
+		}
 
-		let node = e.target as HTMLElement
+		// Find closest anchor element
+		const node = (e.target as HTMLElement).closest('a')
+		if (!node) return
 
-		do {
-			if (node instanceof HTMLAnchorElement && node.getAttribute('href')) {
-				if (
-					Router.settings.interceptLinks == false &&
-					!node.hasAttribute('x-link')
-				)
-					return
-				if (node.hasAttribute('data-native') || node.hasAttribute('native'))
-					return
-				let href = validateLink(node)
-				if (href) {
-					Router.navigate(href)
-					if (e.stopImmediatePropagation) e.stopImmediatePropagation()
-					if (e.stopPropagation) e.stopPropagation()
-					e.preventDefault()
-				}
-				break
-			}
-		} while ((node = node.parentNode as HTMLElement))
+		// Skip if link shouldn't be intercepted
+		if (
+			(Router.settings.handleClicks === false &&
+				!node.hasAttribute('x-link')) ||
+			node.hasAttribute('data-native') ||
+			node.hasAttribute('native')
+		) {
+			return
+		}
+
+		const href = node.getAttribute('href')
+		const target = node.getAttribute('target')
+
+		// Only handle internal links without special targets
+		if (
+			href &&
+			href.startsWith(Router.settings.basePath) &&
+			(!target || /^_?self$/i.test(target))
+		) {
+			Router.navigate(href)
+			e.preventDefault()
+		}
 	})
 }

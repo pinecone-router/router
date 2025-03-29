@@ -1,24 +1,28 @@
-import { Context } from './context'
 import type { Handler } from './handler'
-
 export interface Route {
-	match: (path: string) => MatchResult
-	programmaticTemplates: boolean
-	templateTargetId: string
+	/**
+	 * Set to true automatically when creating a route programmatically.
+	 */
+	readonly programmaticTemplates: boolean
+	/**
+	 * The regex pattern used to match route params, if any.
+	 */
+	readonly pattern?: RegExp
+	/**
+	 * The target ID for the route templates
+	 */
+	readonly targetID?: string
+	/**
+	 * The raw route path
+	 */
+	readonly path: string
+
 	handlers: Handler[]
 	templates: string[]
-	preload: boolean
-	pattern?: RegExp
-	path: string
-}
-
-export interface MatchResult {
-	match: boolean
-	params?: Context['params']
 }
 
 export interface RouteOptions {
-	templateTargetId?: string
+	targetID?: string
 	handlers?: Handler[]
 	templates?: string[]
 	preload?: boolean
@@ -32,77 +36,84 @@ export interface RouteOptions {
  */
 export default function createRoute(
 	path: string,
-	{
-		templateTargetId = '',
-		templates = [],
-		handlers = [],
-		preload = false,
-	}: RouteOptions = {},
+	{ targetID, templates = [], handlers = [] }: RouteOptions = {}
+	// ignoreTrailingSlash: boolean = true
 ): Route {
 	// Create the route object
 	const route: Route = {
-		pattern: path.indexOf(':') !== -1 ? buildRegexp(path) : undefined,
 		programmaticTemplates: templates.length > 0,
-		templateTargetId,
+		targetID,
 		templates,
 		handlers,
-		preload,
 		path,
-
 		/**
 		 * Check whether a path matches against this route
-		 * @param {string} path - path to match against
-		 * @returns {MatchResult}
+		 * @param {string} path path to match against
+		 * @returns {undefined | Context['params']}  returns undefined if no match,
+		 *          otherwise returns the route params
 		 */
-		match(path: string): MatchResult {
-			if (this.pattern) {
-				const found = path.match(this.pattern)
-				if (!found) return { match: false }
-				return { match: true, params: found.groups }
-			}
-			return { match: path === this.path }
-		},
 	}
 
 	return route
 }
+type RouteArgs =
+	| undefined
+	| {
+			[key: string]: string
+	  }
 
-// Based on https://github.com/shaunlee/alpinejs-router/blob/dev/src/pattern.js
-const buildRegexp = (path: string): RegExp => {
-	path = path.endsWith('/') ? path.slice(0, -1) : path
-	let optional: boolean
-	const pattern = path
-		.split('/')
-		.map((segment, i) => {
-			if (i == 0) return segment
-			if (!segment.startsWith(':')) {
-				return '/' + segment
-			}
-			let field = segment.substring(1)
-			let fieldPattern = '[^/]+'
+// https://github.com/amio/my-way
+export function match(pattern: string, path: string): RouteArgs {
+	const args: Record<string, string> = {}
 
-			// Handle parameter modifiers
-			if (field.endsWith('?')) {
-				field = field.slice(0, -1)
-				optional = true
-			} else if (field.endsWith('*')) {
-				field = field.slice(0, -1)
-				fieldPattern = `.*`
-			} else if (field.includes('(')) {
-				const ef = field.match(/\((.+?)\)/)
-				if (ef) {
-					field = field.substring(0, field.indexOf('('))
-					fieldPattern = ef[1]
-				}
-			}
-			if (optional) {
-				// optional modifier requires a different format
-				// with the slash inside the optional group
-				return `(?:/(?<${field}>${fieldPattern}))?`
-			} else {
-				return `/(?<${field}>${fieldPattern})`
-			}
-		})
-		.join('')
-	return new RegExp(`^${pattern}\/?$`)
+	// Pre-compile regexes once
+	const patternRegex = /\/(:)?([\w-]+)([*?+])?(?:<([^>]+)>)?/g
+	const pathRegex = /\/([^/]+)/g
+
+	let patternMatch = patternRegex.exec(pattern)
+	let pathMatch = pathRegex.exec(path)
+
+	while (patternMatch !== null) {
+		const [fullPattern, isParam, name, flag, constraint] = patternMatch
+
+		// No path segment to match against
+		if (pathMatch === null) {
+			return flag === '?' || flag === '*' ? args : undefined
+		}
+
+		// Handle rest parameters (+ and *)
+		if (flag === '+' || flag === '*') {
+			const rest = safeDecodeURIComponent(path.slice(pathMatch.index + 1))
+			if (constraint && !new RegExp(`^${constraint}$`).test(rest))
+				return undefined
+			args[name] = rest
+			return args
+		}
+
+		const [fullPath, value] = pathMatch
+
+		// Literal segment must match exactly
+		if (!isParam && fullPattern !== fullPath) return undefined
+
+		// Named parameter with optional constraint
+		if (isParam) {
+			if (constraint && !new RegExp(`^${constraint}$`).test(value))
+				return undefined
+			args[name] = safeDecodeURIComponent(value)
+		}
+
+		patternMatch = patternRegex.exec(pattern)
+		pathMatch = pathRegex.exec(path)
+	}
+
+	// Make sure we've consumed the entire path
+	return pathMatch === null ? args : undefined
+}
+
+function safeDecodeURIComponent(uri: string): string {
+	try {
+		return decodeURIComponent(uri)
+	} catch {
+		return uri
+	}
 }

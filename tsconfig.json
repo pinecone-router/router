@@ -6,6 +6,9 @@
   "compilerOptions": {
     // Generate d.ts files
     "declaration": true,
+    // go to js file when using IDE functions like
+    // "Go to Definition" in VSCode
+    "declarationMap": true,
     // This compiler run should
     // only output d.ts files
     "emitDeclarationOnly": true,
@@ -13,9 +16,6 @@
     // Removing this would place the .d.ts filesdeclarationMap
     // next to the .js files
     "outDir": "dist",
-    // go to js file when using IDE functions like
-    // "Go to Definition" in VSCode
-    "declarationMap": true,
     "noImplicitAny": true,
     // Enable latest features
     "lib": [
@@ -39,6 +39,6 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noPropertyAccessFromIndexSignature": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
   }
 }

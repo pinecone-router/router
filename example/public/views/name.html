@@ -9,10 +9,10 @@
 <script>
 	Alpine.data('name', () => ({
 		loading: true,
-		name: '',
+		name: Alpine.$persist(''),
 		async fetcher() {
 			try {
-				const response = await fetch(`/views/${this.$params.slug}.json`);
+				const response = await fetch(`/views/${this.$params.slugName}.json`);
 				const data = await response.json();
 				this.name = data.name;
 			} catch (error) {

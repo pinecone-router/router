@@ -1,48 +1,56 @@
 import { type Context } from './context'
-import { type PineconeRouter } from './router'
 
-export type Handler = (context: Context) => HandlerResult | void | Promise<HandlerResult | void>
+export type Handler = (
+	context: Context,
+	result: typeof HandlerResult
+) => HandlerResult | void | Promise<HandlerResult | void>
 
 export enum HandlerResult {
 	HALT,
 	CONTINUE,
 }
 
+export const handlerState = {
+	cancel: false,
+	done: false,
+}
+
+export const abortController = new AbortController()
+
 /**
  * Execute route handlers sequentially, with cancellation support
- * @param {PineconeRouter} Router - Router instance
- * @param {Handler[]} handlers - Handlers to execute
- * @param {Context} context - Current routing context
- * @returns {Promise<HandlerResult>} - CONTINUE if all handlers completed, HALT otherwise
+ * @param {Handler[]} handlers handlers to execute
+ * @param {Context} context current context
+ * @returns {Promise<HandlerResult>} CONTINUE if all handlers completed,
+ *                                   HALT otherwise.
  */
 export async function handle(
-	Router: PineconeRouter,
 	handlers: Handler[],
-	context: Context,
+	context: Context
 ): Promise<HandlerResult> {
-	Router.handlersDone = false
-	Router.cancelHandlers = false
+	handlerState.done = false
+	handlerState.cancel = false
 
 	for (const handler of handlers) {
-		if (Router.cancelHandlers) {
-			Router.cancelHandlers = false
+		if (handlerState.cancel) {
+			handlerState.cancel = false
 			return HandlerResult.HALT
 		}
 
 		// Execute handler (with await if async)
 		const result =
 			handler.constructor.name === 'AsyncFunction'
-				? await handler(context)
-				: handler(context)
+				? await handler(context, HandlerResult)
+				: handler(context, HandlerResult)
 
 		// Stop execution if handler returned HALT
 		if (result === HandlerResult.HALT) {
-			return HandlerResult.HALT
+			return result
 		}
 	}
 
-	if (!Router.cancelHandlers) {
-		Router.handlersDone = true
+	if (!handlerState.cancel) {
+		handlerState.done = true
 		return HandlerResult.CONTINUE
 	}
 

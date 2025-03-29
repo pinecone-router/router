@@ -1,95 +1,68 @@
-import { type ElementWithXAttributes, type Alpine } from 'alpinejs'
+import { type Alpine } from 'alpinejs'
 
-import { getTargetELement, findRouteIndex, modifierValue } from '../utils'
 import { hide, interpolate, load, show } from '../templates'
+import { getTargetELement, modifierValue } from '../utils'
 import { PineconeRouter } from '../router'
-import {
-	DIRECTIVE_REQUIRES_TEMPLATE_ELEMENT,
-	INVALID_TEMPLATE_TYPE,
-	TEMPLATE_WITH_CHILD,
-	PineconeRouterError,
-	DIRECTIVE_REQUIRES_ROUTE,
-} from '../errors'
+import { assertExpressionIsArray, assertRouteTemplate } from '../errors'
 
-export const TemplateDirective = (Alpine: Alpine, Router: PineconeRouter) => {
+const TemplateDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 	Alpine.directive(
 		'template',
-		(
-			el: ElementWithXAttributes,
-			{ expression, modifiers },
-			{ evaluate, cleanup, Alpine, effect },
-		) => {
-			if (!(el instanceof HTMLTemplateElement)) {
-				throw new PineconeRouterError(DIRECTIVE_REQUIRES_TEMPLATE_ELEMENT)
-			}
-
-			const template = el as ElementWithXAttributes<HTMLTemplateElement>
-
-			if (template.content.firstElementChild != null)
-				throw new PineconeRouterError(TEMPLATE_WITH_CHILD)
-
-			expression = expression.trim()
-			if (
-				!(expression.startsWith('[') && expression.endsWith(']')) &&
-				!(expression.startsWith('Array') && expression.endsWith(')'))
-			) {
-				expression = `['${expression}']`
-			}
-
-			const evaluatedExpression = evaluate(expression)
-
-			let urls: string[]
-
-			if (
-				typeof evaluatedExpression == 'object' &&
-				Array.isArray(evaluatedExpression)
-			)
-				urls = evaluatedExpression
-			else {
-				throw new PineconeRouterError(
-					INVALID_TEMPLATE_TYPE(typeof evaluatedExpression),
-				)
-			}
+		(el, { expression, modifiers }, { evaluate, cleanup, Alpine, effect }) => {
+			assertRouteTemplate(el)
 
 			const targetEl = getTargetELement(
 				modifierValue(modifiers, 'target'),
-				Router.settings.templateTargetId,
+				Router.settings.targetID
 			)
 
-			if (modifiers.includes('preload')) {
-				load(urls, template)
-			}
-
-			if (template._x_PineconeRouter_route == undefined) {
-				throw new PineconeRouterError(DIRECTIVE_REQUIRES_ROUTE('template'))
-			}
-
 			// add template to the route
-			const path = template._x_PineconeRouter_route
+			const path = el._x_PineconeRouter_route
 
-			const route =
-				path == 'notfound'
-					? Router.notfound
-					: Router.routes[findRouteIndex(path, Router.routes)]
+			let urls: string[]
 
-			route.templates = urls
+			// only process the expression if it is not empty
+			// this allows inline templates to be used without an expression
+			if (expression != '') {
+				expression = expression.trim()
+				if (
+					!(expression.startsWith('[') && expression.endsWith(']')) &&
+					!(expression.startsWith('Array') && expression.endsWith(')'))
+				) {
+					expression = `['${expression}']`
+				}
 
-			const callback = () => {
-				const found = Router.handlersDone && Router.context.route == route
-				if (found) {
-					if (modifiers.includes('interpolate')) {
-						urls = interpolate(route.templates, Router.context.params)
-					}
-					show(Alpine, Router, template, expression, urls, targetEl)
-				} else hide(template)
+				const evaluatedExpression = evaluate(expression)
+
+				assertExpressionIsArray(evaluatedExpression)
+
+				urls = evaluatedExpression as string[]
+
+				if (modifiers.includes('preload')) {
+					load(urls, el)
+				}
+
+				const route = Router.routes.get(path)!
+				route.templates = urls
 			}
 
-			Alpine.nextTick(() => effect(callback))
+			const callback = (urls?: string[]) => {
+				const found = Router.context.route.path == path
+				if (found) {
+					if (urls && modifiers.includes('interpolate')) {
+						urls = interpolate(urls, Router.context.params)
+					}
+					show(Alpine, el, expression, urls, targetEl)
+				} else hide(el)
+			}
+
+			Alpine.nextTick(() => effect(() => callback(urls)))
 
 			cleanup(() => {
-				template._x_PineconeRouter_undoTemplate &&
-					template._x_PineconeRouter_undoTemplate()
+				el._x_PineconeRouter_undoTemplate && el._x_PineconeRouter_undoTemplate()
 			})
-		},
+		}
 	)
 }
+
+export default TemplateDirective
