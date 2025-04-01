@@ -1,49 +1,48 @@
 declare module "src/handler" {
-    import { type Context } from "src/context";
-    export type Handler = (context: Context, result: typeof HandlerResult) => HandlerResult | void | Promise<HandlerResult | void>;
-    export enum HandlerResult {
-        HALT = 0,
-        CONTINUE = 1
+    import { ContextWithRoute } from "src/context";
+    import { Route } from "src/route";
+    export type Handler<In, Out> = (context: HandlerContext<In>, controller: AbortController) => Out | Promise<Out>;
+    export interface HandlerContext<T> extends ContextWithRoute {
+        readonly data: T;
     }
-    export const handlerState: {
-        cancel: boolean;
-        done: boolean;
-    };
     /**
      * Execute route handlers sequentially, with cancellation support
-     * @param {Handler[]} handlers handlers to execute
-     * @param {Context} context current context
-     * @returns {Promise<HandlerResult>} CONTINUE if all handlers completed,
-     *                                   HALT otherwise.
+     * @param handlers handlers to execute
+     * @param context current context
+     * @param controller abort controller
+     * @returns {Promise<void>}
      */
-    export function handle(handlers: Handler[], context: Context): Promise<HandlerResult>;
+    export function handle(handlers: Route['handlers'], context: ContextWithRoute, controller: AbortController): Promise<void>;
 }
 declare module "src/route" {
     import type { Handler } from "src/handler";
     export interface Route {
         /**
          * Set to true automatically when creating a route programmatically.
+         * @internal
          */
         readonly programmaticTemplates: boolean;
         /**
-         * The regex pattern used to match route params, if any.
+         * The regex pattern used to match the route.
+         * @internal
          */
-        readonly pattern?: RegExp;
+        readonly pattern: RegExp;
         /**
-         * The target ID for the route templates
+         * The target ID for the route's templates
          */
         readonly targetID?: string;
         /**
          * The raw route path
          */
         readonly path: string;
-        handlers: Handler[];
+        match(path: string): RouteArgs;
+        handlers: Handler<unknown, unknown>[];
         templates: string[];
     }
     export interface RouteOptions {
         targetID?: string;
-        handlers?: Handler[];
-        templates?: string[];
+        handlers?: Route['handlers'];
+        templates?: Route['templates'];
         preload?: boolean;
     }
     /**
@@ -53,24 +52,28 @@ declare module "src/route" {
      * @returns {Route} - a route object
      */
     export default function createRoute(path: string, { targetID, templates, handlers }?: RouteOptions): Route;
-    type RouteArgs = undefined | {
+    type RouteArgs = void | {
         [key: string]: string;
     };
-    export function match(pattern: string, path: string): RouteArgs;
+    /**
+     * @param {string} input The route pattern
+     */
+    export function parse(input: string): RegExp;
 }
 declare module "src/context" {
     import { type Route } from "src/route";
-    export const buildContext: (path: string, { route, params, }: {
-        route: Route;
-        params: Context["params"];
-    }) => Context;
+    export const buildContext: (path: string, params: Context["params"], route?: Route) => Context;
     export interface Context {
         readonly path: string;
-        readonly route: Route;
+        readonly route?: Route;
         readonly params: Record<string, string | undefined>;
+    }
+    export interface ContextWithRoute extends Context {
+        readonly route: Route;
     }
 }
 declare module "src/history" {
+    import { type PineconeRouter } from "src/router";
     export interface NavigationHistory {
         /**
          * The current history index
@@ -86,7 +89,7 @@ declare module "src/history" {
          */
         canGoBack: () => boolean;
         /**
-         * Go back to the previous route in the navigation stack
+         * Go back to the previous route in the navigation history
          */
         back: () => void;
         /**
@@ -96,16 +99,46 @@ declare module "src/history" {
          */
         canGoForward: () => boolean;
         /**
-         * Go to the next route in the navigation stack
+         * Go to the next route in the navigation history
          */
         forward: () => void;
         /**
-         * Navigate to a specific position in the navigation stack
+         * Navigate to a specific position in the navigation history
          *
          * @param index The index of the navigation position to navigate to
          * @returns void
          */
         to: (index: number) => void;
+        /**
+         * Push a new path to the history at the current index.
+         * @internal
+         * @param path The path to add to the history
+         * @param pushState Whether or not to call History.pushState.
+         *        Will be set to false if it's the first load or if it's called from
+         *        a popstate event.
+         * @param hash Whether or not we're using hash routing
+         * @returns void
+         */
+        push: (path: string, pushState: boolean, hash?: boolean) => void;
+        /**
+         * Call History.pushState
+         * @internal
+         * @param path The path to add to the history
+         * @param hash Whether or not we're using hash routing
+         * @returns void
+         */
+        pushState: (path: string, hash?: boolean) => void;
+        /**
+         * @internal
+         * The router instance
+         */
+        router?: PineconeRouter;
+        /**
+         * Set the router instance
+         * @internal
+         * @param router The router instance to set
+         */
+        setRouter: (router: PineconeRouter) => void;
     }
     export const createNavigationHistory: () => NavigationHistory;
 }
@@ -144,10 +177,10 @@ declare module "src/settings" {
          * Handlers that will run on every route.
          * @default []
          */
-        globalHandlers: Handler[];
+        globalHandlers: Handler<unknown, unknown>[];
     }
     export let settings: Settings;
-    export const updateSettings: (newSettings: Partial<Settings>) => void;
+    export const updateSettings: (value?: Partial<Settings>) => void;
 }
 declare module "src/utils" {
     export const modifierValue: (modifiers: string[], key: string, fallback?: string) => string | undefined;
@@ -161,7 +194,7 @@ declare module "src/templates" {
     export const make: (Alpine: Alpine, template: ElementWithXAttributes<HTMLTemplateElement>, expression: string, // the expression on the x-template directive
     targetEl?: HTMLElement, urls?: string[]) => void;
     export const hide: (template: ElementWithXAttributes<HTMLTemplateElement>) => void;
-    export const show: (Alpine: Alpine, template: ElementWithXAttributes<HTMLTemplateElement>, expression: string, urls?: Array<string>, targetEl?: HTMLElement) => void;
+    export const show: (Alpine: Alpine, template: ElementWithXAttributes<HTMLTemplateElement>, expression: string, urls?: Array<string>, targetEl?: HTMLElement) => Promise<void>;
     export const interpolate: (urls: string[], params: Context["params"]) => string[];
     export const preload: (urls: string[]) => void;
     /**
@@ -187,7 +220,7 @@ declare module "src/router" {
         context: Context;
         settings: Settings;
         history: NavigationHistory;
-        isLoading: () => boolean;
+        loading: boolean;
         /**
          * Add a new route
          *
@@ -208,18 +241,11 @@ declare module "src/router" {
          * @param {boolean} fromPopState INTERNAL Is set to true when called from
          *                               onpopstate event
          * @param {boolean} firstLoad INTERNAL Is set to true on browser page load.
-         * @param {number} index INTERNAL the index of the navigation stack to go to
+         * @param {number} index INTERNAL the index of the navigation history to go to
          * @returns {Promise<void>}
          */
         navigate: (path: string, fromPopState?: boolean, firstLoad?: boolean, index?: number) => Promise<void>;
     }
-    export const loadingState: {
-        loading: boolean;
-        loadStart: Event;
-        loadEnd: Event;
-        startLoading: () => void;
-        endLoading: () => void;
-    };
     export const createPineconeRouter: (name: string, version: string) => PineconeRouter;
 }
 declare module "src/directives/x-route" {
@@ -232,12 +258,15 @@ declare module "src/directives/x-route" {
     export default RouteDirective;
 }
 declare module "src/errors" {
-    /**
-     * Centralized error messages for Pinecone Router
-     */
     import { ElementWithXAttributes } from 'alpinejs';
     import { RouteTemplate } from "src/directives/x-route";
+    /**
+     * Centralized error messages
+     */
     export const INVALID_EXPRESSION_TYPE: (value: unknown) => string, TARGET_ID_NOT_FOUND: (id: string) => string, ROUTE_EXISTS: (path: string) => string, MISSING_TEMPLATE_TARGET = "No target specified for template rendering", DIRECTIVE_REQUIRES_TEMPLATE = "Directives can only be used on template elements.", DIRECTIVE_REQUIRES_ROUTE: (directive: string) => string, TARGET_ID_NOT_SPECIFIED = "targetID must be specified for programmatically added templates.", ROUTE_NOT_FOUND: (path: string) => string, TEMPLATE_PARAM_NOT_FOUND: (param: string, url: string) => `The param ${string} in the template url ${string} does not exist.`;
+    /**
+     * Assert functions
+     */
     /**
      * Assert that the element is a template element with XAttributes
      * @param value HTMLElement

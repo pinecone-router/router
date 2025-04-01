@@ -1,9 +1,9 @@
-/**
- * Centralized error messages for Pinecone Router
- */
-
 import { ElementWithXAttributes } from 'alpinejs'
 import { RouteTemplate } from './directives/x-route'
+
+/**
+ * Centralized error messages
+ */
 
 export const INVALID_EXPRESSION_TYPE = (value: unknown) =>
 		`Invalid expression type. Expression: ${value}.`,
@@ -20,6 +20,10 @@ export const INVALID_EXPRESSION_TYPE = (value: unknown) =>
 	ROUTE_NOT_FOUND = (path: string) => `Path: ${path} was not found.`,
 	TEMPLATE_PARAM_NOT_FOUND = (param: string, url: string) =>
 		`The param ${param} in the template url ${url} does not exist.` as const
+
+/**
+ * Assert functions
+ */
 
 /**
  * Assert that the element is a template element with XAttributes
@@ -39,7 +43,7 @@ export function assertTemplate(
  */
 export function assertRouteTemplate(
 	value: ElementWithXAttributes<HTMLElement>
-): asserts value is RouteTemplate {
+): asserts value is RouteTemplate & { _x_PineconeRouter_route: string } {
 	assertTemplate(value)
 
 	if (value._x_PineconeRouter_route === undefined) {

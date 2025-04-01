@@ -25,9 +25,9 @@ export const addBasePath = (path: string, basePath: string) => {
 	if (basePath != '/' && !path.startsWith(basePath)) {
 		path = basePath + path
 	}
-	if (path == basePath && !path.endsWith('/')) {
-		path += '/'
-	}
+	// if (path == basePath && !path.endsWith('/')) {
+	// 	path += '/'
+	// }
 	return path
 }
 

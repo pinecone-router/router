@@ -9,7 +9,7 @@
 	<input
 		id="input-bar"
 		type="text"
-		@change="$router.navigate('/hello/'+$event.target.value)"
+		@change="$router.navigate(`/hello/${$el.value}`)"
 		@input="$dispatch('typed')"
 		:value="$params.name ?? ''"
 		placeholder="Write your name"
@@ -37,7 +37,7 @@
 			particleCount: 2,
 			ticks: 100,
 			spread: 10,
-			startVelocity: 20,
+			startVelocity: 30,
 		});
 	});
 </script>

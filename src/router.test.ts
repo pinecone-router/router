@@ -2,9 +2,8 @@ import { describe, expect, test } from 'bun:test'
 import Alpine from 'alpinejs'
 
 import { createPineconeRouter } from './router'
-import { HandlerResult } from './handler'
 
-const router = createPineconeRouter('pinecone-router', '7.0.0')
+const router = createPineconeRouter(Alpine, 'pinecone-router', '7.0.0')
 var output = ''
 
 // setup routes
@@ -25,7 +24,7 @@ describe('Router', () => {
 			})
 			router.add('/halt', {
 				handlers: [
-					() => HandlerResult.HALT,
+					(_, ctrl) => ctrl.abort(),
 					() => {
 						output = 'this should not have happened'
 					},

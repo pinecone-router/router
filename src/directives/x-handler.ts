@@ -23,7 +23,7 @@ const HandlerDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 
 			assertExpressionIsArray(evaluatedExpression)
 
-			let handlers = evaluatedExpression as Handler[]
+			let handlers = evaluatedExpression as Handler<unknown, unknown>[]
 
 			// add `this` context for handlers inside an Alpine.component
 			for (let i = 0; i < handlers.length; i++) {

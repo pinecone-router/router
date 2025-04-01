@@ -5,6 +5,7 @@ import TemplateDirective from './directives/x-template'
 import HandlerDirective from './directives/x-handler'
 import RouteDirective from './directives/x-route'
 import { type NavigationHistory } from './history'
+import { runPreloads } from './templates'
 import { type Context } from './context'
 import { handleClicks } from './links'
 
@@ -28,11 +29,7 @@ declare module 'alpinejs' {
 		_x_PineconeRouter_undoTemplate: () => void
 		_x_PineconeRouter_route: string
 	}
-	interface Alpine {
-		$router: PineconeRouter
-		$history: NavigationHistory
-		$params: Context['params']
-	}
+
 	interface Magics<T> {
 		$router: PineconeRouter
 		$stack: NavigationHistory
@@ -41,7 +38,7 @@ declare module 'alpinejs' {
 }
 
 const PineconeRouterPlugin: PluginCallback = function (Alpine: Alpine) {
-	const Router = Alpine.reactive(createPineconeRouter(name, version))
+	const Router = Alpine.reactive(createPineconeRouter(Alpine, name, version))
 
 	window.PineconeRouter = Router
 
@@ -55,7 +52,6 @@ const PineconeRouterPlugin: PluginCallback = function (Alpine: Alpine) {
 			Router.navigate(location.hash.substring(1), false, true)
 		}
 	})
-
 	// handle navigation events not emitted by links, for example, back button.
 	window.addEventListener('popstate', () => {
 		if (Router.settings.hash) {
@@ -70,6 +66,15 @@ const PineconeRouterPlugin: PluginCallback = function (Alpine: Alpine) {
 	// intercept click event in links
 	handleClicks(Router)
 
+	// run preloads once on first page fully loads.
+	document.addEventListener(
+		'pinecone:end',
+		() => Alpine.nextTick(runPreloads),
+		{
+			once: true,
+		}
+	)
+
 	// order matters in order to use directive.before()
 	// this makes sure the order is as follows:
 	// x-route -> x-handler -> x-template
@@ -77,9 +82,9 @@ const PineconeRouterPlugin: PluginCallback = function (Alpine: Alpine) {
 	HandlerDirective(Alpine, Router)
 	RouteDirective(Alpine, Router)
 
-	Alpine.$router = Router
-	Alpine.$history = Router.history
-	Alpine.$params = Router.context.params
+	// Alpine.$router = Router
+	// Alpine.$history = Router.history
+	// Alpine.$params = Router.context.params
 
 	Alpine.magic('router', () => Router)
 	Alpine.magic('history', () => Router.history)

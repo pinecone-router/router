@@ -7,40 +7,58 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-This is release contains a major overhaul to the codebase, removing redundant
-code, adding better Tyepscript support, and making all the new features added
-throughout all these years work well together.
-Therefore it contains some changes to the way you use Pinecone Router
-documented in detail below.
+This is release contains a major overhaul to the codebase, code structure and
+quality improvements, abd better Tyepscript support. It also made all the new
+features added throughout all these years work better together.
+Therefore, 7.0 contains some changes to the way you use Pinecone Router which
+are documented in detail below.
 
-The result is a cleaner, smaller, and more maintainable code. And
+I spent over a week in a refactoring sprint, thinking of the optimal way to
+write every little part of the router.
+
+The result is not only a cleaner, smaller, and more maintainable code. But also
+less bugs & more features.
 
 Also, with this release, I've sunset the Middlewares feature which proved to
 be not as useful as I thought it would be long back in 2021!.
-Their purpose is very well accomplished with handlers.
+Their purpose has been very well accomplished with handlers for a while now,
+but only now did I really give it the thought to make such a decision.
 
 I continue to support Pinecone Router within my capacities, and this refactor
-will let me have easier time finding the issues as they come up.
+will let me have easier time finding the issues as they come up, and implement
+more features if needed.
 And hopefully even make it less intimidating for contributors to do so aswell!
 
 ### Added
 
 - Added `$params` magic helper.
 - Added [`$history`](./README.md#navigation-history) magic helper to
-  access history related methods.
+  access history related methods and properties.
 - Added support for multiple-child templates.
-  - You can include as many root elements inside the template file
+  - You can include as many root elements inside the template file as you want.
 - Added support for multiple scripts inside the template.
+- Added [`Settings.preload`](./README.md#settings) to enable preloading all
+  other templates after the page fullly loaded.
+- Added proper priority to preloading fetch, they are now of 'low' priority
+  rather than the previous default of 'high'.
+-
+- Added reactive [`PineconeRouter.loading`](./README.md#pineconerouter-object)
+  boolean property set to true when loading.
 - Added support for [regex param modifier](./README.md#route-matching):
-- You can now adjust [Settings](./README.md#settings) by using
-  `$router.settings({alwaysLoad: false, ...})` from inside Alpine components
-- Added Proper Typescript types for all parts of the router.
-- Added proper testing
+- Added an [AbortController](AbortController) passed to
+  [handlers](./README.md#handler-arguments), for better experience.
+- You can now pass data to the next handler by simply returning it.
+- Added a `HandlerContext.data` field inside the
+  [context object passed to handlers](./README.md#handler-arguments),
+  which includes the returned data by the previous handler, if any.
+- Added proper Typescript types for all parts of the router.
+- Added unit tests for some parts of the router using Bun.
 - [`Settings.basePath`](./README.md#settings) is now automatically added
   to the route path.
 
   - This means if you set the `basePath` to `/parent`, you can now just write
-    `x-route="/"` and `x-route="/about"` rather than `x-route="/parent"` and `x-route="/parent/about"`.
+    `x-route="/"` and `x-route="/about"` rather than `x-route="/parent"` and
+    `x-route="/parent/about"`.
 
 - [`Settings.basePath`](./README.md#settings) is now automatically added
   to the template URLS.
@@ -62,15 +80,12 @@ And hopefully even make it less intimidating for contributors to do so aswell!
   context object wont be updated until the handlers are finished.
   - This means handlers must now use the provided context object, if they didn't
     before.
-- Handlers now take a second argument,
-  [`HandlerResult`](./README.md#handler-arguments).
 - No longer passes the hash portion when navigating using normal mode
 
   - ie. if you're on `/home` and click a anchor link to '#tab1', clicking
     a link to '/profile' wont take you to '/profile#tab1' anymore.
 
 - Renamed `Settings.templateTargetId` to `Settings.targetID`
-- Renamed `Settings.alwaysSendLoadingEvents` to `Settings.alwaysLoad`
 - Context.route is now a Route object instead of a string.
 - The navigation methods `navigate|back|forward` etc. are no longer part of the
   context object.
@@ -94,13 +109,13 @@ And hopefully even make it less intimidating for contributors to do so aswell!
     the current one.
 - Renamed the events `pinecone-start`, `pinecone-end`, and `fetch-error` into
   `pinecone:start`, `pinecone:end`, and `pinecone:fetch-error` respectively.
+- loading start and end events (above), are now always dispatched regardless
+  if there are handlers or templates.
 - Renamed RouteOptions.templateTargetId to `RouteOptions.targetID`.
 - Renamed `Settings.interceptLinks` to `Settings.handleClicks` to clearly
   represent what it does.
-- Switched from pnpm/esbuild to bun for package management, bundling, and
+- Switched from pnpm/esbuild/node to bun for package management, bundling, and
   testing.
-- Refactored the code base and public API to be more clean and less redundant,
-  with better Typescript support.
 
 ### Removed
 
@@ -109,9 +124,11 @@ And hopefully even make it less intimidating for contributors to do so aswell!
 - Moved `Context.navigationIndex`, `Context.navigationStack`, into the
   [PineconeRouter object](./README.md#pineconerouter-object)
 - Removed `Context.query` and `Context.hash`, as they aren't useful since you
-  can get them using `window.location.search` and `window.location.hash` respectively.
+  can get them using `window.location.search` and `window.location.hash`
+  respectively.
 - Removed inline templates support from `x-route` in favor of
   [`inline x-template`](./README.md#inline-templates).
+- Removed `Settings.alwaysSendLoadingEvents`, it is now default and unchangable.
 - Removed _internal_ properties from the
   [PineconeRouter object](./README.md#pineconerouter-object) which weren't
   supposed to be accessed or modified by
@@ -168,7 +185,8 @@ And hopefully even make it less intimidating for contributors to do so aswell!
 
 ### Added
 
-- Added `x-template.interpolate` modifier for fetching templates based on route params
+- Added `x-template.interpolate` modifier for fetching templates based on route
+  params
 
 ## [6.1.0] - 2025-03-15
 
@@ -210,7 +228,8 @@ And hopefully even make it less intimidating for contributors to do so aswell!
 
 ### Fixed
 
-- Fixed run order of directives, x-route > x-handler > x-template. no longer dependent on attribute order.
+- Fixed run order of directives, x-route > x-handler > x-template. no longer
+  dependent on attribute order.
   - This fixes errors due to automatic attribute ordering when doing an astro
     build.
 
@@ -218,7 +237,8 @@ And hopefully even make it less intimidating for contributors to do so aswell!
 
 ### Changed
 
-- Changed declarative templates so they replace the target's content rather than appending to it. (fix #49)
+- Changed declarative templates so they replace the target's content rather
+  than appending to it. (fix #49)
 
 ## [5.2.2] - 2025-02-03
 
@@ -240,7 +260,8 @@ And hopefully even make it less intimidating for contributors to do so aswell!
 - Added `includeQuery` option for `navigate()`, `redirect()`, `back()`, and
   `forward()` and the setting `PineconeRouter.settings.includeQuery` to clear
   search query when navigating and clicking links.
-  - See [README section](/README.md#clearing-search-query-on-navigation) for documentation.
+  - See [README section](/README.md#clearing-search-query-on-navigation) for
+    documentation.
   - Thanks @yllumi #47 for the suggestion
 
 ## [5.1.0] - 2025-01-22
@@ -248,7 +269,8 @@ And hopefully even make it less intimidating for contributors to do so aswell!
 ### Added
 
 - Added Navigation Stack allowing for `$router.back()` method and more, see
-  [README](/README.md#context-object--router-magic-helper) for more info. (Thanks @Blindmikey #46 for the suggestion)
+  [README](/README.md#context-object--router-magic-helper) for more info.
+  (Thanks @Blindmikey #46 for the suggestion)
 
 ## [5.0.0] - 2024-12-25
 
@@ -315,23 +337,29 @@ And hopefully even make it less intimidating for contributors to do so aswell!
 
 - Support custom target element ID for inline templates: `x-route.target.app`.
   - This means now inline templates also use
-    [global template target id from settings](https://github.com/pinecone-router/router?tab=readme-ov-file#settings).
-- Added an error when trying to use `x-template` on a template element that have a child, meaning trying to mix inline and external templates.
-  - It is impossible to have both as they both put the content inside the template, x-template does after fetching it from a link. (no one tried this afaik but just in case).
+    [global template target id from settings](./README.md#settings).
+- Added an error when trying to use `x-template` on a template element that have
+  a child, meaning trying to mix inline and external templates.
+  - It is impossible to have both as they both put the content inside the
+    template, x-template does after fetching it from a link.
+    (no one tried this afaik but just in case).
 
 ### Changed
 
-- No longer use the same variable names as `x-if` for showing and hiding inline or external templates:
+- No longer use the same variable names as `x-if` for showing and hiding inline
+  or external templates:
   - `el._x_undoIf` -> `el._x_PineconeRouter_undoTemplate`
   - `el._x_currentIfEl` -> `el._x_PineconeRouter_CurrentTemplate`
-- Now `x-route` adds an `el._x_PineconeRouter_route` with the full route as its value (including base path in settings)
+- Now `x-route` adds an `el._x_PineconeRouter_route` with the full route as its
+  value (including base path in settings)
   > These changes are just for internal use.
 
 ## [4.1.1] - 2024-01-06
 
 ### Fixed
 
-- Fixed template not rendering inside the target element after revisiting the page
+- Fixed template not rendering inside the target element after revisiting the
+  page
 - Fixed loading event not being sent after preloading page finishes loading.
 
 ## [4.1.0] - 2024-01-06

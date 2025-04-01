@@ -28,28 +28,27 @@ export interface Settings {
 	handleClicks: boolean
 
 	/**
-	 * Set to true to always send loading events,
-	 * even if the template is inline and there are no handlers.
-	 * @default false
-	 */
-	alwaysLoad: boolean
-
-	/**
 	 * Handlers that will run on every route.
 	 * @default []
 	 */
-	globalHandlers: Handler[]
+	globalHandlers: Handler<unknown, unknown>[]
+
+	/**
+	 * Set to true to preload all templates.
+	 * @default false
+	 * */
+	preload: boolean
 }
 
 export let settings: Settings = {
 	hash: false,
 	basePath: '/',
 	globalHandlers: [],
-	alwaysLoad: false,
 	handleClicks: true,
 	targetID: undefined,
+	preload: false,
 }
 
-export const updateSettings = (newSettings: Partial<Settings>): void => {
-	settings = { ...settings, ...newSettings }
+export const updateSettings = (value?: Partial<Settings>) => {
+	settings = { ...settings, ...value }
 }

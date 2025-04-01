@@ -1,15 +1,18 @@
-import createRoute, { match, type Route, type RouteOptions } from './route'
+import { type Alpine } from 'alpinejs'
+
 import { createNavigationHistory, type NavigationHistory } from './history'
-import { settings, updateSettings, type Settings } from './settings'
-import { handle, HandlerResult, handlerState } from './handler'
 import { buildContext, type Context } from './context'
+import createRoute, { type Route, type RouteOptions } from './route'
+import { settings, updateSettings, type Settings } from './settings'
 import { load, preload } from './templates'
 import { addBasePath } from './utils'
+import { handle } from './handler'
 import {
 	TARGET_ID_NOT_SPECIFIED,
 	ROUTE_NOT_FOUND,
 	ROUTE_EXISTS,
 } from './errors'
+import { RouteTemplate } from './directives/x-route'
 
 // Create a custom type that guarantees the notfound route exists
 export type RoutesMap = Map<string, Route> & {
@@ -25,7 +28,7 @@ export interface PineconeRouter {
 	settings: Settings
 	history: NavigationHistory
 
-	isLoading: () => boolean
+	loading: boolean
 
 	/**
 	 * Add a new route
@@ -60,26 +63,8 @@ export interface PineconeRouter {
 	) => Promise<void>
 }
 
-export const loadingState = {
-	loading: false,
-	loadStart: new Event('pinecone:start'),
-	loadEnd: new Event('pinecone:end'),
-
-	startLoading: function (): void {
-		if (!this.loading) {
-			document.dispatchEvent(this.loadStart)
-			this.loading = true
-		}
-	},
-	endLoading: function (): void {
-		if (this.loading) {
-			document.dispatchEvent(this.loadEnd)
-			this.loading = false
-		}
-	},
-}
-
 export const createPineconeRouter = (
+	Alpine: Alpine,
 	name: string,
 	version: string
 ): PineconeRouter => {
@@ -91,10 +76,9 @@ export const createPineconeRouter = (
 
 	const routes = new Map([['notfound', notfound]]) as RoutesMap
 
-	const context = buildContext('', {
-		route: notfound,
-		params: {},
-	})
+	const context = buildContext('', {}, '')
+	let controller: AbortController | null = null
+	let loading = false
 
 	const router: PineconeRouter = {
 		name,
@@ -102,7 +86,18 @@ export const createPineconeRouter = (
 		history: createNavigationHistory(),
 		routes,
 		context,
-		isLoading: () => loadingState.loading,
+
+		get loading(): boolean {
+			return loading
+		},
+
+		set loading(value: boolean) {
+			if (loading == value) return
+			loading = value
+			document.dispatchEvent(
+				new Event(value ? 'pinecone:start' : 'pinecone:end')
+			)
+		},
 
 		get settings(): Settings {
 			return settings
@@ -115,13 +110,18 @@ export const createPineconeRouter = (
 		add: function (path: string, options: RouteOptions) {
 			// check if the route was registered already
 			// but allow updating the notfound route
-			if (path != 'notfound' && this.routes.has(path)) {
-				throw new Error(ROUTE_EXISTS(path))
+			if (path != 'notfound') {
+				if (this.routes.has(path)) {
+					throw new Error(ROUTE_EXISTS(path))
+				}
 			}
 
-			if (options.templates && options.preload) {
+			// preload if specified globally or in the route options
+			if (options.templates && (settings.preload || options.preload)) {
 				preload(options.templates)
 			}
+
+			// path = addBasePath(path, settings.basePath)
 			this.routes.set(path, createRoute(path, options))
 		},
 
@@ -135,9 +135,15 @@ export const createPineconeRouter = (
 			firstLoad?: boolean,
 			index?: number
 		) {
-			// if a navigation request was made before previous route handlers were
-			// done, cancel them
-			if (!handlerState.done) handlerState.cancel = true
+			// Cancel any ongoing handlers
+			if (controller) {
+				controller.abort()
+			}
+			// Create a new controller for this navigation
+			controller = new AbortController()
+			// controller.signal.addEventListener('abort', () => {
+			// 	this.loading = false
+			// })
 
 			// if specified add the basePath
 			// TODO: Test basepath
@@ -151,59 +157,46 @@ export const createPineconeRouter = (
 			let route = this.routes.get('notfound')
 			let params = {}
 
-			this.routes.forEach((r: Route) => {
-				const res = match(addBasePath(r.path, settings.basePath), path)
+			for (let [_, r] of this.routes) {
+				const res = r.match(path)
 				if (res) {
 					params = res
 					route = r
-					return
+					break
 				}
-			})
+			}
 
 			// create a new local context object.
 			// this is to prevent editing the global context, which triggers
 			// Alpine effects and causes them to run before this function has
 			// done its work.
-			const context = buildContext(path, {
-				...this.context,
-				route,
-				params,
-			})
+			const context = buildContext(path, params, route.path)
 
-			const handlers = settings.globalHandlers.concat(context.route.handlers)
+			const handlers = settings.globalHandlers.concat(route.handlers)
 
-			// if alwaysSendLoadingEvents is true, or there are handlers or templates
-			// to render and the path changed
-			// (ie. not soft reload), then dispatch the loading start event
-			if (
-				settings.alwaysLoad ||
-				((handlers.length || context.route.templates.length) &&
-					this.context.path != path)
-			) {
-				loadingState.startLoading()
-			}
+			this.loading = true
 
 			if (handlers.length) {
-				const ok = await handle(handlers, context)
-
-				// if a handler halted execution,
-				// return without displaying a template
-				if (ok == HandlerResult.HALT) {
-					loadingState.endLoading()
+				try {
+					await handle(handlers, context, controller)
+				} catch (_) {
+					this.loading = false
 					return
 				}
-				if (!context.route.templates) {
-					loadingState.endLoading()
+
+				if (!route.templates) {
+					this.loading = false
 				}
-			} else {
-				handlerState.done = true
 			}
 
-			// if called from navigateTo(), do not add the path to the stack
 			if (index != null) {
+				// if called from history.to(), do not push to the NavigationHistory.
+				// only call History.pushState() to update the URL
 				this.history.index = index
+				this.history.pushState(path, settings.hash)
 			} else if (path != this.context.path) {
-				// if path has changed push it to the stack
+				// if this was non-history navigation, and  path has changed,
+				//  push the path to the NavigationHistory
 				this.history.push(path, !fromPopState && !firstLoad, settings.hash)
 			}
 
@@ -211,22 +204,26 @@ export const createPineconeRouter = (
 			this.context = context
 
 			// show templates added programmatically
-			if (context.route.programmaticTemplates) {
+			if (route.programmaticTemplates) {
 				let target = document.getElementById(
-					context.route.targetID ?? settings.targetID ?? ''
+					route.targetID ?? settings.targetID ?? ''
 				)
 
 				if (!target) throw new Error(TARGET_ID_NOT_SPECIFIED)
 
-				load(context.route.templates, target).finally(() =>
-					loadingState.endLoading()
-				)
+				load(route.templates, target).finally(() => (this.loading = false))
 			}
 
-			if (settings.alwaysLoad) loadingState.endLoading()
+			// end loading if there are no templates
+			if (!route.templates) this.loading = false
 		},
 	}
-
+	document.addEventListener('pinecone:start', () => {
+		router.loading = true
+	})
+	document.addEventListener('pinecone:end', () => {
+		router.loading = false
+	})
 	router.history.setRouter(router)
 
 	return router

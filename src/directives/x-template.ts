@@ -1,9 +1,10 @@
 import { type Alpine } from 'alpinejs'
 
-import { hide, interpolate, load, show } from '../templates'
+import { assertExpressionIsArray, assertRouteTemplate } from '../errors'
+import { hide, interpolate, preload, show } from '../templates'
 import { getTargetELement, modifierValue } from '../utils'
 import { PineconeRouter } from '../router'
-import { assertExpressionIsArray, assertRouteTemplate } from '../errors'
+import { settings } from '../settings'
 
 const TemplateDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 	Alpine.directive(
@@ -16,13 +17,13 @@ const TemplateDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 				Router.settings.targetID
 			)
 
-			// add template to the route
 			const path = el._x_PineconeRouter_route
-
 			let urls: string[]
+			const interpolated = modifiers.includes('interpolate')
 
 			// only process the expression if it is not empty
 			// this allows inline templates to be used without an expression
+
 			if (expression != '') {
 				expression = expression.trim()
 				if (
@@ -33,13 +34,14 @@ const TemplateDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 				}
 
 				const evaluatedExpression = evaluate(expression)
-
 				assertExpressionIsArray(evaluatedExpression)
-
 				urls = evaluatedExpression as string[]
 
-				if (modifiers.includes('preload')) {
-					load(urls, el)
+				if (
+					!interpolated &&
+					(settings.preload || modifiers.includes('preload'))
+				) {
+					preload(urls, el)
 				}
 
 				const route = Router.routes.get(path)!
@@ -47,16 +49,19 @@ const TemplateDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 			}
 
 			const callback = (urls?: string[]) => {
-				const found = Router.context.route.path == path
+				const found = Router.context.route === path
 				if (found) {
-					if (urls && modifiers.includes('interpolate')) {
+					if (urls && interpolated) {
 						urls = interpolate(urls, Router.context.params)
 					}
-					show(Alpine, el, expression, urls, targetEl)
+					show(Alpine, el, expression, urls, targetEl).then(() => {
+						console.log('shown template')
+						Router.loading = false
+					})
 				} else hide(el)
 			}
 
-			Alpine.nextTick(() => effect(() => callback(urls)))
+			effect(() => callback(urls))
 
 			cleanup(() => {
 				el._x_PineconeRouter_undoTemplate && el._x_PineconeRouter_undoTemplate()

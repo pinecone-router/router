@@ -1,6 +1,6 @@
 <div x-data="name" x-effect="fetcher">
-	<strong x-text="`This is ` + name"></strong>
-	<hr />
+	<strong x-show="!loading" x-text="`This is ` + name"></strong>
+	<br />
 	<a href="/basic/foo">Menu Foo</a><br />
 	<a href="/basic/bar">Menu Bar</a><br />
 	<a href="/basic/baz">Menu Baz</a><br />
@@ -12,6 +12,7 @@
 		name: Alpine.$persist(''),
 		async fetcher() {
 			try {
+				this.loading = true;
 				const response = await fetch(`/views/${this.$params.slugName}.json`);
 				const data = await response.json();
 				this.name = data.name;

@@ -1,13 +1,13 @@
 import { type ElementWithXAttributes, type Alpine } from 'alpinejs'
 
-import { loadingState } from './router'
-import { settings } from './settings'
 import { type Context } from './context'
+import { settings } from './settings'
 import { addBasePath } from './utils'
 
+const inMakeProgress = new Set()
 const cache = new Map<string, string>()
 const loading = new Map<string, Promise<string>>()
-const inMakeProgress = new Set()
+const preloads = new Set<{ url: string; el?: HTMLElement }>()
 
 export const fetchError = (error: string, url: string) => {
 	document.dispatchEvent(
@@ -15,6 +15,8 @@ export const fetchError = (error: string, url: string) => {
 	)
 }
 
+// This function takes a template element and inserts its content right after
+// the element, or alternatively if  targetEl is it then inside of the latter.
 export const make = (
 	Alpine: Alpine,
 	template: ElementWithXAttributes<HTMLTemplateElement>,
@@ -22,9 +24,10 @@ export const make = (
 	targetEl?: HTMLElement,
 	urls?: string[]
 ) => {
-	// having a unique id ensures the same template can be used multiple times inside the same page
-	// this is for when routes share a template
-	// with this, adding an id to the template element will make it unique
+	// having a unique id ensures the same template can be used multiple times
+	// inside the same page.
+	// this is for when routes share a template.
+	// with this, adding an id to the template element will make it unique.
 	const unique_id = template.id + expression
 
 	if (inMakeProgress.has(unique_id)) return
@@ -90,15 +93,17 @@ export const hide = (template: ElementWithXAttributes<HTMLTemplateElement>) => {
 	}
 }
 
-export const show = (
+export const show = async (
 	Alpine: Alpine,
 	template: ElementWithXAttributes<HTMLTemplateElement>,
 	expression: string,
 	urls?: Array<string>,
 	targetEl?: HTMLElement
-): void => {
+) => {
+	// case: template already rendered, params changed.
 	// if the template is rendered but the template url parameters have changed
 	// hide the content and remove the content inside the template
+	// this will trigger the template to be loaded again with new urls bellow.
 	if (
 		template._x_PineconeRouter_templateUrls != undefined &&
 		template._x_PineconeRouter_templateUrls != urls
@@ -107,41 +112,43 @@ export const show = (
 		template.innerHTML = ''
 	}
 
+	// case: template already rendered, route didn't change.
 	// the template is already inserted into the page
 	// leave it as is and end loading
 	if (template._x_PineconeRouter_template) {
-		loadingState.endLoading()
 		return
 	}
 
+	// case: template not rendered, but template content exists.
 	if (template.content.childElementCount) {
 		make(Alpine, template, expression, targetEl, urls)
-		loadingState.endLoading()
 		return
 	}
 
+	// case: template content doesn't exist, load it from urls
 	if (urls) {
 		// if templates are not loaded, load them
-		load(urls, template)
-			.then(() => make(Alpine, template, expression, targetEl, urls))
-			.finally(() => loadingState.endLoading())
+		return load(urls, template).then(() =>
+			make(Alpine, template, expression, targetEl, urls)
+		)
 	}
 }
 
+// Process params inside template urls
 export const interpolate = (
 	urls: string[],
 	params: Context['params']
 ): string[] => {
-	return urls.map((url) => {
-		// Replace :param format (e.g., /users/:id/profile.html)
-		return url.replace(/:([^/.]+)/g, (_, name) => {
-			return params[name] || name
-		})
-	})
+	return urls.map((url) =>
+		url.replace(/:([^/.]+)/g, (_, name) => params[name] || name)
+	)
 }
 
 // Load a template from a url and put its content into cachedTemplates
-const loadUrl = async (url: string): Promise<string> => {
+const loadUrl = async (
+	url: string,
+	priority: RequestPriority = 'high'
+): Promise<string> => {
 	url = addBasePath(url, settings.basePath)
 	// Return from cache if available
 	if (cache.has(url)) return cache.get(url)!
@@ -149,7 +156,7 @@ const loadUrl = async (url: string): Promise<string> => {
 	// Return existing promise if already loading
 	if (loading.has(url)) return loading.get(url)!
 
-	const fetchPromise = fetch(url)
+	const fetchPromise = fetch(url, { priority })
 		.then((r) => {
 			if (!r.ok) {
 				fetchError(r.statusText, url)
@@ -168,8 +175,19 @@ const loadUrl = async (url: string): Promise<string> => {
 }
 
 // Preload templates from urls
-export const preload = (urls: string[]): void => {
-	urls.forEach(loadUrl)
+export const preload = (urls: string[], el?: HTMLElement): void => {
+	urls.forEach((url) => preloads.add({ url, el }))
+}
+
+export const runPreloads = (): void => {
+	for (const item of preloads) {
+		if (item.el) {
+			load([item.url], item.el, 'low')
+		} else {
+			loadUrl(item.url, 'low')
+		}
+		preloads.delete(item)
+	}
 }
 
 /**
@@ -180,8 +198,9 @@ export const preload = (urls: string[]): void => {
  */
 export const load = (
 	urls: string[],
-	el: HTMLTemplateElement | HTMLElement
+	el: HTMLTemplateElement | HTMLElement,
+	priority: RequestPriority = 'high'
 ): Promise<void> =>
-	Promise.all(urls.map(loadUrl)).then((htmlArray) => {
+	Promise.all(urls.map((url) => loadUrl(url, priority))).then((htmlArray) => {
 		el.innerHTML = htmlArray.join('')
 	})

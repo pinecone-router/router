@@ -15,23 +15,27 @@ The feature-packed Alpine.js router.
 
 ## About
 
-An easy to use but feature-packed router for Alpine.js.
+An small, easy to use, and feature-packed router for Alpine.js.
 
 ```html
 <template x-route="/" x-template>
-	<h1>Welcome Home!</h1>
+  <h1>Welcome!</h1>
+  <p>What's your name?</p>
+  <input @enter="$router.navigate(`/hello/${$el.value}`)"></input>
 </template>
-<template x-route="/hello/:name" x-handler="checkName" x-template>
-	<h1>Hello <span x-text="$params.name"></span>!</h1>
-	<button @click="$router.back()">Go Back</button>
+<template x-route="/hello/:name"
+  x-template>
+  <h1>Hello <span x-text="$params.name"></span>!</h1>
+  <button @click="$router.back()">Go Back</button>
 </template>
-<template x-route"notfound" x-template="/404.html"></template>
+<template x-route="notfound" x-template="/404.html"></template>
 ```
 
 ## Features:
 
 - :smile: Easy and familiar syntax well integrated with Alpine.js.
-- :gear: [Handler functions](#x-handler) allow you to run code before content is displayed.
+- :gear: [Handler functions](#x-handler) allow you to run functions on for each
+  route.
 - :beginner:&nbsp;&nbsp;[Inline](#inline-templates) and [external](#x-template) templates to display content.
 - :sparkles: Magic **$router** & **$params** to access router data.
 - &nbsp;<img src="https://skillicons.dev/icons?i=ts" width="12px" />&nbsp;&nbsp;Full Typescript support.
@@ -151,7 +155,8 @@ By adding an empty `x-template` attribute to a route template element, Pinecone 
 </template>
 ```
 
-In this example it will inserts the child elements into the document the same way `x-if` does: after the `template` tag.
+In this example it will inserts the child elements into the document the same
+way `x-if` does: after the `template` tag.
 
 #### Modifiers
 
@@ -169,7 +174,8 @@ In this example it will inserts the child elements into the document the same wa
 
 ### External templates
 
-`x-template` also allows you to specify one or more external template files to be fetched from a URL.
+`x-template` also allows you to specify one or more external template files
+to be fetched from a URL.
 
 ```html
 <template x-route="/" x-template="/home.html"></template>
@@ -183,7 +189,8 @@ In this example it will fetch the html files and inserts them in the document th
 
 #### Modifiers
 
-- **`.preload`**: Fetches the template on page load, without waiting for the route to be matched.
+- **`.preload`**: Fetches the template on page load with low priority, without
+  waiting for the route to be matched.
 - **`.target`**: Takes an ID paramater for example `.target.app` will render the template inside the element with the `app` ID
 - **`.interpolate`**: Enable named route params in template urls.
 
@@ -212,25 +219,26 @@ In this example it will fetch the html files and inserts them in the document th
 ```
 
 > [!NOTE]
-> For obvious reasons, `.preload` cannot be used with `.interpolate`.
-
-> [!NOTE]
-> Templates's content are cached by PineconeRouter in a variable when loaded, and cleared on page reload.
+> Templates's content are cached by PineconeRouter in a variable when loaded,
+> and are automatically cleared on browser page reload.
 
 <br>
 
 > [!NOTE]
-> When fetching a template using a named param fails, it dispatches a [`fetch-error`](https://github.com/pinecone-router/router/#events--loading-bar) event.
+> When fetching a template fails, it adispatches a
+> [`pinecone:fetch-error`](#events--loading-bar) event.
 
 > [!TIP]
 > Modifiers can be used simulateneously: `x-template.preload.target.app`
+> For obvious reasons, `.preload` cannot be used with `.interpolate`.
 
 > [!TIP]
 > Default Target ID can be set globally in [Settings](#settings).
 
 ### Embeded Scripts
 
-Templates can have their own script elements, which will run the template is rendered.
+Templates can have their own script elements, which will run when the route is
+matched.
 
 /template.html:
 
@@ -257,33 +265,64 @@ Templates can have their own script elements, which will run the template is ren
 
 > [!IMPORTANT]
 > Templates does _not_ reload when the path changes on the same route.
->
-> `init()` will only run when the template is rendered.
+> `init()` will run only once until the user visits another route then comes
+> back.
 
 > [!TIP]
-> To run a function when params change, use `x-effect` or `$watch`.
+> To run a function when params change, use `x-effect` or `$watch`:
+
+```html
+<div x-data="hello" x-effect="getData"></div>
+<strong x-show="!loading" x-text="name"></strong>
+<script>
+	Alpine.data('name', () => ({
+		loading: true,
+		name: Alpine.$persist(''),
+		async getData() {
+			try {
+				this.loading = true
+				const response = await fetch(`/views/${this.$params.slugName}.json`)
+				const data = await response.json()
+				this.name = data.name
+			} catch (error) {
+				console.error('Fetch error:', error)
+			} finally {
+				this.loading = false
+			}
+		},
+	}))
+</script>
+```
 
 ## `x-handler`
 
-This powerful directive can be used alone or alongisde `x-template`, it allow you to excute one or more methods when a route is matched but before it is added to the [Navigation History](#navigation-history).
+This powerful directive can be used alone or alongisde `x-template`, it allow
+you to excute one or more methods when a route is matched.
 
-Handlers runs **before x-template** allowing you to redirect before showing any content.
+- Handlers run **before x-template** allowing you to redirect before showing any
+  content aswell.
 
-`x-handler` takes a _function, or an array of function_, that will be called in
-order.
+- Handlers run before the route is added to the
+  [Navigation History](#navigation-history).
 
-If the handler is async, it will be awaited.
+- `x-handler` takes a _function, or an array of function_, that will be called in
+  order.
+
+- Handlers are awaited.
 
 ### Handler arguments
 
 Each handler function receives two arguments:
 
-1. `context` - The [Context object](#context-object) containing current route information.
-2. `result` - A `HandlerResult` enum object with two values:
-   - `result.HALT` (or `0`) - Stops execution of queued handlers handlers and
-     prevents template rendering
-   - `result.CONTINUE` (or `1`) - Proceeds to the next handler (this is the
-     default if nothing is returned)
+1. `context` - The [HandlerContext object](#handlercontext-object) containing
+   current route information.
+2. `controller` - An
+   [`AbortController`](https://kettanaito.com/blog/dont-sleep-on-abort-controller)
+   which allows you to:
+
+- check `controller.signal` to cancel your handler when a user navigates
+  elsewhere. For example, the clicked a link while handler is `fetch`ing data.
+- use `controller.abort()` to cancel subsequent handlers.
 
 ### Examples
 
@@ -300,9 +339,27 @@ You can also define global handlers programmatically through [Settings](#setting
 
 To prevent / stop the next handlers from executing and templates from rendering, you can:
 
-- `return result.HALT`
-- `return this.$router.navigate()` or return after, as navigation requests
-  automaticalled cancel queued handlers.
+- `this.$router.navigate()` to redirect to another path, since all navigation
+  requests cancel queued handlers
+- `controller.abort()` to cancel subsequent handlers without redirecting.
+  - This is useful if you want to show an error from a handler without
+    redirecting, ie. using JS.
+
+### HandlerContext object
+
+These are the types you can import if using Alpine.js with Typescript
+
+```ts
+export type Handler<In, Out> = (
+	context: HandlerContext<In>,
+	controller: AbortController
+) => Out | Promise<Out>
+
+//
+export interface HandlerContext<T> extends ContextWithRoute {
+	readonly data: T
+}
+```
 
 ## $router magic helper
 
@@ -329,29 +386,31 @@ export interface PineconeRouter {
 	settings: Settings
 	history: NavigationHistory
 
+	loading: boolean
+
 	/**
 	 * Add a new route
 	 *
-	 * @param {string} path The path to match
-	 * @param {RouteOptions} options Options for the route
+	 * @param {string} path the path to match
+	 * @param {RouteOptions} options the options for the route
 	 */
 	add: (path: string, options: RouteOptions) => void
 
 	/**
 	 * Remove a route
 	 *
-	 * @param {string} path The route to remove
+	 * @param {string} path the route to remove
 	 */
 	remove: (path: string) => void
 
 	/**
 	 *  Navigate to the specified path
 	 *
-	 * @param {string} path The path with no hash, even if using hash routing.
+	 * @param {string} path the path with no hash even if using hash routing
 	 * @param {boolean} fromPopState INTERNAL Is set to true when called from
 	 *                               onpopstate event
-	 * @param {boolean} firstLoad INTERNAL Is set to true on browser page load.
-	 * @param {number} index INTERNAL the index of the navigation history to go to
+	 * @param {boolean} firstLoad INTERNAL
+	 * @param {number} index INTERNAL
 	 * @returns {Promise<void>}
 	 */
 	navigate: (
@@ -427,12 +486,12 @@ export interface RouteOptions {
 
 ## Settings:
 
-PineconeRouter can be configured using `PineconeRouter.settings`.
+PineconeRouter can be configured using [`PineconeRouter.settings`](#pineconerouter-object).
 
 In Alpine:
 
 ```html
-<div x-data="router" x-init="$router.settings({targetID: 'app'})"></div>
+<div x-data="router" x-init="$router.settings = {targetID: 'app'}"></div>
 ```
 
 In JS:
@@ -440,14 +499,14 @@ In JS:
 ```html
 <script>
 	document.addEventListener('alpine:init', () => {
-		window.PineconeRouter.settings({
-			hash: false,
-			basePath: '/',
-			targetID: undefined,
-			handleClicks: true,
-			alwaysLoad: false,
-			globalHandlers: [],
-		})
+		// this will only update the appropriate values
+		window.PineconeRouter.settings = {
+			basePath: '/app',
+			targetID: 'app',
+		}
+		// the same as this:
+		window.PineconeRouter.settings.basePath = '/app'
+		window.PineconeRouter.settings.targetID = 'app'
 	})
 </script>
 ```
@@ -455,39 +514,36 @@ In JS:
 ### Settings object
 
 ```ts
-interface Settings {
+export interface Settings {
 	/**
-	 * @default false
-	 * @summary enable hash routing
+	 * enable hash routing
+	 * @default false: boolean
 	 */
 	hash: boolean
+
 	/**
-	 * @default `/`
-	 * @summary The base path of the site, for example /blog.
+	 * The base path of the site, for example /blog.
 	 * Note: do not use with using hash routing.
+	 * @default `/`
 	 */
 	basePath: string
+
 	/**
-	 * @default undefined
-	 * @summmary Set an optional ID for where the templates will render by default.
+	 * Set an optional ID for where the templates will render by default.
 	 * This can be overriden by the .target modifier.
+	 * @default undefined
 	 */
 	targetID?: string
+
 	/**
+	 * Set to false if you don't want to intercept links by default.
 	 * @default true
-	 * @summary Set to false if you don't want to intercept links by default.
 	 */
 	handleClicks: boolean
 
 	/**
-	 * @default false
-	 * @summary Set to true to always send loading events, even if the template is inline and there are no handlers.
-	 */
-	alwaysLoad: boolean
-
-	/**
+	 * Handlers that will run on every route.
 	 * @default []
-	 * @summary handlers that will run on every route.
 	 */
 	globalHandlers: Handler[]
 }
@@ -593,22 +649,6 @@ This means if you set the `basePath` to `/parent`, you can now just write:
   `x-template="/parent/views/home.html"`.
 - `$router.navigate('/about')` rather than `$router.navigate('/parent/about')`
 
-## Redirecting
-
-**Redirecting from a handler**:
-
-This will prevent any queued handlers from executing
-
-```js
-handler(context) {
-	...
-  this.$router.navigate(path)
-  return
-  // or
-  return this.$router.navigate(path)
-}
-```
-
 ### Bypass click handling
 
 By default Pinecone Router intercept all clicks on anchor elements with [valid attribues](./src/links.ts).
@@ -649,10 +689,6 @@ document.addEventListener('pinecone:fetch-error', (err) => console.error(err))
 | **pinecone:start**       | document  | loading starts                               |
 | **pinecone:end**         | document  | loading ends                                 |
 | **pinecone:fetch-error** | document  | when the fetching of external templates fail |
-
-> [!NOTE]
-> By default, these events only fire when there are external templates and/or handlers.
-> To make it so they are always dispatched you can use [`Settings.alwaysLoad`](#settings)
 
 ### Adding and Removing routes & templates programmatically with Javascript
 

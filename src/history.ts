@@ -55,6 +55,15 @@ export interface NavigationHistory {
 	push: (path: string, pushState: boolean, hash?: boolean) => void
 
 	/**
+	 * Call History.pushState
+	 * @internal
+	 * @param path The path to add to the history
+	 * @param hash Whether or not we're using hash routing
+	 * @returns void
+	 */
+	pushState: (path: string, hash?: boolean) => void
+
+	/**
 	 * @internal
 	 * The router instance
 	 */
@@ -104,11 +113,12 @@ export const createNavigationHistory = (): NavigationHistory => {
 			this.entries.push(path)
 			this.index = this.entries.length - 1
 
-			// handle history state management
-			if (pushState) {
-				const fullPath = hash ? '#' + path : path
-				history.pushState({ path: fullPath }, '', fullPath)
-			}
+			if (pushState) this.pushState(path, hash)
+		},
+
+		pushState: function (path: string, hash?: boolean): void {
+			const fullPath = hash ? '#' + path : path
+			history.pushState({ path: fullPath }, '', fullPath)
 		},
 
 		setRouter(router: PineconeRouter): void {
