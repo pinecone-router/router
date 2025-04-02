@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [7.0.0] - 2025-04-02
+
 This is release contains a major overhaul to the codebase, code structure and
 quality improvements, abd better Tyepscript support. It also made all the new
 features added throughout all these years work better together.
@@ -37,23 +39,23 @@ And hopefully even make it less intimidating for contributors to do so aswell!
 - Added support for multiple-child templates.
   - You can include as many root elements inside the template file as you want.
 - Added support for multiple scripts inside the template.
+- Added support for params in template urls (interpolation) for routes added
+  [programmatically](./README.md#adding-and-removing-routes--templates-programmatically-with-javascript)
 - Added [`Settings.preload`](./README.md#settings) to enable preloading all
   other templates after the page fullly loaded.
-- Added proper priority to preloading fetch, they are now of 'low' priority
-  rather than the previous default of 'high'.
-- Added support for params in template urls for routes added
-  [programmatically](./README.md#adding-and-removing-routes--templates-programmatically-with-javascript)
+- Added proper priority option to preloading requests, they are now of 'low'
+  priority rather than the previous default of 'high'.
+- Preloading now waits for the first page to be fully rendered before starting.
 - Added reactive [`PineconeRouter.loading`](./README.md#pineconerouter-object)
-  boolean property set to true when loading.
-- Added support for [regex param modifier](./README.md#route-matching):
+  boolean property set to true when loading that you use to hide content on
+  loading.
+- Added support for [extension param modifier](./README.md#route-matching):
 - Added an [AbortController](AbortController) passed to
   [handlers](./README.md#handler-arguments), for better experience.
 - You can now pass data to the next handler by simply returning it.
 - Added a `HandlerContext.data` field inside the
   [context object passed to handlers](./README.md#handler-arguments),
   which includes the returned data by the previous handler, if any.
-- Added proper Typescript types for all parts of the router.
-- Added unit tests for some parts of the router using Bun.
 - [`Settings.basePath`](./README.md#settings) is now automatically added
   to the route path.
 
@@ -63,6 +65,8 @@ And hopefully even make it less intimidating for contributors to do so aswell!
 
 - [`Settings.basePath`](./README.md#settings) is now automatically added
   to the template URLS.
+- Added proper Typescript types for all parts of the router.
+- Added unit tests for some parts of the router using Bun.
 
 ### Changed
 
@@ -77,25 +81,24 @@ And hopefully even make it less intimidating for contributors to do so aswell!
 
 - Changed [PineconeRouter.settings](./README.md#pineconerouter-object) from a
   [Settings object](./README.md#settings-object) to a function that
-  returns the `Settings` object and takes `Partial<Settiings>` object in order
-  to change settings. [See more](./README.md#settings)
+  returns the `Settings` object and takes `Partial<Settings>` object in order
+  to configure. [See more](./README.md#settings)
 - During navigation&mdash;ie while handlers are being executed&mdash;the global
   context object wont be updated until the handlers are finished.
 
-  - This means handlers must now use the provided context object, if they didn't
-    before.
+  - This means handlers must now use the provided context object, if they
+    didn't before for whatever reason.
 
-- Renamed `Settings.templateTargetId` to `Settings.targetID`
-- Context.route is now a Route object instead of a string.
 - The navigation methods `navigate|back|forward` etc. are no longer part of the
   context object.
 
   - Instead use `$router.navigate`, `this.$router.navigate`,
     `window.PineconeRouter.navigate`, or `Alpine.$router.navigate` etc.
 
+- Renamed `Settings.templateTargetId` to `Settings.targetID`
 - Renamed RouteOptions.templateTargetId to `RouteOptions.targetID`.
-- Changed the [route-matching](./README.md#route-matching) method to be based on
-  [regexparam](https://github.com/lukeed/regexparam).
+- Renamed `Settings.interceptLinks` to `Settings.handleClicks` to clearly
+  represent what it does.
 - Templates will not be automatically hidden until the handlers are done,
   meaning the previous template will stay visible while next route's handlers
   are running.
@@ -112,28 +115,27 @@ And hopefully even make it less intimidating for contributors to do so aswell!
 - Renamed the events `pinecone-start`, `pinecone-end`, and `fetch-error` into
   `pinecone:start`, `pinecone:end`, and `pinecone:fetch-error` respectively.
 - loading start and end events (above), are now always dispatched regardless
-  if there are handlers or templates.
+  if there are handlers/templates or not (`alwaysSendLoadingEvents` by default).
 - No longer passes the hash portion when navigating using normal mode
 
   - ie. if you're on `/home` and click an anchor link to '#tab1', then clicking
     a link to '/profile' after wont take you to '/profile#tab1' anymore.
 
-- Renamed `Settings.interceptLinks` to `Settings.handleClicks` to clearly
-  represent what it does.
 - Switched from pnpm/esbuild/node to bun for package management, bundling, and
   testing.
+- Changed the [route-matching](./README.md#route-matching) method to be based on
+  [regexparam](https://github.com/lukeed/regexparam) with modifications.
 
 ### Removed
 
 - Removed `redirect` method, as it's no longer needed now that all navigation
   requests now cancel handlers in progress, for example `navigate()`.
-- Moved `Context.navigationIndex`, `Context.navigationStack`, into the
-  [PineconeRouter object](./README.md#pineconerouter-object)
 - Removed `Context.query` and `Context.hash`, as they aren't useful since you
   can get them using `window.location.search` and `window.location.hash`
   respectively.
 - Removed inline templates support from `x-route` in favor of
   [`inline x-template`](./README.md#inline-templates).
+  - This removed duplicate code while being only a little bit inconvenient.
 - Removed `Settings.alwaysSendLoadingEvents`, it is now default and unchangable.
 - Removed _internal_ properties from the
   [PineconeRouter object](./README.md#pineconerouter-object) which weren't
@@ -144,19 +146,15 @@ And hopefully even make it less intimidating for contributors to do so aswell!
 ### Fixed
 
 - All navigation requests now cancel ongoing handlers, including `back()`
-  and `forward()` etc.
-- Fix issues where effects are still executed during the navigation
-  process due to the global context updating prematurely.
+  and `forward()`.
 - Trailing slashes are now properly always ignored by default.
-- Scripts inside template files are no longer required to be the second
-  child.
-- Routes that share the same `x-template` value ie. the same template
-  urls, used to be ignored after the first one, this can now be solved by
-  adding an `id` to the template elements.
+- Routes that share the same `x-template` value&mdash;ie. the same template
+  urls&mdash;used to be ignored after the first one, this can now be solved by
+  adding a unique `id` to the template elements.
 - Fixed a bug where x-effect/$watch callback inside a template still
-  run after the route changes
+  run after the route changes due to the global context updating prematurely
   (fix [#62](https://github.com/pinecone-router/router/issues/62)).
-- Fixed Back and Forth navigation doesn't always work
+- Fixed browser back and forth navigation not always always work
   ([#16](https://github.com/pinecone-router/router/issues/16))
 
 ### Others:
@@ -615,7 +613,7 @@ It's mostly backward compatible but need a few tweaks:
 
 - Let go of multi-router support for simpler codebase.
 
-[unreleased]: https://github.com/pinecone-router/router/compare/6.2.4...HEAD
+[unreleased]: https://github.com/pinecone-router/router/compare/7.0.0...HEAD
 [0.0.3]: https://github.com/pinecone-router/router/compare/0.0.2...0.0.3
 [0.0.4]: https://github.com/pinecone-router/router/compare/0.0.3...0.0.4
 [0.0.5]: https://github.com/pinecone-router/router/compare/0.0.4...0.0.5
@@ -670,3 +668,4 @@ It's mostly backward compatible but need a few tweaks:
 [6.2.2]: https://github.com/pinecone-router/router/compare/6.2.1..6.2.2
 [6.2.3]: https://github.com/pinecone-router/router/compare/6.2.2..6.2.3
 [6.2.4]: https://github.com/pinecone-router/router/compare/6.2.3..6.2.4
+[7.0.0]: https://github.com/pinecone-router/router/compare/6.2.4..7.0.0

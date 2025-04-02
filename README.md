@@ -573,6 +573,8 @@ In JS:
 </script>
 ```
 
+`PineconeRouter.settings()` returns the current settings.
+
 ### Settings object
 
 ```ts
