@@ -2,6 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import Alpine from 'alpinejs'
 
 import { createPineconeRouter } from './router'
+import { cache, loadUrl } from './templates'
 
 const router = createPineconeRouter(Alpine, 'pinecone-router', '7.0.0')
 var output = ''
@@ -98,4 +99,27 @@ describe('Router', () => {
 		router.navigate('/halt')
 		expect(output).toBe('')
 	})
+})
+test('Settings.basePath', async () => {
+	const router = createPineconeRouter(Alpine, 'pinecone-router', '7.0.0')
+	// Test basePath setting
+	router.settings({ basePath: '/test' })
+
+	// Should automatically add basePath to routes
+	router.add('/', {})
+	router.add('/hello', {})
+	router.add('/about', {})
+
+	expect(router.routes.has('/test/hello')).toBe(true)
+
+	// Should add basePath to navigation
+	await router.navigate('/hello')
+	expect(router.context.path).toBe('/test/hello')
+
+	// Test navigation with absolute path including basePath
+	await router.navigate('/test/about')
+	expect(router.context.path).toBe('/test/about')
+
+	// Test that history entries include basePath
+	expect(router.history.entries).toEqual(['/test/hello', '/test/about'])
 })

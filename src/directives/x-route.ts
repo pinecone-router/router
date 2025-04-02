@@ -2,6 +2,8 @@ import { type ElementWithXAttributes, type Alpine } from 'alpinejs'
 
 import { PineconeRouter } from '../router'
 import { assertTemplate } from '../errors'
+import { addBasePath } from '../utils'
+import { settings } from '../settings'
 
 export interface RouteTemplate
 	extends ElementWithXAttributes<HTMLTemplateElement> {
@@ -10,7 +12,7 @@ export interface RouteTemplate
 
 const RouteDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 	Alpine.directive('route', (el, { expression }, { cleanup }) => {
-		let path = expression
+		let path = addBasePath(expression, settings.basePath)
 
 		assertTemplate(el)
 

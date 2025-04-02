@@ -41,7 +41,8 @@ And hopefully even make it less intimidating for contributors to do so aswell!
   other templates after the page fullly loaded.
 - Added proper priority to preloading fetch, they are now of 'low' priority
   rather than the previous default of 'high'.
--
+- Added support for params in template urls for routes added
+  [programmatically](./README.md#adding-and-removing-routes--templates-programmatically-with-javascript)
 - Added reactive [`PineconeRouter.loading`](./README.md#pineconerouter-object)
   boolean property set to true when loading.
 - Added support for [regex param modifier](./README.md#route-matching):
@@ -74,16 +75,15 @@ And hopefully even make it less intimidating for contributors to do so aswell!
   - This change was made to separate template code from `x-route`, although it
     was handy, this change results in cleaner and more concise code.
 
-- To access params you can now use `$router.context.params` or the new `$params`
-  magic helper.
+- Changed [PineconeRouter.settings](./README.md#pineconerouter-object) from a
+  [Settings object](./README.md#settings-object) to a function that
+  returns the `Settings` object and takes `Partial<Settiings>` object in order
+  to change settings. [See more](./README.md#settings)
 - During navigation&mdash;ie while handlers are being executed&mdash;the global
   context object wont be updated until the handlers are finished.
+
   - This means handlers must now use the provided context object, if they didn't
     before.
-- No longer passes the hash portion when navigating using normal mode
-
-  - ie. if you're on `/home` and click a anchor link to '#tab1', clicking
-    a link to '/profile' wont take you to '/profile#tab1' anymore.
 
 - Renamed `Settings.templateTargetId` to `Settings.targetID`
 - Context.route is now a Route object instead of a string.
@@ -93,12 +93,14 @@ And hopefully even make it less intimidating for contributors to do so aswell!
   - Instead use `$router.navigate`, `this.$router.navigate`,
     `window.PineconeRouter.navigate`, or `Alpine.$router.navigate` etc.
 
+- Renamed RouteOptions.templateTargetId to `RouteOptions.targetID`.
 - Changed the [route-matching](./README.md#route-matching) method to be based on
-  [my-way](https://github.com/amio/my-way).
+  [regexparam](https://github.com/lukeed/regexparam).
 - Templates will not be automatically hidden until the handlers are done,
   meaning the previous template will stay visible while next route's handlers
   are running.
-  - This means you will not get an empty page while loading.
+  - This means you will not get an empty page while loading a page with async
+    handlers.
 - `Context.navigationStack` and `Context.navigationIndex` are now
   `PineconeRouter.history.entries` and `PineconeRouter.history.index`
   respectively. [See docs](./README.md#navigation-history).
@@ -111,7 +113,11 @@ And hopefully even make it less intimidating for contributors to do so aswell!
   `pinecone:start`, `pinecone:end`, and `pinecone:fetch-error` respectively.
 - loading start and end events (above), are now always dispatched regardless
   if there are handlers or templates.
-- Renamed RouteOptions.templateTargetId to `RouteOptions.targetID`.
+- No longer passes the hash portion when navigating using normal mode
+
+  - ie. if you're on `/home` and click an anchor link to '#tab1', then clicking
+    a link to '/profile' after wont take you to '/profile#tab1' anymore.
+
 - Renamed `Settings.interceptLinks` to `Settings.handleClicks` to clearly
   represent what it does.
 - Switched from pnpm/esbuild/node to bun for package management, bundling, and
@@ -137,21 +143,20 @@ And hopefully even make it less intimidating for contributors to do so aswell!
 
 ### Fixed
 
-- FIXED: All navigation requests now cancel ongoing handlers, including `back()`
+- All navigation requests now cancel ongoing handlers, including `back()`
   and `forward()` etc.
-- FIXED: Fix issues where effects are still executed during the navigation
+- Fix issues where effects are still executed during the navigation
   process due to the global context updating prematurely.
-- FIXED: Trailing slashes are now properly always ignored by default.
-- FIXED: Scripts inside template files are no longer required to be the second
+- Trailing slashes are now properly always ignored by default.
+- Scripts inside template files are no longer required to be the second
   child.
-- FIXED: Routes that share the same `x-template` value ie. the same template
+- Routes that share the same `x-template` value ie. the same template
   urls, used to be ignored after the first one, this can now be solved by
   adding an `id` to the template elements.
-- FIXED: Fixed a bug where x-effect/$watch callback inside a template still
+- Fixed a bug where x-effect/$watch callback inside a template still
   run after the route changes
   (fix [#62](https://github.com/pinecone-router/router/issues/62)).
-- FIXED: Made it so only links that starts with `Settings.basePath` are handled.
-- FIXED: Fixed Back and Forth navigation doesn't always work
+- Fixed Back and Forth navigation doesn't always work
   ([#16](https://github.com/pinecone-router/router/issues/16))
 
 ### Others:

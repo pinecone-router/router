@@ -1,0 +1,26 @@
+<div x-data="name" x-effect="fetcher">
+	<strong x-show="!loading" x-text="`This is ` + name"></strong>
+	<br />
+	<a href="/basic/foo">Menu Foo</a><br />
+	<a href="/basic/bar">Menu Bar</a><br />
+	<a href="/basic/baz">Menu Baz</a><br />
+</div>
+
+<script>
+	Alpine.data('name', () => ({
+		loading: true,
+		name: Alpine.$persist(''),
+		async fetcher() {
+			try {
+				this.loading = true;
+				const response = await fetch(`/views/${this.$params.slugName}.json`);
+				const data = await response.json();
+				this.name = data.name;
+			} catch (error) {
+				console.error('Fetch error:', error);
+			} finally {
+				this.loading = false;
+			}
+		},
+	}));
+</script>

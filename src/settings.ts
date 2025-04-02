@@ -22,7 +22,7 @@ export interface Settings {
 	targetID?: string
 
 	/**
-	 * Set to false if you don't want to intercept links by default.
+	 * Set to false if you don't want to intercept link clicks by default.
 	 * @default true
 	 */
 	handleClicks: boolean
@@ -42,13 +42,14 @@ export interface Settings {
 
 export let settings: Settings = {
 	hash: false,
-	basePath: '/',
+	basePath: '',
 	globalHandlers: [],
 	handleClicks: true,
 	targetID: undefined,
 	preload: false,
 }
 
-export const updateSettings = (value?: Partial<Settings>) => {
+export const updateSettings = (value?: Partial<Settings>): Settings => {
 	settings = { ...settings, ...value }
+	return settings
 }

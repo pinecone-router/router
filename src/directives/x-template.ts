@@ -14,7 +14,7 @@ const TemplateDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 
 			const targetEl = getTargetELement(
 				modifierValue(modifiers, 'target'),
-				Router.settings.targetID
+				settings.targetID
 			)
 
 			const path = el._x_PineconeRouter_route
@@ -55,7 +55,6 @@ const TemplateDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 						urls = interpolate(urls, Router.context.params)
 					}
 					show(Alpine, el, expression, urls, targetEl).then(() => {
-						console.log('shown template')
 						Router.loading = false
 					})
 				} else hide(el)

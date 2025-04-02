@@ -1,12 +1,11 @@
 import { Context } from './context'
 import { Route } from './route'
 /**
- * Handler type takes the In and Out parameter.
+ * Handler type takes the In and Out parameters.
  *
- * In is the value of the previous handler, which will be inside
+ * @param In  is the value of the previous handler, which will be inside
  * `HandlerContext.data`.
- *
- * Out is the return value of the handler.
+ * @param Out is the return value of the handler.
  */
 export type Handler<In, Out> = (
 	context: HandlerContext<In>,
@@ -43,6 +42,8 @@ export async function handle(
 			const ctx = { ...context, data } as HandlerContext<
 				Parameters<typeof handler>[0]
 			>
+			// try catch abort signal from the handler if the user used promise with
+			// abort signal.
 			try {
 				data = await handler(ctx, controller)
 			} catch (e) {

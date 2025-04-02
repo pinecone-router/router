@@ -35,11 +35,7 @@ export const handleClicks = (Router: PineconeRouter) => {
 		const target = node.getAttribute('target')
 
 		// Only handle internal links without special targets
-		if (
-			href &&
-			href.startsWith(Router.settings.basePath) &&
-			(!target || /^_?self$/i.test(target))
-		) {
+		if (href && (!target || /^_?self$/i.test(target))) {
 			Router.navigate(href)
 			e.preventDefault()
 		}

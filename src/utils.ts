@@ -22,12 +22,10 @@ export const modifierValue = (
 
 export const addBasePath = (path: string, basePath: string) => {
 	if (path == 'notfound') return path
-	if (basePath != '/' && !path.startsWith(basePath)) {
+
+	if (!path.startsWith(basePath)) {
 		path = basePath + path
 	}
-	// if (path == basePath && !path.endsWith('/')) {
-	// 	path += '/'
-	// }
 	return path
 }
 

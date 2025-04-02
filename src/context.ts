@@ -15,7 +15,6 @@ type contextBuilder = (
 /**
  * This is the global Context object
  * Which can be accessed from `PineconeRouter.context`
- * T is either Route, when a route is matched / n
  */
 export interface Context {
 	readonly path: string

@@ -64,8 +64,8 @@ export interface NavigationHistory {
 	pushState: (path: string, hash?: boolean) => void
 
 	/**
-	 * @internal
 	 * The router instance
+	 * @internal
 	 */
 	router?: PineconeRouter
 

@@ -5,6 +5,13 @@ export interface Route {
 	 * @internal
 	 */
 	readonly programmaticTemplates: boolean
+
+	/**
+	 * Set to true when the route is added programmatically and defined as having
+	 * params in the template urls
+	 * @internal
+	 */
+	readonly interpolate: boolean
 	/**
 	 * The regex pattern used to match the route.
 	 * @internal
@@ -25,9 +32,10 @@ export interface Route {
 }
 
 export interface RouteOptions {
-	targetID?: string
 	handlers?: Route['handlers']
-	templates?: Route['templates']
+	interpolate?: boolean
+	templates?: string[]
+	targetID?: string
 	preload?: boolean
 }
 
@@ -39,15 +47,21 @@ export interface RouteOptions {
  */
 export default function createRoute(
 	path: string,
-	{ targetID, templates = [], handlers = [] }: RouteOptions = {}
+	{
+		targetID,
+		templates = [],
+		handlers = [],
+		interpolate = false,
+	}: RouteOptions = {}
 ): Route {
 	// Create the route object
 	const route: Route = {
 		programmaticTemplates: templates.length > 0,
-		targetID,
-		templates,
-		handlers,
 		pattern: parse(path),
+		interpolate,
+		templates,
+		targetID,
+		handlers,
 		path,
 		match(path: string) {
 			let m = this.pattern.exec(path)
@@ -64,7 +78,9 @@ type RouteArgs = void | {
 }
 
 /**
+ * Based on [regexparam](https://github.com/lukeed/regexparam)
  * @param {string} input The route pattern
+ * @returns {RegExp} The compiled regular expression for the route
  */
 export function parse(input: string): RegExp {
 	let optionalIndex: number,

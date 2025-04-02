@@ -7,7 +7,7 @@ import { addBasePath } from './utils'
 const inMakeProgress = new Set()
 const cache = new Map<string, string>()
 const loading = new Map<string, Promise<string>>()
-const preloads = new Set<{ url: string; el?: HTMLElement }>()
+const preloads = new Set<{ urls: string[]; el?: HTMLElement }>()
 
 export const fetchError = (error: string, url: string) => {
 	document.dispatchEvent(
@@ -114,7 +114,7 @@ export const show = async (
 
 	// case: template already rendered, route didn't change.
 	// the template is already inserted into the page
-	// leave it as is and end loading
+	// leave it as is and return.
 	if (template._x_PineconeRouter_template) {
 		return
 	}
@@ -145,7 +145,7 @@ export const interpolate = (
 }
 
 // Load a template from a url and put its content into cachedTemplates
-const loadUrl = async (
+export const loadUrl = async (
 	url: string,
 	priority: RequestPriority = 'high'
 ): Promise<string> => {
@@ -176,15 +176,15 @@ const loadUrl = async (
 
 // Preload templates from urls
 export const preload = (urls: string[], el?: HTMLElement): void => {
-	urls.forEach((url) => preloads.add({ url, el }))
+	preloads.add({ urls, el })
 }
 
 export const runPreloads = (): void => {
 	for (const item of preloads) {
 		if (item.el) {
-			load([item.url], item.el, 'low')
+			load(item.urls, item.el, 'low')
 		} else {
-			loadUrl(item.url, 'low')
+			item.urls.map((url) => loadUrl(url, 'low'))
 		}
 		preloads.delete(item)
 	}

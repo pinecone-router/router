@@ -10,6 +10,7 @@ import { type Context } from './context'
 import { handleClicks } from './links'
 
 import { name, version } from '../package.json'
+import { settings } from './settings'
 
 declare global {
 	interface Window {
@@ -35,6 +36,10 @@ declare module 'alpinejs' {
 		$stack: NavigationHistory
 		$params: Context['params']
 	}
+
+	interface Alpine {
+		$router: PineconeRouter
+	}
 }
 
 const PineconeRouterPlugin: PluginCallback = function (Alpine: Alpine) {
@@ -46,15 +51,16 @@ const PineconeRouterPlugin: PluginCallback = function (Alpine: Alpine) {
 	document.addEventListener('alpine:initialized', () => {
 		// virtually navigate to the path on the first page load
 		// this will register the path in history and sets the path variable
-		if (Router.settings.hash == false) {
+		if (settings.hash == false) {
 			Router.navigate(location.pathname + location.search, false, true)
 		} else {
 			Router.navigate(location.hash.substring(1), false, true)
 		}
 	})
+
 	// handle navigation events not emitted by links, for example, back button.
 	window.addEventListener('popstate', () => {
-		if (Router.settings.hash) {
+		if (settings.hash) {
 			if (window.location.hash != '') {
 				Router.navigate(window.location.hash.substring(1), true)
 			}
@@ -66,7 +72,7 @@ const PineconeRouterPlugin: PluginCallback = function (Alpine: Alpine) {
 	// intercept click event in links
 	handleClicks(Router)
 
-	// run preloads once on first page fully loads.
+	// run preloads once when page fully loads.
 	document.addEventListener(
 		'pinecone:end',
 		() => Alpine.nextTick(runPreloads),
@@ -82,9 +88,7 @@ const PineconeRouterPlugin: PluginCallback = function (Alpine: Alpine) {
 	HandlerDirective(Alpine, Router)
 	RouteDirective(Alpine, Router)
 
-	// Alpine.$router = Router
-	// Alpine.$history = Router.history
-	// Alpine.$params = Router.context.params
+	Alpine.$router = Router
 
 	Alpine.magic('router', () => Router)
 	Alpine.magic('history', () => Router.history)

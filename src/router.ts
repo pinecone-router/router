@@ -4,7 +4,7 @@ import { createNavigationHistory, type NavigationHistory } from './history'
 import { buildContext, type Context } from './context'
 import createRoute, { type Route, type RouteOptions } from './route'
 import { settings, updateSettings, type Settings } from './settings'
-import { load, preload } from './templates'
+import { interpolate, load, preload } from './templates'
 import { addBasePath } from './utils'
 import { handle } from './handler'
 import {
@@ -12,7 +12,6 @@ import {
 	ROUTE_NOT_FOUND,
 	ROUTE_EXISTS,
 } from './errors'
-import { RouteTemplate } from './directives/x-route'
 
 // Create a custom type that guarantees the notfound route exists
 export type RoutesMap = Map<string, Route> & {
@@ -25,7 +24,7 @@ export interface PineconeRouter {
 
 	routes: RoutesMap
 	context: Context
-	settings: Settings
+	settings: (value?: Partial<Settings>) => Settings
 	history: NavigationHistory
 
 	loading: boolean
@@ -50,9 +49,10 @@ export interface PineconeRouter {
 	 *
 	 * @param {string} path the path with no hash even if using hash routing
 	 * @param {boolean} fromPopState INTERNAL Is set to true when called from
-	 *                               onpopstate event
+	 *                  onpopstate event
 	 * @param {boolean} firstLoad INTERNAL Is set to true on browser page load.
-	 * @param {number} index INTERNAL the index of the navigation history to go to
+	 * @param {number} index INTERNAL the index of the navigation history
+	 *                  that was navigated to.
 	 * @returns {Promise<void>}
 	 */
 	navigate: (
@@ -91,7 +91,7 @@ export const createPineconeRouter = (
 			return loading
 		},
 
-		set loading(value: boolean) {
+		set loading(value) {
 			if (loading == value) return
 			loading = value
 			document.dispatchEvent(
@@ -99,18 +99,13 @@ export const createPineconeRouter = (
 			)
 		},
 
-		get settings(): Settings {
-			return settings
-		},
+		settings: (value) => updateSettings(value),
 
-		set settings(value: Partial<Settings>) {
-			updateSettings(value)
-		},
-
-		add: function (path: string, options: RouteOptions) {
+		add: function (path, options) {
 			// check if the route was registered already
 			// but allow updating the notfound route
 			if (path != 'notfound') {
+				path = addBasePath(path, settings.basePath)
 				if (this.routes.has(path)) {
 					throw new Error(ROUTE_EXISTS(path))
 				}
@@ -121,38 +116,29 @@ export const createPineconeRouter = (
 				preload(options.templates)
 			}
 
-			// path = addBasePath(path, settings.basePath)
 			this.routes.set(path, createRoute(path, options))
 		},
 
-		remove: function (path: string): void {
+		remove: function (path) {
 			this.routes.delete(path)
 		},
 
-		navigate: async function (
-			path: string,
-			fromPopState?: boolean,
-			firstLoad?: boolean,
-			index?: number
-		) {
+		navigate: async function (path, fromPopState?, firstLoad?, index?) {
 			// Cancel any ongoing handlers
 			if (controller) {
 				controller.abort()
 			}
 			// Create a new controller for this navigation
 			controller = new AbortController()
-			// controller.signal.addEventListener('abort', () => {
-			// 	this.loading = false
-			// })
 
 			// if specified add the basePath
-			// TODO: Test basepath
+
 			path = addBasePath(path || '/', settings.basePath)
 
 			// special case: first load with hash routing and root path
-			if (firstLoad && settings.hash && path === '/') {
-				return this.navigate('/', false, false)
-			}
+			// if (firstLoad && settings.hash && path === '/') {
+			// 	return this.navigate('/', false, false)
+			// }
 
 			let route = this.routes.get('notfound')
 			let params = {}
@@ -177,9 +163,11 @@ export const createPineconeRouter = (
 			this.loading = true
 
 			if (handlers.length) {
+				// try catch promise reject from abort signal
 				try {
 					await handle(handlers, context, controller)
 				} catch (_) {
+					// promise rejected by abort signal
 					this.loading = false
 					return
 				}
@@ -210,21 +198,18 @@ export const createPineconeRouter = (
 				)
 
 				if (!target) throw new Error(TARGET_ID_NOT_SPECIFIED)
+				const urls = route.interpolate
+					? interpolate(route.templates, params)
+					: route.templates
 
-				load(route.templates, target).finally(() => (this.loading = false))
+				load(urls, target).finally(() => (this.loading = false))
 			}
 
 			// end loading if there are no templates
 			if (!route.templates) this.loading = false
 		},
 	}
-	document.addEventListener('pinecone:start', () => {
-		router.loading = true
-	})
-	document.addEventListener('pinecone:end', () => {
-		router.loading = false
-	})
-	router.history.setRouter(router)
 
+	router.history.setRouter(router)
 	return router
 }

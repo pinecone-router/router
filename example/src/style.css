@@ -8,10 +8,6 @@
 	@apply flex flex-col space-y-3 p-3 [&>*]:bg-secondary-2 [&>*]:p-2 font-bold text-brand [&>*]:rounded-3xl;
 }
 
-button:disabled {
-	@apply text-gray-400;
-}
-
 body {
 	@apply bg-brand p-3;
 }
@@ -21,7 +17,11 @@ body {
 }
 
 .back-forward-button {
-	@apply text-brand font-bold;
+	@apply text-gray-400 font-bold;
+}
+
+button:not([disabled]) {
+	@apply text-brand;
 }
 
 .logo-link {
