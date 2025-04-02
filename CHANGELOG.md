@@ -10,16 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [7.0.0] - 2025-04-02
 
 This is release contains a major overhaul to the codebase, code structure and
-quality improvements, abd better Tyepscript support. It also made all the new
-features added throughout all these years work better together.
+quality improvements, and better Tyepscript support.
 Therefore, 7.0 contains some changes to the way you use Pinecone Router which
 are documented in detail below.
-
-I spent over a week in a refactoring sprint, thinking of the optimal way to
-write every little part of the router.
-
-The result is not only a cleaner, smaller, and more maintainable code. But also
-less bugs & more features.
 
 Also, with this release, I've sunset the Middlewares feature which proved to
 be not as useful as I thought it would be long back in 2021!.
@@ -40,22 +33,21 @@ And hopefully even make it less intimidating for contributors to do so aswell!
   - You can include as many root elements inside the template file as you want.
 - Added support for multiple scripts inside the template.
 - Added support for params in template urls (interpolation) for routes added
-  [programmatically](./README.md#adding-and-removing-routes--templates-programmatically-with-javascript)
+  [programmatically](./README.md#adding--removing-routes-with-javascript)
 - Added [`Settings.preload`](./README.md#settings) to enable preloading all
-  other templates after the page fullly loaded.
+  templates.
 - Added proper priority option to preloading requests, they are now of 'low'
   priority rather than the previous default of 'high'.
 - Preloading now waits for the first page to be fully rendered before starting.
 - Added reactive [`PineconeRouter.loading`](./README.md#pineconerouter-object)
-  boolean property set to true when loading that you use to hide content on
-  loading.
-- Added support for [extension param modifier](./README.md#route-matching):
+  boolean property set to true when loading.
 - Added an [AbortController](AbortController) passed to
   [handlers](./README.md#handler-arguments), for better experience.
 - You can now pass data to the next handler by simply returning it.
 - Added a `HandlerContext.data` field inside the
   [context object passed to handlers](./README.md#handler-arguments),
   which includes the returned data by the previous handler, if any.
+- Added support for [extension param modifier](./README.md#route-matching):
 - [`Settings.basePath`](./README.md#settings) is now automatically added
   to the route path.
 
@@ -70,8 +62,8 @@ And hopefully even make it less intimidating for contributors to do so aswell!
 
 ### Changed
 
-- Instead of providing the context object, now `$router` does what it says and
-  provides [`PineconeRouter`](./README.md#pineconerouter-object) object.
+- Instead of providing the context object, `$router` now does what it says and
+  provides [`PineconeRouter object`](./README.md#pineconerouter-object) .
 - [inline templates](./README.md#inline-templates) now must use an empty
   `x-template` directive.
 
@@ -123,8 +115,6 @@ And hopefully even make it less intimidating for contributors to do so aswell!
 
 - Switched from pnpm/esbuild/node to bun for package management, bundling, and
   testing.
-- Changed the [route-matching](./README.md#route-matching) method to be based on
-  [regexparam](https://github.com/lukeed/regexparam) with modifications.
 
 ### Removed
 
@@ -135,7 +125,6 @@ And hopefully even make it less intimidating for contributors to do so aswell!
   respectively.
 - Removed inline templates support from `x-route` in favor of
   [`inline x-template`](./README.md#inline-templates).
-  - This removed duplicate code while being only a little bit inconvenient.
 - Removed `Settings.alwaysSendLoadingEvents`, it is now default and unchangable.
 - Removed _internal_ properties from the
   [PineconeRouter object](./README.md#pineconerouter-object) which weren't
@@ -156,8 +145,6 @@ And hopefully even make it less intimidating for contributors to do so aswell!
   (fix [#62](https://github.com/pinecone-router/router/issues/62)).
 - Fixed browser back and forth navigation not always always work
   ([#16](https://github.com/pinecone-router/router/issues/16))
-
-### Others:
 
 ## [6.2.4] - 2025-03-20
 
