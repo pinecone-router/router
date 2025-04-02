@@ -22,7 +22,7 @@
       "ESNext",
       "dom"
     ],
-    "target": "ESNext",
+    "target": "ES2015",
     "module": "ESNext",
     "moduleDetection": "force",
     "jsx": "react-jsx",

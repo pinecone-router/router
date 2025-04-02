@@ -1,25 +1,22 @@
-import { ElementWithXAttributes } from 'alpinejs'
-import { RouteTemplate } from './directives/x-route'
+import { type ElementWithXAttributes } from 'alpinejs'
+import { type RouteTemplate } from './directives/x-route'
 
 /**
  * Centralized error messages
  */
 
 export const INVALID_EXPRESSION_TYPE = (value: unknown) =>
-		`Invalid expression type. Expression: ${value}.`,
+		`Invalid expression type. Expression: ${value}`,
 	TARGET_ID_NOT_FOUND = (id: string) =>
-		`Can't find an element with the supplied target ID: ${id}`,
+		`Can't find an element with target ID: ${id}`,
 	ROUTE_EXISTS = (path: string) => `Route already exists: ${path}`,
-	MISSING_TEMPLATE_TARGET = 'No target specified for template rendering',
 	DIRECTIVE_REQUIRES_TEMPLATE =
 		'Directives can only be used on template elements.',
 	DIRECTIVE_REQUIRES_ROUTE = (directive: string) =>
-		`x-${directive} must be used on the same template as x-route.`,
+		`x-${directive} must be used on the same template as x-route`,
 	TARGET_ID_NOT_SPECIFIED =
-		'targetID must be specified for programmatically added templates.',
-	ROUTE_NOT_FOUND = (path: string) => `Path: ${path} was not found.`,
-	TEMPLATE_PARAM_NOT_FOUND = (param: string, url: string) =>
-		`The param ${param} in the template url ${url} does not exist.` as const
+		'targetID must be specified for programmatically added templates',
+	ROUTE_NOT_FOUND = (path: string) => `Path: ${path} was not found`
 
 /**
  * Assert functions
@@ -38,7 +35,8 @@ export function assertTemplate(
 }
 
 /**
- * Assert that the element is a template element with XAttributes and a route attribute
+ * Assert that the element is a template element with XAttributes
+ * and a route attribute
  * @param value {ElementWithXAttributes<HTMLElement>} The element to check
  */
 export function assertRouteTemplate(
@@ -52,7 +50,7 @@ export function assertRouteTemplate(
 }
 
 /**
- * Assert that the element is a template element with XAttributes and a route attribute
+ * Assert that the element is an array
  * @param value {unknown} The evaluated expression to check
  */
 export function assertExpressionIsArray(

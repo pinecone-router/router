@@ -1,4 +1,5 @@
-/*! tailwindcss v4.1.0 | MIT License | https://tailwindcss.com */
+/*! tailwindcss v4.1.1 | MIT License | https://tailwindcss.com */
+@layer theme, base, components, utilities;
 @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
   @layer base {
     *, ::before, ::after, ::backdrop {
@@ -25,10 +26,10 @@
       --tw-ring-offset-color: #fff;
       --tw-ring-offset-shadow: 0 0 #0000;
       --tw-space-x-reverse: 0;
+      --tw-border-style: solid;
     }
   }
 }
-@layer theme, base, components, utilities;
 @layer theme {
   :root, :host {
     --font-sans: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
@@ -197,6 +198,9 @@
   }
 }
 @layer utilities {
+  .static {
+    position: static;
+  }
   .container {
     width: 100%;
     @media (width >= 40rem) {
@@ -249,14 +253,8 @@
   .p-2 {
     padding: calc(var(--spacing) * 2);
   }
-  .p-3 {
-    padding: calc(var(--spacing) * 3);
-  }
   .py-8 {
     padding-block: calc(var(--spacing) * 8);
-  }
-  .text-center {
-    text-align: center;
   }
   .text-sm {
     font-size: var(--text-sm);
@@ -322,7 +320,7 @@ body {
   font-weight: var(--font-weight-bold);
   color: var(--color-gray-400);
 }
-button:not([disabled]) {
+.back-forward-button:not([disabled]) {
   color: var(--color-brand);
 }
 .logo-link {
@@ -374,6 +372,16 @@ button:not([disabled]) {
     margin-inline-start: calc(calc(var(--spacing) * 3) * var(--tw-space-x-reverse));
     margin-inline-end: calc(calc(var(--spacing) * 3) * calc(1 - var(--tw-space-x-reverse)));
   }
+}
+.input {
+  border-radius: var(--radius-3xl);
+  border-style: var(--tw-border-style);
+  border-width: 2px;
+  border-color: var(--color-brand);
+  padding: calc(var(--spacing) * 3);
+  text-align: center;
+  --tw-font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-bold);
 }
 @property --tw-rotate-x {
   syntax: "*";
@@ -482,4 +490,9 @@ button:not([disabled]) {
   syntax: "*";
   inherits: false;
   initial-value: 0;
+}
+@property --tw-border-style {
+  syntax: "*";
+  inherits: false;
+  initial-value: solid;
 }

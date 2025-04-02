@@ -4,6 +4,8 @@ import { assertExpressionIsArray, assertRouteTemplate } from '../errors'
 
 import { type Route } from '../route'
 import type { Handler } from '../handler'
+import { settings } from '../settings'
+import { isArrayExpression } from '../utils'
 
 const HandlerDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 	Alpine.directive(
@@ -11,11 +13,7 @@ const HandlerDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 		(el, { expression, modifiers }, { evaluate, cleanup }) => {
 			// check if the handlers expression is an array
 			// if not make it one
-			expression = expression.trim()
-			if (
-				!(expression.startsWith('[') && expression.endsWith(']')) &&
-				!(expression.startsWith('Array') && expression.endsWith(')'))
-			) {
+			if (!isArrayExpression(expression)) {
 				expression = `[${expression}]`
 			}
 
@@ -33,7 +31,7 @@ const HandlerDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 			let route: Route
 
 			if (modifiers.includes('global')) {
-				Router.settings.globalHandlers = handlers
+				settings.globalHandlers = handlers
 			} else {
 				assertRouteTemplate(el)
 
@@ -45,7 +43,7 @@ const HandlerDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 
 			cleanup(() => {
 				if (modifiers.includes('global')) {
-					Router.settings.globalHandlers = []
+					settings.globalHandlers = []
 				} else {
 					route.handlers = []
 				}

@@ -9,14 +9,14 @@ export interface Settings {
 
 	/**
 	 * The base path of the site, for example /blog.
-	 * Note: do not use with using hash routing.
-	 * @default `/`
+	 * No effect with hash routing.
+	 * @default ``
 	 */
 	basePath: string
 
 	/**
 	 * Set an optional ID for where the templates will render by default.
-	 * This can be overriden by the .target modifier.
+	 * This can be overridden by the .target modifier.
 	 * @default undefined
 	 */
 	targetID?: string

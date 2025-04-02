@@ -1,11 +1,12 @@
 import { type PineconeRouter } from './router'
+import { settings } from './settings'
 
 /**
- * @description Add a handler to click events on valid links
+ * Add a handler to click events on valid links
  */
 export const handleClicks = (Router: PineconeRouter) => {
 	window.document.body.addEventListener('click', (e: MouseEvent) => {
-		// Ignore modified clicks or non-primary buttons
+		// ignore modified clicks or non-primary buttons
 		if (
 			e.ctrlKey ||
 			e.metaKey ||
@@ -17,14 +18,13 @@ export const handleClicks = (Router: PineconeRouter) => {
 			return
 		}
 
-		// Find closest anchor element
+		// find closest anchor element
 		const node = (e.target as HTMLElement).closest('a')
 		if (!node) return
 
-		// Skip if link shouldn't be intercepted
+		// skip if link shouldn't be intercepted
 		if (
-			(Router.settings.handleClicks === false &&
-				!node.hasAttribute('x-link')) ||
+			(settings.handleClicks === false && !node.hasAttribute('x-link')) ||
 			node.hasAttribute('data-native') ||
 			node.hasAttribute('native')
 		) {
@@ -34,7 +34,7 @@ export const handleClicks = (Router: PineconeRouter) => {
 		const href = node.getAttribute('href')
 		const target = node.getAttribute('target')
 
-		// Only handle internal links without special targets
+		// only handle internal links without special targets
 		if (href && (!target || /^_?self$/i.test(target))) {
 			Router.navigate(href)
 			e.preventDefault()

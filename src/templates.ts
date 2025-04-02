@@ -1,8 +1,8 @@
 import { type ElementWithXAttributes, type Alpine } from 'alpinejs'
 
 import { type Context } from './context'
-import { settings } from './settings'
 import { addBasePath } from './utils'
+import { settings } from './settings'
 
 const inMakeProgress = new Set()
 const cache = new Map<string, string>()
@@ -15,14 +15,22 @@ export const fetchError = (error: string, url: string) => {
 	)
 }
 
-// This function takes a template element and inserts its content right after
-// the element, or alternatively if  targetEl is it then inside of the latter.
+/**
+ * Creates a unique instance of a template with the given expression and target element.
+ * @param Alpine Alpine.js instance
+ * @param template The template element to be processed.
+ * @param expression The expression on the x-template directive.
+ * @param targetEl The target element where the template will be rendered.
+ * @param urls Template urls
+ * @returns void
+ */
 export const make = (
 	Alpine: Alpine,
 	template: ElementWithXAttributes<HTMLTemplateElement>,
 	expression: string, // the expression on the x-template directive
-	targetEl?: HTMLElement,
-	urls?: string[]
+	targetEl?: HTMLElement, // the target element where the template will
+	//  be rendered
+	urls?: string[] // template urls
 ) => {
 	// having a unique id ensures the same template can be used multiple times
 	// inside the same page.
@@ -35,9 +43,10 @@ export const make = (
 
 	const contentNode = template.content
 
+	// pre-allocates the array with the children size
 	const clones: HTMLElement[] = Array(contentNode.childElementCount)
 
-	// Clone scripts to make them run
+	// clone scripts to make them run
 	contentNode.querySelectorAll('script').forEach((oldScript) => {
 		const newScript = document.createElement('script')
 		Array.from(oldScript.attributes).forEach((attr) =>
@@ -47,14 +56,16 @@ export const make = (
 		oldScript.parentNode?.replaceChild(newScript, oldScript)
 	})
 
-	// Clone all children and add the x-data scope
-	Array.from(contentNode.children).forEach((child, index) => {
-		const clone = child.cloneNode(true) as ElementWithXAttributes<HTMLElement>
-		clones[index] = clone
-		Alpine.addScopeToNode(clone, {}, template)
-		// TODO: add if proved useful
-		// template.id && clone.setAttribute('template-id', template.id)
-	})
+	// clone all children and add the x-data scope
+	const children = Array.from(contentNode.children)
+	for (let i = 0; i < children.length; i++) {
+		clones[i] = children[i].cloneNode(
+			true
+		) as ElementWithXAttributes<HTMLElement>
+
+		Alpine.addScopeToNode(clones[i], {}, template)
+		// Alpine.initTree(clones[i])
+	}
 
 	Alpine.mutateDom(() => {
 		if (targetEl) {
@@ -70,7 +81,7 @@ export const make = (
 	template._x_PineconeRouter_templateUrls = urls
 
 	template._x_PineconeRouter_undoTemplate = () => {
-		// Remove clone element
+		// remove clone elements safely
 		Alpine.mutateDom(() => {
 			clones.forEach((clone: ElementWithXAttributes<HTMLElement>) => {
 				Alpine.destroyTree(clone)
@@ -134,7 +145,12 @@ export const show = async (
 	}
 }
 
-// Process params inside template urls
+/**
+ * Interpolates params in URLs.
+ * @param urls Array of template URLs.
+ * @param params Object containing params to inject into URLs.
+ * @returns Array of interpolated URLs.
+ */
 export const interpolate = (
 	urls: string[],
 	params: Context['params']
@@ -144,7 +160,13 @@ export const interpolate = (
 	)
 }
 
-// Load a template from a url and put its content into cachedTemplates
+/**
+ * Load a template from a url and cache its content.
+ * @param url Template URL.
+ * @param priority Request priority ('high' | 'low'), default: 'high'.
+ * @returns {Promise<string>} A promise that resolves to the content of
+ * the template as a string.
+ */
 export const loadUrl = async (
 	url: string,
 	priority: RequestPriority = 'high'
@@ -174,27 +196,39 @@ export const loadUrl = async (
 	return fetchPromise
 }
 
-// Preload templates from urls
+/**
+ * Add urls to the preload queue
+ * @param urls Array of template URLs to preload
+ * @param el Optional target element where to put the content of the urls
+ * @returns void
+ */
 export const preload = (urls: string[], el?: HTMLElement): void => {
 	preloads.add({ urls, el })
 }
 
+/**
+ * Load all preloaded templates and removes them from the queue.
+ * It is called when the router is initialized and the first page
+ * finishes loading.
+ * @returns void
+ */
 export const runPreloads = (): void => {
 	for (const item of preloads) {
 		if (item.el) {
 			load(item.urls, item.el, 'low')
 		} else {
-			item.urls.map((url) => loadUrl(url, 'low'))
+			item.urls.map((url: string) => loadUrl(url, 'low'))
 		}
 		preloads.delete(item)
 	}
 }
 
 /**
- * Load templates from urls into an element
- * @param urls array of urls to load
- * @param el target element where to put the content of the urls
- * @returns Promise<string> the new innerHTML of the target element
+ * Load templates from urls and puts the content the el.innerHTML.
+ * @param urls array of urls to load.
+ * @param el target element where to put the content of the urls.
+ * @param priority Request priority ('high' | 'low'), default: 'high'.
+ * @returns {Promise<void>}
  */
 export const load = (
 	urls: string[],

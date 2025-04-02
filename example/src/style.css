@@ -20,7 +20,7 @@ body {
 	@apply text-gray-400 font-bold;
 }
 
-button:not([disabled]) {
+.back-forward-button:not([disabled]) {
 	@apply text-brand;
 }
 
@@ -50,6 +50,10 @@ button:not([disabled]) {
 
 .footer-row-spaced {
 	@apply flex space-x-3 justify-center;
+}
+
+.input {
+	@apply p-3 rounded-3xl font-bold text-center border-2 border-brand;
 }
 
 @theme {

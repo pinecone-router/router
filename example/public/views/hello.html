@@ -13,7 +13,7 @@
 		@input="$dispatch('typed')"
 		:value="$params.name ?? ''"
 		placeholder="Write your name"
-		class="p-3 rounded-3xl font-bold text-center"
+		class="input"
 	/>
 
 	<p class="tracking-tighter text-sm font-bold">
@@ -23,9 +23,6 @@
 <script>
 	Alpine.data('hello', () => ({
 		greeting: 'Hello,',
-		init() {
-			// console.log('hello from init()');
-		},
 	}));
 </script>
 <script type="module">

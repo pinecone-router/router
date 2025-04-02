@@ -1,9 +1,9 @@
 <div x-data="name" x-effect="fetcher">
 	<strong x-show="!loading" x-text="`This is ` + name"></strong>
 	<br />
-	<a href="/basic/foo">Menu Foo</a><br />
-	<a href="/basic/bar">Menu Bar</a><br />
-	<a href="/basic/baz">Menu Baz</a><br />
+	<a href="/param-changes/foo">Menu Foo</a><br />
+	<a href="/param-changes/bar">Menu Bar</a><br />
+	<a href="/param-changes/baz">Menu Baz</a><br />
 </div>
 
 <script>
@@ -13,7 +13,8 @@
 		async fetcher() {
 			try {
 				this.loading = true;
-				const response = await fetch(`/views/${this.$params.slugName}.json`);
+				const url = `/views/${this.$params.slug}.json`;
+				const response = await fetch(url);
 				const data = await response.json();
 				this.name = data.name;
 			} catch (error) {

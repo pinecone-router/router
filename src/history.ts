@@ -117,7 +117,8 @@ export const createNavigationHistory = (): NavigationHistory => {
 		},
 
 		pushState: function (path: string, hash?: boolean): void {
-			const fullPath = hash ? '#' + path : path
+			// add hash to path if using hash routing
+			const fullPath = hash && !path.startsWith('#') ? '#' + path : path
 			history.pushState({ path: fullPath }, '', fullPath)
 		},
 

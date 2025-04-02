@@ -1,10 +1,8 @@
-import { type Alpine } from 'alpinejs'
-
 import { createNavigationHistory, type NavigationHistory } from './history'
-import { buildContext, type Context } from './context'
 import createRoute, { type Route, type RouteOptions } from './route'
 import { settings, updateSettings, type Settings } from './settings'
 import { interpolate, load, preload } from './templates'
+import { buildContext, type Context } from './context'
 import { addBasePath } from './utils'
 import { handle } from './handler'
 import {
@@ -64,7 +62,6 @@ export interface PineconeRouter {
 }
 
 export const createPineconeRouter = (
-	Alpine: Alpine,
 	name: string,
 	version: string
 ): PineconeRouter => {
@@ -124,21 +121,16 @@ export const createPineconeRouter = (
 		},
 
 		navigate: async function (path, fromPopState?, firstLoad?, index?) {
-			// Cancel any ongoing handlers
+			// cancel any ongoing handlers
 			if (controller) {
 				controller.abort()
 			}
-			// Create a new controller for this navigation
+			// create a new abort controller for this navigation
 			controller = new AbortController()
 
-			// if specified add the basePath
+			this.loading = true
 
 			path = addBasePath(path || '/', settings.basePath)
-
-			// special case: first load with hash routing and root path
-			// if (firstLoad && settings.hash && path === '/') {
-			// 	return this.navigate('/', false, false)
-			// }
 
 			let route = this.routes.get('notfound')
 			let params = {}
@@ -160,8 +152,6 @@ export const createPineconeRouter = (
 
 			const handlers = settings.globalHandlers.concat(route.handlers)
 
-			this.loading = true
-
 			if (handlers.length) {
 				// try catch promise reject from abort signal
 				try {
@@ -177,7 +167,7 @@ export const createPineconeRouter = (
 				}
 			}
 
-			if (index != null) {
+			if (index != undefined) {
 				// if called from history.to(), do not push to the NavigationHistory.
 				// only call History.pushState() to update the URL
 				this.history.index = index

@@ -20,13 +20,25 @@ export const modifierValue = (
 	return rawValue
 }
 
+/**
+ *
+ * @param path
+ * @param basePath
+ * @returns
+ */
 export const addBasePath = (path: string, basePath: string) => {
 	if (path == 'notfound') return path
 
 	if (!path.startsWith(basePath)) {
 		path = basePath + path
 	}
+
 	return path
+}
+
+export const isArrayExpression = (expression: string): boolean => {
+	// Ensure the expression is a valid string and check for array-like patterns
+	return /^\[.*\]$|^Array\(.*\)$/.test(expression.trim())
 }
 
 export const getTargetELement = (
@@ -36,8 +48,7 @@ export const getTargetELement = (
 	let target = targetId ?? globalTargetId ?? ''
 	let targetEl = document.getElementById(target)
 
-	if (target.length && !targetEl)
-		throw new ReferenceError(TARGET_ID_NOT_FOUND(target))
+	if (target && !targetEl) throw new ReferenceError(TARGET_ID_NOT_FOUND(target))
 
 	return targetEl ?? undefined
 }

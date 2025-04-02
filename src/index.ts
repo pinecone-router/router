@@ -3,25 +3,25 @@ import { type PluginCallback, type Alpine } from 'alpinejs'
 import { createPineconeRouter, type PineconeRouter } from './router'
 import TemplateDirective from './directives/x-template'
 import HandlerDirective from './directives/x-handler'
-import RouteDirective from './directives/x-route'
 import { type NavigationHistory } from './history'
+import RouteDirective from './directives/x-route'
 import { runPreloads } from './templates'
 import { type Context } from './context'
 import { handleClicks } from './links'
+import { settings } from './settings'
 
 import { name, version } from '../package.json'
-import { settings } from './settings'
 
 declare global {
 	interface Window {
 		PineconeRouter: PineconeRouter
-		Alpine: Alpine
 	}
 }
 
 // This extends the alpinejs types
 // Adding our custom magics and html attributes
-// This allows the user to extend AlpineComponent with $router and $params already set
+// This allows the user to extend AlpineComponent with $router and $params
+// already set.
 declare module 'alpinejs' {
 	interface XAttributes {
 		_x_PineconeRouter_templateUrls: string[]
@@ -43,7 +43,7 @@ declare module 'alpinejs' {
 }
 
 const PineconeRouterPlugin: PluginCallback = function (Alpine: Alpine) {
-	const Router = Alpine.reactive(createPineconeRouter(Alpine, name, version))
+	const Router = Alpine.reactive(createPineconeRouter(name, version))
 
 	window.PineconeRouter = Router
 
@@ -88,8 +88,10 @@ const PineconeRouterPlugin: PluginCallback = function (Alpine: Alpine) {
 	HandlerDirective(Alpine, Router)
 	RouteDirective(Alpine, Router)
 
+	// register the router as a global variable
 	Alpine.$router = Router
 
+	// register magic helpers
 	Alpine.magic('router', () => Router)
 	Alpine.magic('history', () => Router.history)
 	Alpine.magic('params', () => Router.context.params)

@@ -17,7 +17,6 @@ const RouteDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 		assertTemplate(el)
 
 		if (path != 'notfound') {
-			// register the new route if possible
 			Router.add(path, {})
 		}
 

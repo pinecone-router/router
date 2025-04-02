@@ -10,9 +10,11 @@
 	},
 	"type": "module",
 	"keywords": [
+		"alpinejs-router",
+		"alpine router",
+		"alpine.js router",
 		"alpinejs",
 		"alpine",
-		"alpine.js",
 		"Alpine JS",
 		"Alpine JS Plugin",
 		"Alpine JS Plugins",
@@ -25,9 +27,9 @@
 	"umd:main": "dist/router.min.js",
 	"module": "dist/router.esm.js",
 	"scripts": {
-		"dist": "bun build-esm && bun build-cdn && bun build-tsc",
-		"build-cdn": "bun build src/index.ts --minify --sourcemap=\"linked\" --entry-naming=\"router.min.[ext]\" --format \"iife\" --outdir=\"./dist\"",
-		"build-esm": "bun build src/index.ts --minify --sourcemap=\"linked\" --entry-naming=\"router.esm.[ext]\" --format \"esm\" --outdir=\"./dist\"",
+		"dist": "bun run build-tsc && bun run build-esm && bun run build-cdn",
+		"build-cdn": "bun build builds/cdn.js --minify --sourcemap=\"linked\" --entry-naming=\"router.min.[ext]\" --format \"iife\" --outdir=\"./dist\"",
+		"build-esm": "bun build builds/module.js --minify --sourcemap=\"linked\" --entry-naming=\"router.esm.[ext]\" --format \"esm\" --outdir=\"./dist\"",
 		"build-tsc": "tsc  --emitDeclarationOnly --declaration --project tsconfig.json --outfile dist/index.d.ts",
 		"dev": "bun build src/index.ts --watch --minify --sourcemap=\"linked\" --entry-naming=\"router.esm.[ext]\" --outdir=\"./example\"",
 		"example": "cd example && bun dev"
@@ -41,9 +43,5 @@
 		"typescript": "^5"
 	},
 	"types": "dist/index.d.ts",
-	"packageManager": "pnpm@10.5.2+sha512.da9dc28cd3ff40d0592188235ab25d3202add8a207afbedc682220e4a0029ffbff4562102b9e6e46b4e3f9e8bd53e6d05de48544b0c57d4b0179e22c76d1199b",
-	"private": true,
-	"dependencies": {
-		"regexparam": "^3.0.0"
-	}
+	"dependencies": {}
 }

@@ -2,7 +2,7 @@ import { type Alpine } from 'alpinejs'
 
 import { assertExpressionIsArray, assertRouteTemplate } from '../errors'
 import { hide, interpolate, preload, show } from '../templates'
-import { getTargetELement, modifierValue } from '../utils'
+import { getTargetELement, isArrayExpression, modifierValue } from '../utils'
 import { PineconeRouter } from '../router'
 import { settings } from '../settings'
 
@@ -23,13 +23,8 @@ const TemplateDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 
 			// only process the expression if it is not empty
 			// this allows inline templates to be used without an expression
-
 			if (expression != '') {
-				expression = expression.trim()
-				if (
-					!(expression.startsWith('[') && expression.endsWith(']')) &&
-					!(expression.startsWith('Array') && expression.endsWith(')'))
-				) {
+				if (!isArrayExpression(expression)) {
 					expression = `['${expression}']`
 				}
 

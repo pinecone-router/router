@@ -26,7 +26,7 @@ export interface Route {
 	 */
 	readonly path: string
 
-	match(path: string): RouteArgs
+	match(path: string): undefined | { [key: string]: string }
 	handlers: Handler<unknown, unknown>[]
 	templates: string[]
 }
@@ -39,13 +39,19 @@ export interface RouteOptions {
 	preload?: boolean
 }
 
+export type MatchResult =
+	| undefined
+	| {
+			[key: string]: string
+	  }
+
 /**
  * Creates a new Route object
  * @param {string} path - route path pattern
  * @param {RouteOptions} options - route configuration options
  * @returns {Route} - a route object
  */
-export default function createRoute(
+export const createRoute = (
 	path: string,
 	{
 		targetID,
@@ -53,80 +59,70 @@ export default function createRoute(
 		handlers = [],
 		interpolate = false,
 	}: RouteOptions = {}
-): Route {
-	// Create the route object
-	const route: Route = {
-		programmaticTemplates: templates.length > 0,
-		pattern: parse(path),
-		interpolate,
-		templates,
-		targetID,
-		handlers,
-		path,
-		match(path: string) {
-			let m = this.pattern.exec(path)
-			if (m) {
-				return { ...m.groups }
-			}
-		},
-	}
-
-	return route
-}
-type RouteArgs = void | {
-	[key: string]: string
-}
+): Route => ({
+	programmaticTemplates: templates.length > 0,
+	pattern: parse(path),
+	interpolate,
+	templates,
+	targetID,
+	handlers,
+	path,
+	match(path: string) {
+		const m = this.pattern.exec(path)
+		if (m) {
+			return { ...m.groups }
+		}
+	},
+})
 
 /**
- * Based on [regexparam](https://github.com/lukeed/regexparam)
  * @param {string} input The route pattern
  * @returns {RegExp} The compiled regular expression for the route
  */
 export function parse(input: string): RegExp {
-	let optionalIndex: number,
-		segment: string | undefined,
-		extensionIndex: number,
-		pattern = ''
-	const segments = input.split('/')
-	segments[0] || segments.shift()
+	// split the input string into segments by '/'
+	const segments = input.split('/').filter(Boolean)
 
-	while ((segment = segments.shift())) {
-		if (segment.startsWith(':')) {
-			optionalIndex = segment.indexOf('?', 1)
-			extensionIndex = segment.indexOf('.', 1)
-			let paramName = segment.substring(
-				1,
-				Math.min(
-					...[optionalIndex, extensionIndex, segment.length].filter(
-						(i) => i > 0
-					)
-				)
-			)
+	// construct the regex pattern from the segments
+	const pattern = segments
+		.map((segment) => {
+			// if the segment does not start with ':', return it as a static
+			// path segment
+			if (!segment.startsWith(':')) return '/' + segment
 
-			const isWildcard = paramName.endsWith('*') || paramName.endsWith('+')
-			const isOptionalWildcard = paramName.endsWith('*')
+			// extract the parameter name, modifier, and extension (if any) from
+			// the segment
+			const [, name, modifier, ext] =
+				segment.match(/^:(\w+)([?+*]?)(?:\.(.+))?$/) || []
 
-			if (isWildcard) {
-				paramName = paramName.slice(0, -1)
-				pattern += isOptionalWildcard
-					? `(?:/(?<${paramName}>.*)?)?`
-					: `/(?<${paramName}>.+)`
-			} else {
-				pattern +=
-					optionalIndex > 0 && extensionIndex < 0
-						? `(?:/(?<${paramName}>[^/]+?))?`
-						: `/(?<${paramName}>[^/]+?)`
+			// check if the segment is a wildcard or optional
+			const isWildcard = modifier === '*' || modifier === '+'
+			const isOptional = modifier === '?' || modifier === '*'
 
-				if (extensionIndex > 0)
-					pattern +=
-						(optionalIndex > 0 ? '?' : '') +
-						'\\' +
-						segment.substring(extensionIndex)
-			}
-		} else {
-			pattern += '/' + segment
-		}
-	}
+			// create the base pattern for matching the segment
+			const basePattern = isWildcard ? (isOptional ? '.*?' : '.+') : '[^/]+?'
 
-	return new RegExp('^' + pattern + '\/?$', 'i')
+			// construct the named capture group pattern for the segment
+			const namedPattern = `(?<${name}>${basePattern})`
+
+			// if the segment has an extension, add it to the pattern
+			const extensionPattern = ext ? `\\.${ext}` : ''
+
+			// combine the named pattern and extension pattern
+			const segmentPattern = namedPattern + extensionPattern
+
+			// if the segment is optional, wrap it in a non-capturing group
+			// with a '?' quantifier
+			if (isOptional) return `(?:/${segmentPattern})?`
+
+			// return the segment pattern as a required part of the path
+			return `/${segmentPattern}`
+		})
+		.join('')
+
+	// create a regex pattern that matches the entire path, allowing for an
+	// optional trailing slash and case insensitivity
+	return new RegExp(`^${pattern}/?$`, 'i')
 }
+
+export default createRoute

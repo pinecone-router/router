@@ -15,17 +15,33 @@
 A small, easy to use, and feature-packed router for Alpine.js.
 
 ```html
-<template x-route="/" x-template>
-  <h1>Welcome!</h1>
-  <p>What's your name?</p>
-  <input @enter="$router.navigate(`/hello/${$el.value}`)"></input>
-</template>
-<template x-route="/hello/:name"
-  x-template>
-  <h1>Hello <span x-text="$params.name"></span>!</h1>
-  <button @click="$router.back()">Go Back</button>
-</template>
-<template x-route="notfound" x-template="/404.html"></template>
+<div x-data="app" >
+  <template x-route="/" x-template>
+    <h1>Welcome!</h1>
+    <p>What's your name?</p>
+    <input @enter="$router.navigate('/'+$el.value)"></input>
+  </template>
+
+  <template x-route="/:name" x-handler="handle" x-template>
+    <h1>Hello <span x-text="$params.name"></span>!</h1>
+    <button @click="$history.back()">Go Back</button>
+  </template>
+
+  <template x-route="notfound" x-template="/404.html"></template>
+</div>
+
+<script>
+  document.addEventListener('alpine:init', () => {
+    PineconeRouter.settings.targetID = 'app'
+    Alpine.data('app', () => ({
+      handler(context, controller) {
+        if (context.params.name == 'easter') {
+          this.$router.navigate('/easter-egg')
+        }
+      },
+    }))
+  })
+</script>
 ```
 
 ## Features:
@@ -34,11 +50,11 @@ A small, easy to use, and feature-packed router for Alpine.js.
 - :gear: [Handler functions](#x-handler) allow you to run functions on for each
   route.
 - :beginner:&nbsp;&nbsp;[Inline](#inline-templates) and [external](#x-template) templates to display content.
-- :sparkles: Magic helpers **$router**, **$params**, and $history to access
+- :sparkles: 3 Magic helpers to easily access
   router data.
 - &nbsp;<img src="https://skillicons.dev/icons?i=ts" width="14px" />
   &nbsp;Full Typescript support.
-- :link: Automatic [click handling](#bypass-click-handling) and [loading events](#events--loading-bar).
+- :link: Automatic [click handling](#bypass-click-handling) and [loading events](#events--loading).
 - :hash: [Hash routing](#settings) support.
 
 **Demo**: [Pinecone example](https://pinecone-example.vercel.app/),
@@ -50,6 +66,10 @@ This projects follow the [Semantic Versioning](https://semver.org/) guidelines.
 
 > [!IMPORTANT]
 > Check the [CHANGELOG](./CHANGELOG.md) before major updates.
+
+> [!NOTE]
+> If you're upgrading from v6, also see the more compact
+> [Upgrade Guide](./upgrade_to%207.x.md).
 
 ### CDN
 
@@ -72,7 +92,7 @@ Alpine.plugin(PineconeRouter)
 Alpine.start()
 ```
 
-### script="module"
+### Browser Module
 
 ```javascript
 import PineconeRouter from 'https://cdn.jsdelivr.net/npm/pinecone-router@7.0.0/dist/router.esm.js'
@@ -108,24 +128,28 @@ Declare routes by creating a template tag with the `x-route` directive.
 
 #### Segments types
 
-| Segment                     | Type                        | Matches                                           | Doesn't Match                          |
-| --------------------------- | --------------------------- | ------------------------------------------------- | -------------------------------------- |
-| `/literal`                  | Literal segment             | `/literal`                                        | `/something-else`, `/literal/sub`      |
-| `/:name`                    | Named segment               | `/john`, `/123`                                   | `/john/doe`, `/`                       |
-| `/:name?`                   | Optional segment            | `/profile`, `/profile/john`                       | `/profile/john/settings`               |
-| `/users/:name+`             | Rest segment                | `/users/john`, `/users/john/settings`             | `/users` (matches one or more)         |
-| `/:name*`                   | Wildcard segment            | `/files`, `/files/docs`, `/files/docs/report.pdf` | N/A (matches zero or more)             |
-| `/movies/:title.mp4`        | Segment with suffix         | `/movies/avatar.mp4`                              | `/movies/avatar.mov`, `/movies/avatar` |
-| `/movies/:title.(mp4\|mov)` | Segment with suffix pattern | `/movies/avatar.mp4`, `/movies/avatar.mov`        | `/movies/avatar.avi`, `/movies/avatar` |
+- **Literal** (`/literal`): Matches `/literal` but not `/something-else`
+- **Named** (`/:name`): Matches `/john` or `/123` but not `/john/doe` or `/`
+- **Optional** (`/:name?`): Matches `/profile` or `/profile/john` but
+  not `/profile/john/settings`
+- **Rest** (`/users/:rest+`): Matches `/users/john` or `/users/john/settings`
+  but not `/users` (matches one or more)
+- **Wildcard** (`/:path*`): Matches `/files`, `/files/docs`,
+  `/files/docs/report.pdf` (matches zero or more)
+- **Suffix** (`/movies/:title.mp4`): Matches `/movies/avatar.mp4` but not
+  `/movies/avatar.mov` or `/movies/avatar`
+- **Suffix Pattern** (`/movies/:title.(mp4|mov)`): Matches `/movies/avatar.mp4`
+  or `/movies/avatar.mov` but not `/movies/avatar.avi` or `/movies/avatar`
 
 > [!IMPORTANT]
 > Trailing slashes are normalized (both `/about` and `/about/` work the same)
+> Matching is case-insensitive
 
 #### Accessing params
 
 You can access the params' values with:
 
-- `$params.paramName` from Alpine.js components.
+- `$params` magic helper: `$params.paramName` from Alpine.js components.
 - `context.params.paramName` from inside handlers.
 - [`PineconeRouter.context.params`](#pineconerouter-object) from elsewhere
   in JS.
@@ -220,7 +244,7 @@ the same way `x-if` does: after the appropriate `template` tags.
 
 > [!NOTE]
 > When fetching a template fails, it adispatches a
-> [`pinecone:fetch-error`](#events--loading-bar) event to `document`.
+> [`pinecone:fetch-error`](#events--loading) event to `document`.
 
 > [!TIP]
 > Modifiers can be used simulateneously: `x-template.preload.target.app`
@@ -278,7 +302,7 @@ matched.
 		async getData() {
 			try {
 				this.loading = true
-				const response = await fetch(`/views/${this.$params.slugName}.json`)
+				const response = await fetch(`/views/${this.$params.slug}.json`)
 				const data = await response.json()
 				this.name = data.name
 			} catch (error) {
@@ -296,7 +320,7 @@ matched.
 This powerful directive can be used alone or alongisde `x-template`, it allow
 you to excute one or more methods when a route is matched.
 
-- `x-handler` takes a _function, or an array of function_, that will be called
+- `x-handler` takes a _function, or an array of functions_, that will be called
   in order.
 - Handlers are awaited.
 - Handlers run **before x-template** allowing you to redirect before showing
@@ -587,14 +611,14 @@ export interface Settings {
 
 	/**
 	 * The base path of the site, for example /blog.
-	 * Note: do not use with using hash routing.
+	 * No effect when using hash routing.
 	 * @default `/`
 	 */
 	basePath: string
 
 	/**
 	 * Set an optional ID for where the templates will render by default.
-	 * This can be overriden by the .target modifier.
+	 * This can be overridden by the .target modifier.
 	 * @default undefined
 	 */
 	targetID?: string
@@ -651,7 +675,7 @@ export interface Route {
 	 */
 	readonly path: string
 
-	match(path: string): RouteArgs
+	match(path: string): undefined | { [key: string]: string }
 	handlers: Handler<unknown, unknown>[]
 	templates: string[]
 }
@@ -794,7 +818,7 @@ When disabeld:
 <a href="/path" x-link>This won't reload the page</a>
 ```
 
-### Events / Loading bar
+### Events / Loading
 
 | name                     | recipient | when it is dispatched               |
 | ------------------------ | --------- | ----------------------------------- |
@@ -802,14 +826,25 @@ When disabeld:
 | **pinecone:end**         | document  | loading ends                        |
 | **pinecone:fetch-error** | document  | fetching of external templates fail |
 
-You can easily use [nProgress](http://ricostacruz.com/nprogress) with
-`x-template`:
+Usage from Alpine.js:
+
+```html
+<div @pinecone:start.document=""></div>
+```
+
+> [!TIP]
+> You can easily use [nProgress](http://ricostacruz.com/nprogress) with
+> `x-template`:
 
 ```js
 document.addEventListener('pinecone:start', () => NProgress.start())
 document.addEventListener('pinecone:end', () => NProgress.done())
 document.addEventListener('pinecone:fetch-error', (err) => console.error(err))
 ```
+
+> [!TIP]
+> You can also use [$router.loading](#pineconerouter-object) to check the
+> loading state reactively.
 
 ### Add & Remove Routes Programmatically
 
