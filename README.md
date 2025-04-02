@@ -32,7 +32,6 @@ A small, easy to use, and feature-packed router for Alpine.js.
 
 <script>
   document.addEventListener('alpine:init', () => {
-    PineconeRouter.settings.targetID = 'app'
     Alpine.data('app', () => ({
       handler(context, controller) {
         if (context.params.name == 'easter') {
