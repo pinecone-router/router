@@ -87,12 +87,25 @@ describe('match function', () => {
 		expect(match('/books/:book*', '/books')).toEqual({})
 	})
 
+	test('extension in path does not matter', () => {
+		expect(match('/:foo*', '/foo.pdf')).toEqual({ foo: 'foo.pdf' })
+	})
+
 	// Trailing slash handling
 	test('routes match regardless of trailing slashes', () => {
 		expect(match('/foo', '/foo/')).toEqual({})
 		expect(match('/:foo', '/foo/')).toEqual({ foo: 'foo' })
 		expect(match('/:foo+', '/foo/bar/')).toEqual({ foo: 'foo/bar/' })
 		expect(match('/:foo*', '/foo/bar')).toEqual({ foo: 'foo/bar' })
+	})
+
+	test('unencoded URL paramter is captured correctly', () => {
+		expect(
+			match(
+				'/watch/:url+',
+				'/watch/https://www.youtube.com/watch?v=Z1jvXZ-Tqc4'
+			)
+		).toEqual({ url: 'https://www.youtube.com/watch?v=Z1jvXZ-Tqc4' })
 	})
 
 	test('encoded URL parameter is captured correctly', () => {

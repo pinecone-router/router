@@ -142,6 +142,7 @@ Declare routes by creating a template tag with the `x-route` directive.
 
 > [!IMPORTANT]
 > Trailing slashes are normalized (both `/about` and `/about/` work the same)
+>
 > Matching is case-insensitive
 
 #### Accessing params
