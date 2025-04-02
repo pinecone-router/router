@@ -1,5 +1,5 @@
 <p align="center">
-  <img src=".github/pinecone-router-social-card-alt-dark.png?raw=true" title="Pinecone Router logo with the text: The feature-packed router for
+  <img src=".github/pinecone-router-social-card-alt-light.png?raw=true" title="Pinecone Router logo with the text: The feature-packed router for
    Alpine.js">
 </p>
 
