@@ -16,13 +16,14 @@
     // Removing this would place the .d.ts filesdeclarationMap
     // next to the .js files
     "outDir": "dist",
+    "rootDir": "src",
     "noImplicitAny": true,
     // Enable latest features
     "lib": [
       "ESNext",
       "dom"
     ],
-    "target": "ES2015",
+    "target": "ESNext",
     "module": "ESNext",
     "moduleDetection": "force",
     "jsx": "react-jsx",

@@ -3,7 +3,7 @@
 	"description": "The extendable client-side router for Alpine.js.",
 	"license": "MIT",
 	"author": "Rafik El Hadi Houari <rehhouari@gmail.com>",
-	"version": "7.0.0-beta.0",
+	"version": "7.0.0-beta.2",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/pinecone-router/router"
@@ -30,7 +30,7 @@
 		"dist": "bun run build-tsc && bun run build-esm && bun run build-cdn",
 		"build-cdn": "bun build builds/cdn.js --minify --sourcemap=\"linked\" --entry-naming=\"router.min.[ext]\" --format \"iife\" --outdir=\"./dist\"",
 		"build-esm": "bun build builds/module.js --minify --sourcemap=\"linked\" --entry-naming=\"router.esm.[ext]\" --format \"esm\" --outdir=\"./dist\"",
-		"build-tsc": "tsc  --emitDeclarationOnly --declaration --project tsconfig.json --outfile dist/index.d.ts",
+		"build-tsc": "tsc  --emitDeclarationOnly --declaration --project tsconfig.json",
 		"dev": "bun build src/index.ts --watch --minify --sourcemap=\"linked\" --entry-naming=\"router.esm.[ext]\" --outdir=\"./example\"",
 		"example": "cd example && bun dev"
 	},
