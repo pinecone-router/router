@@ -3,12 +3,17 @@
    Alpine.js">
 </p>
 
-[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?labelColor=%23d7f4ee&color=%230b2822&label=version&sort=semver)](https://github.com/pinecone-router/router/tree/7.0.0)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router?labelColor=%23d7f4ee&color=%230b2822)](https://bundlephobia.com/result?p=pinecone-router@7.0.0)
-[![Downloads from JSDelivr](https://img.shields.io/jsdelivr/npm/hm/pinecone-router?style=flat&labelColor=%23d7f4ee&color=%230b2822)](https://www.jsdelivr.com/package/npm/pinecone-router)
-[![npm](https://img.shields.io/npm/dm/pinecone-router?label=npm&logo=npm&labelColor=%23d7f4ee&color=%230b2822&logoColor=%230b2822)](https://npmjs.com/package/pinecone-router)
-[![Changelog](https://img.shields.io/badge/changelog-0b2822)](/CHANGELOG.md)
-[![Sponsor](https://img.shields.io/badge/sponsor-0b2822?logo=githubsponsors)](https://ko-fi.com/rehhouari)
+<div style="text-align: center">
+
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router?labelColor=%23d7f4ee&style=for-the-badge&color=%230b2822&&logo=bun&logoColor=%230b2822)](https://bundlephobia.com/result?p=pinecone-router@7.0.0)
+![jsDelivr hits (npm)](https://img.shields.io/jsdelivr/npm/hm/pinecone-router?style=for-the-badge&logo=jsdelivr&logoColor=%230b2822&label=jsdelivr&labelColor=d7f4ee&color=%230b2822)
+[![npm](https://img.shields.io/npm/dm/pinecone-router?label=npm&logo=npm&labelColor=%23d7f4ee&color=%230b2822&style=for-the-badge&logoColor=%230b2822)](https://npmjs.com/package/pinecone-router)
+<br>
+[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?labelColor=%23d7f4ee&color=%230b2822&label=version&style=for-the-badge&sort=semver&logo=semver&logoColor=%230b2822)](https://github.com/pinecone-router/router/tree/7.0.0)
+[![Changelog](https://img.shields.io/badge/changelog-0b2822?style=for-the-badge)](/CHANGELOG.md)
+[![Sponsor](https://img.shields.io/badge/sponsor-0b2822?logo=githubsponsors&style=for-the-badge)](https://ko-fi.com/rehhouari)
+
+</div>
 
 # Pinecone Router
 
