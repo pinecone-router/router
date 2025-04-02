@@ -3,7 +3,7 @@
    Alpine.js">
 </p>
 
-<div style="text-align: center">
+<div align="center">
 
 [![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router?labelColor=%23d7f4ee&style=for-the-badge&color=%230b2822&&logo=bun&logoColor=%230b2822)](https://bundlephobia.com/result?p=pinecone-router@7.0.0)
 ![jsDelivr hits (npm)](https://img.shields.io/jsdelivr/npm/hm/pinecone-router?style=for-the-badge&logo=jsdelivr&logoColor=%230b2822&label=jsdelivr&labelColor=d7f4ee&color=%230b2822)
