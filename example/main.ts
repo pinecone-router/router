@@ -3,7 +3,9 @@ import Alpine, { type Alpine as AlpineType } from 'alpinejs';
 import NProgress from 'nprogress';
 import Persist from '@alpinejs/persist';
 import PineconeRouterPlugin from 'pinecone-router';
-import { type PineconeRouter } from 'pinecone-router/src/router';
+import { test } from 'pinecone-router/handler';
+
+test('IT IS WORKING');
 
 declare global {
 	interface Window {

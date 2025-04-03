@@ -17,7 +17,7 @@ declare module 'alpinejs' {
     }
     interface Magics<T> {
         $router: PineconeRouter;
-        $history: NavigationHistory;
+        $stack: NavigationHistory;
         $params: Context['params'];
     }
     interface Alpine {

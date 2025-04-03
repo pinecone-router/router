@@ -22,10 +22,6 @@
 		"history",
 		"pushstate"
 	],
-	"source": "src/index.ts",
-	"main": "dist/router.min.js",
-	"umd:main": "dist/router.min.js",
-	"module": "dist/router.esm.js",
 	"scripts": {
 		"dist": "bun run build-tsc && bun run build-esm && bun run build-cdn",
 		"build-cdn": "bun build builds/cdn.js --minify --sourcemap=\"linked\" --entry-naming=\"router.min.[ext]\" --format \"iife\" --outdir=\"./dist\"",
@@ -42,6 +38,54 @@
 		"prettier": "^3.5.3",
 		"typescript": "^5"
 	},
+	"main": "dist/router.min.js",
+	"umd:main": "dist/router.min.js",
+	"module": "dist/router.esm.js",
 	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/router.esm.js"
+		},
+		"./handler": {
+			"types": "./dist/handler.d.ts"
+		},
+		"./context": {
+			"types": "./dist/context.d.ts"
+		},
+		"./errors": {
+			"types": "./dist/errors.d.ts"
+		},
+		"./history": {
+			"types": "./dist/history.d.ts"
+		},
+		"./links": {
+			"types": "./dist/links.d.ts"
+		},
+		"./route": {
+			"types": "./dist/route.d.ts"
+		},
+		"./router": {
+			"types": "./dist/router.d.ts"
+		},
+		"./settings": {
+			"types": "./dist/settings.d.ts"
+		},
+		"./templates": {
+			"types": "./dist/templates.d.ts"
+		},
+		"./utils": {
+			"types": "./dist/utils.d.ts"
+		},
+		"./directives/x-handler": {
+			"types": "./dist/directives/x-handler.d.ts"
+		},
+		"./directives/x-route": {
+			"types": "./dist/directives/x-route.d.ts"
+		},
+		"./directives/x-template": {
+			"types": "./dist/directives/x-template.d.ts"
+		}
+	},
 	"dependencies": {}
 }

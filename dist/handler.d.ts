@@ -23,4 +23,5 @@ export interface HandlerContext<T = unknown> extends Context {
  * @returns {Promise<void>}
  */
 export declare function handle(handlers: Route['handlers'], context: Context, controller: AbortController): Promise<void>;
+export declare function test(v: string): void;
 //# sourceMappingURL=handler.d.ts.map
