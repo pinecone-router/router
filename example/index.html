@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Pinecone Router Simple Example</title>
+
+		<link href="./src/output.css" rel="stylesheet" />
+	</head>
+
+	<body x-data="example">
+		<a href="/" class="logo-link"
+			><img
+				src="/pinecone-router-readme-transparent.png"
+				width="176px"
+				height="auto"
+				class="logo"
+		/></a>
+		<div id="main">
+			<div>
+				<h1 id="title">Pinecone Router Usage Examples</h1>
+				<!-- <div x-show="$router.loading">Loading...</div> -->
+
+				<button
+					class="back-forward-button"
+					:disabled="!$history.canGoBack()"
+					@click="$history.back()"
+				>
+					Back
+				</button>
+
+				<button
+					class="back-forward-button"
+					:disabled="!$history.canGoForward()"
+					@click="$history.forward()"
+				>
+					Forward
+				</button>
+				<!-- Routes -->
+
+				<!-- Homepage -->
+				<template x-route="/" x-template>
+					<div class="links">
+						<a href="/hello">Hello World</a>
+						<a href="/test">A non-existing route</a>
+						<a href="/handler">x-handler</a>
+						<a href="/target">x-template.target</a>
+						<a href="/multiple-templates">Multiple templates</a>
+						<a href="/prog-template">Adding templates using js</a>
+						<a href="/interpolated-templates">Interpolated templates</a>
+						<a href="/param-changes/foo">Handling Param Changes</a>
+					</div>
+				</template>
+
+				<!-- 404 page: this will load before its accessed (preloadeed) -->
+				<template
+					x-route="notfound"
+					x-template.preload="/views/404.html"
+				></template>
+
+				<!-- Hello World page: his will load when the page is visited then cached in memory until page is reloaded-->
+				<template
+					x-route="/hello/:name?"
+					x-handler="hello"
+					x-template.preload="/views/hello.html"
+				></template>
+
+				<!-- x-handler example -->
+
+				<!-- x-handler example links -->
+				<!-- this inline template is inserted into #app element using target modifier-->
+				<template x-route="/handler" x-template>
+					<div class="links">
+						<a href="/handler/inline"
+							>Inline handler (redirects to this page)</a
+						>
+						<a href="/handler/async">Async handler with template</a>
+					</div>
+				</template>
+
+				<!-- x-handler examples -->
+
+				<!-- inline handler, this will redirect and the template wont be loaded-->
+				<template
+					x-route="/handler/inline"
+					x-handler="[()=>$router.navigate('/handler'), thisWontRun]"
+					x-template="/views/hello.html"
+				></template>
+
+				<template
+					x-route="/handler/async"
+					x-handler="[awaitedHandler, processData]"
+					x-template="/views/async.html"
+				></template>
+
+				<!-- This template will be inserted inside the #app element instead of as a siblining -->
+				<template
+					x-route="/target"
+					x-template.preload.target.alt="/views/body.html"
+				></template>
+
+				<!-- This route contains multiple templates -->
+				<template
+					x-route="/multiple-templates"
+					x-template="['/views/header.html' ,'/views/body.html', '/views/footer.html']"
+				></template>
+
+				<!-- Using the .interpolate modifier, you can add parameters to the template path-->
+				<template
+					x-route="/interpolated-templates"
+					x-template="/views/interpolated.html"
+				></template>
+				<template
+					x-route="/interpolated-templates/:name"
+					x-template.interpolate="['/views/interpolated-templates/:name.html']"
+				></template>
+
+				<!-- Using x-effect to handle param changes params -->
+				<template
+					x-route="/param-changes/:slug"
+					x-template.preload="/views/param-changes.html"
+				></template>
+
+				<div id="app"></div>
+				<div id="alt"></div>
+				<!-- footer -->
+				<div class="footer-container">
+					<div class="footer-row">
+						<a
+							class="doc-link"
+							href="https://github.com/pinecone-router/router?tab=readme-ov-file"
+							target="_blank"
+							>Read Documentation</a
+						>
+						<a
+							class="source-link"
+							href="https://github.com/pinecone-router/pinecone-example"
+							target="_blank"
+							>Example Source</a
+						>
+					</div>
+					<div class="footer-row-spaced">
+						<a
+							class="doc-link"
+							href="https://github.com/pinecone-router/router/discussions"
+							target="_blank"
+							>Ask questions</a
+						>
+						<a
+							class="doc-link"
+							href="https://github.com/pinecone-router/router/issues"
+							target="_blank"
+							>Report bugs</a
+						>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			let example = {
+				hello(ctx, ctrl) {
+					if (ctx.params.name?.toLowerCase() == 'home') {
+						return this.$router.navigate('/');
+					}
+				},
+
+				// async functions will be automatically awaited by Pinecone Router
+				// meaning until its finished subsequent handlers wont be executed
+				// and templates wont be displayed
+				// async functions will be automatically awaited by Pinecone Router
+				async awaitedHandler(ctx, controller) {
+					try {
+						// use abort signal to cancel when the user navigates away.
+						const response = await fetch(
+							'https://jsonplaceholder.typicode.com/posts',
+							{ signal: controller.signal }
+						);
+						return await response.json(); // pass the response to the next handler
+					} catch (err) {
+						// safely ignore aborts, but handle fetch errors
+						if (err.name != 'AbortError') {
+							console.error(`Download error: ${err.message}`);
+							// abort on error for example, which wont render the route's
+							// template nor run subsequent handlers
+							controller.abort();
+						}
+					}
+				},
+				processData(ctx) {
+					// get previous handler's returned data
+					if (ctx.data) {
+						console.table(ctx.data);
+					}
+				},
+
+				thisWontRun(ctx, ctrl) {
+					// this will not run because the previous handler redirected
+					console.log('this wont run');
+				},
+			};
+
+			document.addEventListener('alpine:init', () => {
+				window.PineconeRouter.settings({
+					preload: true,
+					targetID: 'app',
+					// hash: true,
+				});
+				window.PineconeRouter.add('/prog-template', {
+					templates: ['/views/body.html', '/views/footer.html'],
+				});
+			});
+
+			// add loading bar
+			document.addEventListener('pinecone:start', () => {
+				NProgress.start();
+			});
+			document.addEventListener('pinecone:end', () => {
+				NProgress.done();
+			});
+			document.addEventListener('pinecone:fetch-error', (err) =>
+				console.error(err)
+			);
+		</script>
+
+		<script type="module" src="/main.ts"></script>
+	</body>
+</html>

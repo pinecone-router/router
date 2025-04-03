@@ -20,5 +20,3 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 
-# testing
-index.html
