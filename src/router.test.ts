@@ -36,7 +36,7 @@ describe('Router', () => {
 		}
 	})
 
-	test('Navigation Stack', () => {
+	test('Navigation History', () => {
 		expect(router).toBeDefined()
 
 		expect(router.history.entries).toEqual([])

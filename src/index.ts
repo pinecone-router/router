@@ -33,7 +33,7 @@ declare module 'alpinejs' {
 
 	interface Magics<T> {
 		$router: PineconeRouter
-		$stack: NavigationHistory
+		$history: NavigationHistory
 		$params: Context['params']
 	}
 

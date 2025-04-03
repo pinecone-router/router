@@ -55,10 +55,11 @@ const TemplateDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 				} else hide(el)
 			}
 
-			effect(() => callback(urls))
+			const effectRunner = effect(() => callback(urls))
 
 			cleanup(() => {
 				el._x_PineconeRouter_undoTemplate && el._x_PineconeRouter_undoTemplate()
+				Alpine.release(effectRunner)
 			})
 		}
 	)
