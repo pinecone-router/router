@@ -42,7 +42,7 @@ declare module 'alpinejs' {
 	}
 }
 
-const PineconeRouterPlugin: PluginCallback = function (Alpine: Alpine) {
+export const PineconeRouterPlugin: PluginCallback = function (Alpine: Alpine) {
 	const Router = Alpine.reactive(createPineconeRouter(name, version))
 
 	window.PineconeRouter = Router

@@ -1,14 +1,12 @@
 {
 	"name": "pinecone-router",
-	"description": "The extendable client-side router for Alpine.js.",
-	"license": "MIT",
+	"version": "7.0.0-beta.3",
 	"author": "Rafik El Hadi Houari <rehhouari@gmail.com>",
-	"version": "7.0.0-beta.2",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/pinecone-router/router"
 	},
-	"type": "module",
+	"description": "The feature-packed router for Alpine.js.",
 	"keywords": [
 		"alpinejs-router",
 		"alpine router",
@@ -22,14 +20,20 @@
 		"history",
 		"pushstate"
 	],
+	"license": "MIT",
 	"scripts": {
 		"dist": "bun run build-tsc && bun run build-esm && bun run build-cdn",
 		"build-cdn": "bun build builds/cdn.js --minify --sourcemap=\"linked\" --entry-naming=\"router.min.[ext]\" --format \"iife\" --outdir=\"./dist\"",
 		"build-esm": "bun build builds/module.js --minify --sourcemap=\"linked\" --entry-naming=\"router.esm.[ext]\" --format \"esm\" --outdir=\"./dist\"",
-		"build-tsc": "tsc  --emitDeclarationOnly --declaration --project tsconfig.json",
+		"build-tsc": "tsc  --project tsconfig.json",
 		"dev": "bun build src/index.ts --watch --minify --sourcemap=\"linked\" --entry-naming=\"router.esm.[ext]\" --outdir=\"./example\"",
 		"example": "cd example && bun dev"
 	},
+	"type": "module",
+	"types": "dist/types.d.ts",
+	"umd:main": "dist/router.min.js",
+	"main": "dist/router.min.js",
+	"module": "dist/router.esm.js",
 	"devDependencies": {
 		"@happy-dom/global-registrator": "^17.4.4",
 		"@types/alpinejs": "^3.13.11",
@@ -37,55 +41,5 @@
 		"alpinejs": "^3.14.9",
 		"prettier": "^3.5.3",
 		"typescript": "^5"
-	},
-	"main": "dist/router.min.js",
-	"umd:main": "dist/router.min.js",
-	"module": "dist/router.esm.js",
-	"types": "dist/index.d.ts",
-	"exports": {
-		".": {
-			"types": "./dist/index.d.ts",
-			"import": "./dist/router.esm.js"
-		},
-		"./handler": {
-			"types": "./dist/handler.d.ts"
-		},
-		"./context": {
-			"types": "./dist/context.d.ts"
-		},
-		"./errors": {
-			"types": "./dist/errors.d.ts"
-		},
-		"./history": {
-			"types": "./dist/history.d.ts"
-		},
-		"./links": {
-			"types": "./dist/links.d.ts"
-		},
-		"./route": {
-			"types": "./dist/route.d.ts"
-		},
-		"./router": {
-			"types": "./dist/router.d.ts"
-		},
-		"./settings": {
-			"types": "./dist/settings.d.ts"
-		},
-		"./templates": {
-			"types": "./dist/templates.d.ts"
-		},
-		"./utils": {
-			"types": "./dist/utils.d.ts"
-		},
-		"./directives/x-handler": {
-			"types": "./dist/directives/x-handler.d.ts"
-		},
-		"./directives/x-route": {
-			"types": "./dist/directives/x-route.d.ts"
-		},
-		"./directives/x-template": {
-			"types": "./dist/directives/x-template.d.ts"
-		}
-	},
-	"dependencies": {}
+	}
 }

@@ -17,13 +17,13 @@ declare module 'alpinejs' {
     }
     interface Magics<T> {
         $router: PineconeRouter;
-        $stack: NavigationHistory;
+        $history: NavigationHistory;
         $params: Context['params'];
     }
     interface Alpine {
         $router: PineconeRouter;
     }
 }
-declare const PineconeRouterPlugin: PluginCallback;
+export declare const PineconeRouterPlugin: PluginCallback;
 export default PineconeRouterPlugin;
 //# sourceMappingURL=index.d.ts.map

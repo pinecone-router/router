@@ -2,15 +2,10 @@ import './src/style.css';
 import Alpine, { type Alpine as AlpineType } from 'alpinejs';
 import NProgress from 'nprogress';
 import Persist from '@alpinejs/persist';
-import PineconeRouterPlugin from 'pinecone-router';
-import { test } from 'pinecone-router/handler';
-
-test('IT IS WORKING');
-
+import PineconeRouter from 'pinecone-router';
 declare global {
 	interface Window {
-		NProgress: NProgress;
-		PineconeRouter: PineconeRouter;
+		NProgress: typeof NProgress;
 		Alpine: AlpineType;
 	}
 }
@@ -18,11 +13,11 @@ declare global {
 window.NProgress = NProgress;
 
 Alpine.plugin(Persist);
-Alpine.plugin(PineconeRouterPlugin);
+Alpine.plugin(PineconeRouter);
 
 window.Alpine = Alpine;
 
-Alpine.data('dropdown', function () {
+Alpine.data<{}, string[]>('dropdown', function () {
 	return {
 		open: this.$persist(false),
 	};
