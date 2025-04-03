@@ -4,7 +4,7 @@ import 'nprogress/nprogress.css';
 import Alpine, { type Alpine as AlpineType } from 'alpinejs';
 import NProgress from 'nprogress';
 import Persist from '@alpinejs/persist';
-import PineconeRouter from '../src/index';
+import PineconeRouter from 'pinecone-router';
 
 declare global {
 	interface Window {
