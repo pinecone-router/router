@@ -1,4 +1,6 @@
 import './src/style.css';
+import 'nprogress/nprogress.css';
+
 import Alpine, { type Alpine as AlpineType } from 'alpinejs';
 import NProgress from 'nprogress';
 import Persist from '@alpinejs/persist';
