@@ -1,3 +1,38 @@
+import { NavigationHistory } from './history'
+import { PineconeRouter } from './router'
+import { Context } from './context'
+
+/// Extend Window interface
+
+declare global {
+	interface Window {
+		PineconeRouter: PineconeRouter
+	}
+}
+
+/// Extend Alpine.js types
+
+declare module 'alpinejs' {
+	interface XAttributes {
+		_x_PineconeRouter_undoTemplate: () => void
+		_x_PineconeRouter_template: HTMLElement[]
+		_x_PineconeRouter_templateUrls: string[]
+		_x_PineconeRouter_route: string
+	}
+
+	interface Magics<T> {
+		$router: PineconeRouter
+		$history: NavigationHistory
+		$params: Context['params']
+	}
+
+	interface Alpine {
+		$router: PineconeRouter
+	}
+}
+
+/// Exports
+
 // Types from handler.ts
 export { Handler, HandlerContext } from './handler'
 

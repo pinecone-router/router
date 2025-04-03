@@ -1,6 +1,5 @@
 {
-  // Change this to match your project
-  "include": [
+  "files": [
     "src/types.ts"
   ],
   "compilerOptions": {
@@ -41,5 +40,9 @@
     "noUnusedParameters": true,
     "noPropertyAccessFromIndexSignature": true,
     "allowSyntheticDefaultImports": true,
-  }
+    "noImplicitThis": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "forceConsistentCasingInFileNames": true
+  },
 }

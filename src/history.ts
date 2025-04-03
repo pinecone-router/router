@@ -45,11 +45,11 @@ export interface NavigationHistory {
 	/**
 	 * Push a new path to the history at the current index.
 	 * @internal
-	 * @param path The path to add to the history
-	 * @param pushState Whether or not to call History.pushState.
+	 * @param {string} path The path to add to the history
+	 * @param {boolean} pushState Whether or not to call History.pushState.
 	 *        Will be set to false if it's the first load or if it's called from
 	 *        a popstate event.
-	 * @param hash Whether or not we're using hash routing
+	 * @param {boolean} [hash] Whether or not we're using hash routing
 	 * @returns void
 	 */
 	push: (path: string, pushState: boolean, hash?: boolean) => void

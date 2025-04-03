@@ -1,6 +1,6 @@
 {
 	"name": "pinecone-router",
-	"version": "7.0.0-beta.3",
+	"version": "7.0.0-beta.4",
 	"author": "Rafik El Hadi Houari <rehhouari@gmail.com>",
 	"repository": {
 		"type": "git",
@@ -31,9 +31,9 @@
 	},
 	"type": "module",
 	"types": "dist/types.d.ts",
-	"umd:main": "dist/router.min.js",
 	"main": "dist/router.min.js",
 	"module": "dist/router.esm.js",
+	"umd:main": "dist/router.min.js",
 	"devDependencies": {
 		"@happy-dom/global-registrator": "^17.4.4",
 		"@types/alpinejs": "^3.13.11",

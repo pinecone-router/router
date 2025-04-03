@@ -191,6 +191,12 @@ export const loadUrl = async (
 			loading.delete(url)
 			return html || ''
 		})
+		.catch((error) => {
+			if (error instanceof TypeError) {
+				fetchError(error.message, url)
+			}
+			return ''
+		})
 
 	loading.set(url, fetchPromise)
 	return fetchPromise

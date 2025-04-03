@@ -30,10 +30,10 @@ export interface PineconeRouter {
      *  Navigate to the specified path
      *
      * @param {string} path the path with no hash even if using hash routing
-     * @param {boolean} fromPopState INTERNAL Is set to true when called from
+     * @param {boolean} [fromPopState] INTERNAL: Is set to true when called from
      *                  onpopstate event
-     * @param {boolean} firstLoad INTERNAL Is set to true on browser page load.
-     * @param {number} index INTERNAL the index of the navigation history
+     * @param {boolean} [firstLoad] INTERNAL: Is set to true on browser page load.
+     * @param {number} [index] INTERNAL: the index of the navigation history
      *                  that was navigated to.
      * @returns {Promise<void>}
      */

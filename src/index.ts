@@ -1,46 +1,14 @@
 import { type PluginCallback, type Alpine } from 'alpinejs'
 
-import { createPineconeRouter, type PineconeRouter } from './router'
 import TemplateDirective from './directives/x-template'
 import HandlerDirective from './directives/x-handler'
-import { type NavigationHistory } from './history'
 import RouteDirective from './directives/x-route'
+import { createPineconeRouter } from './router'
 import { runPreloads } from './templates'
-import { type Context } from './context'
 import { handleClicks } from './links'
 import { settings } from './settings'
 
 import { name, version } from '../package.json'
-
-declare global {
-	interface Window {
-		PineconeRouter: PineconeRouter
-	}
-}
-
-// This extends the alpinejs types
-// Adding our custom magics and html attributes
-// This allows the user to extend AlpineComponent with $router and $params
-// already set.
-declare module 'alpinejs' {
-	interface XAttributes {
-		_x_PineconeRouter_templateUrls: string[]
-		_x_PineconeRouter_template: HTMLElement[]
-		_x_PineconeRouter_scripts: HTMLScriptElement[]
-		_x_PineconeRouter_undoTemplate: () => void
-		_x_PineconeRouter_route: string
-	}
-
-	interface Magics<T> {
-		$router: PineconeRouter
-		$history: NavigationHistory
-		$params: Context['params']
-	}
-
-	interface Alpine {
-		$router: PineconeRouter
-	}
-}
 
 export const PineconeRouterPlugin: PluginCallback = function (Alpine: Alpine) {
 	const Router = Alpine.reactive(createPineconeRouter(name, version))
