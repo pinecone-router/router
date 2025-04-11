@@ -25,6 +25,8 @@ will let me have easier time finding the issues as they come up, and implement
 more features if needed.
 And hopefully even make it less intimidating for contributors to do so as well!
 
+For a more concise upgrade guide, [look here](./upgrade_to_v7.md)
+
 ### Added
 
 - Added `$params` magic helper.
