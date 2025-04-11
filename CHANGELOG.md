@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [7.0.1] - 2025-04-11
+
+### Fixed
+
+- Fixed path not added to NavigationHistory on first page load.
+
 ## [7.0.0] - 2025-04-11
 
 This is release contains a major overhaul to the codebase, code structure and
@@ -617,7 +623,7 @@ It's mostly backward compatible but need a few tweaks:
 
 - Let go of multi-router support for simpler codebase.
 
-[unreleased]: https://github.com/pinecone-router/router/compare/7.0.0...HEAD
+[unreleased]: https://github.com/pinecone-router/router/compare/7.0.1...HEAD
 [0.0.3]: https://github.com/pinecone-router/router/compare/0.0.2...0.0.3
 [0.0.4]: https://github.com/pinecone-router/router/compare/0.0.3...0.0.4
 [0.0.5]: https://github.com/pinecone-router/router/compare/0.0.4...0.0.5
@@ -674,3 +680,4 @@ It's mostly backward compatible but need a few tweaks:
 [6.2.4]: https://github.com/pinecone-router/router/compare/6.2.3..6.2.4
 [6.2.5]: https://github.com/pinecone-router/router/compare/6.2.4..6.2.5
 [7.0.0]: https://github.com/pinecone-router/router/compare/6.2.5..7.0.0
+[7.0.1]: https://github.com/pinecone-router/router/compare/7.0.0..7.0.1
