@@ -12,7 +12,7 @@ and this project adheres to
 
 ### Fixed
 
-- Fixed loading not ending when there are no templates.
+- Fixed loading not ending when there are no templates or handlers.
 
 ## [7.0.1] - 2025-04-11
 
