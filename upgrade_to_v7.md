@@ -1,7 +1,7 @@
 # Upgrade Guide: Pinecone Router 6.x to 7.x
 
 For a more detailed list of changes and also additions which aren't covered
-here, see [CHANGELOG](./CHANGELOG.md#7.0.0)
+here, see [CHANGELOG](./CHANGELOG.md#700---2025-04-11)
 
 ## $router Changes
 
