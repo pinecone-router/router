@@ -60,7 +60,7 @@ PineconeRouter.Settings is now a function.
 To configure:
 
 ```js
-Pinecone.Router.settings({
+PineconeRouter.settings({
 	basePath: '/app',
 	targetID: 'app',
 })
