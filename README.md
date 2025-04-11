@@ -75,7 +75,7 @@ This projects follow the [Semantic Versioning](https://semver.org/) guidelines.
 
 > [!NOTE]
 > If you're upgrading from v6, also see the more compact
-> [Upgrade Guide](./upgrade_to%207.x.md).
+> [Upgrade Guide](./upgrade_to_v7.md).
 
 ### CDN
 
