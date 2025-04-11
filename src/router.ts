@@ -198,7 +198,7 @@ export const createPineconeRouter = (
 			}
 
 			// end loading if there are no templates
-			if (!route.templates) this.loading = false
+			if (!route.templates.length) this.loading = false
 		},
 	}
 

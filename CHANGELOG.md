@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [7.0.2] - 2025-04-11
+
+### Fixed
+
+- Fixed loading not ending when there are no templates.
+
 ## [7.0.1] - 2025-04-11
 
 ### Fixed
@@ -623,7 +629,7 @@ It's mostly backward compatible but need a few tweaks:
 
 - Let go of multi-router support for simpler codebase.
 
-[unreleased]: https://github.com/pinecone-router/router/compare/7.0.1...HEAD
+[unreleased]: https://github.com/pinecone-router/router/compare/7.0.2...HEAD
 [0.0.3]: https://github.com/pinecone-router/router/compare/0.0.2...0.0.3
 [0.0.4]: https://github.com/pinecone-router/router/compare/0.0.3...0.0.4
 [0.0.5]: https://github.com/pinecone-router/router/compare/0.0.4...0.0.5
@@ -681,3 +687,4 @@ It's mostly backward compatible but need a few tweaks:
 [6.2.5]: https://github.com/pinecone-router/router/compare/6.2.4..6.2.5
 [7.0.0]: https://github.com/pinecone-router/router/compare/6.2.5..7.0.0
 [7.0.1]: https://github.com/pinecone-router/router/compare/7.0.0..7.0.1
+[7.0.2]: https://github.com/pinecone-router/router/compare/7.0.1...7.0.2
