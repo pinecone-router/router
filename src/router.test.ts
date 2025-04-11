@@ -3,7 +3,7 @@ import Alpine from 'alpinejs'
 
 import { createPineconeRouter } from './router'
 
-const router = createPineconeRouter('pinecone-router', '7.0.0')
+const router = createPineconeRouter('pinecone-router', '7.0.1')
 var output = ''
 
 // setup routes
@@ -100,7 +100,7 @@ describe('Router', () => {
 	})
 })
 test('Settings.basePath', async () => {
-	const router = createPineconeRouter('pinecone-router', '7.0.0')
+	const router = createPineconeRouter('pinecone-router', '7.0.1')
 	// Test basePath setting
 	router.settings({ basePath: '/test' })
 
