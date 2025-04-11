@@ -17,13 +17,17 @@ export interface Route {
      */
     readonly pattern: RegExp;
     /**
+     * The raw route path
+     */
+    readonly path: string;
+    /**
      * The target ID for the route's templates
      */
     readonly targetID?: string;
     /**
-     * The raw route path
+     * The name of the route
      */
-    readonly path: string;
+    readonly name: string;
     match(path: string): undefined | {
         [key: string]: string;
     };
@@ -36,6 +40,7 @@ export interface RouteOptions {
     templates?: string[];
     targetID?: string;
     preload?: boolean;
+    name?: string;
 }
 export type MatchResult = undefined | {
     [key: string]: string;
@@ -46,7 +51,7 @@ export type MatchResult = undefined | {
  * @param {RouteOptions} options - route configuration options
  * @returns {Route} - a route object
  */
-export declare const createRoute: (path: string, { targetID, templates, handlers, interpolate, }?: RouteOptions) => Route;
+export declare const createRoute: (path: string, { targetID, templates, handlers, interpolate, name, }?: RouteOptions) => Route;
 /**
  * @param {string} input The route pattern
  * @returns {RegExp} The compiled regular expression for the route

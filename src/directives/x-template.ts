@@ -44,7 +44,8 @@ const TemplateDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 			}
 
 			const callback = (urls?: string[]) => {
-				const found = Router.context.route === path
+				const found = Router.context.route?.path === path
+
 				if (found) {
 					if (urls && interpolated) {
 						urls = interpolate(urls, Router.context.params)

@@ -69,11 +69,12 @@ export const createPineconeRouter = (
 		handlers: [
 			(ctx) => console.error(new ReferenceError(ROUTE_NOT_FOUND(ctx.path))),
 		],
+		name: 'notfound',
 	})
 
 	const routes = new Map([['notfound', notfound]]) as RoutesMap
 
-	const context = buildContext('', {}, '')
+	const context = buildContext('', {})
 	let controller: AbortController | null = null
 	let loading = false
 
@@ -148,7 +149,7 @@ export const createPineconeRouter = (
 			// this is to prevent editing the global context, which triggers
 			// Alpine effects and causes them to run before this function has
 			// done its work.
-			const context = buildContext(path, params, route.path)
+			const context = buildContext(path, params, route)
 
 			const handlers = settings.globalHandlers.concat(route.handlers)
 

@@ -123,10 +123,10 @@ Declare routes by creating a template tag with the `x-route` directive.
 
 > [!NOTE]
 > Alternatively you can
-> [use Javascript to add routes](#adding--removing-routes-with-javascript)
+> [use Javascript to add routes](#add--remove-routes-programmatically)
 
 > [!NOTE]
-> Read more about [notfound route](#notfound-route)
+> Read more: [`notfound` route](#notfound-route), [Named routes](#named-routes)
 
 ### Route matching
 
@@ -476,13 +476,9 @@ export type Handler<In, Out> = (
 	controller: AbortController
 ) => Out | Promise<Out>
 
-/**
- * HandlerContext is the context passed to the handler.
- * It contains the current route and the data from the previous handler.
- * @param T The type of the returned data from the previous handler.
- */
 export interface HandlerContext<T = unknown> extends Context {
 	readonly data: T
+	readonly route: Route
 }
 ```
 
@@ -572,12 +568,18 @@ Contains information about the current route. This is available at all times:
 Reference:
 
 ```ts
+/**
+ * This is the global Context object
+ * Which can be accessed from `PineconeRouter.context`
+ */
 export interface Context {
 	readonly path: string
-	readonly route: string
+	readonly route?: Route
 	readonly params: Record<string, string | undefined>
 }
 ```
+
+Read more: [Route object](#route-object)
 
 ## Settings:
 
@@ -648,7 +650,7 @@ export interface Settings {
 }
 ```
 
-See more: [Base Path](#base-path)
+Read more: [Base Path](#base-path)
 
 ## Route object
 
@@ -666,19 +668,27 @@ export interface Route {
 	 * @internal
 	 */
 	readonly interpolate: boolean
+
 	/**
 	 * The regex pattern used to match the route.
 	 * @internal
 	 */
 	readonly pattern: RegExp
-	/**
-	 * The target ID for the route's templates
-	 */
-	readonly targetID?: string
+
 	/**
 	 * The raw route path
 	 */
 	readonly path: string
+
+	/**
+	 * The target ID for the route's templates
+	 */
+	readonly targetID?: string
+
+	/**
+	 * The name of the route
+	 */
+	readonly name: string
 
 	match(path: string): undefined | { [key: string]: string }
 	handlers: Handler<unknown, unknown>[]
@@ -691,6 +701,7 @@ export interface RouteOptions {
 	templates?: string[]
 	targetID?: string
 	preload?: boolean
+	name?: string
 }
 ```
 
@@ -786,6 +797,36 @@ handler.
 
 You can also update the `notfound` route [programmatically](#adding-a-template), using [`PineconeRouter.add`](#pineconerouter-object), to which `notfound` is the only expection that wont throw an error due to an exisitng route.
 
+### Named routes
+
+You can add an optional name to the route which can be helpful in certain
+situations:
+
+- With x-route:
+
+```html
+<template x-route:name="/test"></template>
+```
+
+- With JS:
+
+```js
+PineconeRouter.add('/test', { name: 'name' })
+```
+
+- Access inside handlers:
+
+```js
+function handler(context, controller) {
+	console.log('route name:', context.route.name) // route name: name
+}
+```
+
+> [!NOTE]
+> If there was no route name suplied, it will fallback to the route's path.
+>
+> Names don't have to be unique.
+
 ### Base Path
 
 After setting a [`Settings.basePath`](#settings), it will automatically added to
@@ -862,17 +903,9 @@ window.PineconeRouter.add(path, options)
 ```
 
 - path: string, the route's path.
-- options: array of route options:
+- options: RouteOptions, array of route options:
 
-```ts
-export interface RouteOptions {
-	handlers?: Route['handlers']
-	interpolate?: boolean
-	templates?: string[]
-	targetID?: string
-	preload?: boolean
-}
-```
+See [RouteOptions](#route-object)
 
 Note that by adding handlers this way you wont have access to the `this` of the
 alpine.js component if the handler is part of one.

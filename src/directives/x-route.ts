@@ -11,13 +11,13 @@ export interface RouteTemplate
 }
 
 const RouteDirective = (Alpine: Alpine, Router: PineconeRouter) => {
-	Alpine.directive('route', (el, { expression }, { cleanup }) => {
+	Alpine.directive('route', (el, { expression, value }, { cleanup }) => {
 		let path = addBasePath(expression, settings.basePath)
 
 		assertTemplate(el)
 
 		if (path != 'notfound') {
-			Router.add(path, {})
+			Router.add(path, { name: value })
 		}
 
 		// set the path in the element so it is used by other directives

@@ -18,6 +18,7 @@ export type Handler<In, Out> = (
  */
 export interface HandlerContext<T = unknown> extends Context {
 	readonly data: T
+	readonly route: Route
 }
 
 /**

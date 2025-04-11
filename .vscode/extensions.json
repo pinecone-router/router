@@ -1,6 +1,6 @@
 {
   "recommendations": [
-    "ethansk.restore-terminals",
+    // "ethansk.restore-terminals",
     "oven.bun-vscode"
   ]
 }

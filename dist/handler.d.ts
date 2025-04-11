@@ -14,6 +14,7 @@ export type Handler<In, Out> = (context: HandlerContext<In>, controller: AbortCo
  */
 export interface HandlerContext<T = unknown> extends Context {
     readonly data: T;
+    readonly route: Route;
 }
 /**
  * Execute route handlers sequentially, with cancellation support

@@ -12,19 +12,27 @@ export interface Route {
 	 * @internal
 	 */
 	readonly interpolate: boolean
+
 	/**
 	 * The regex pattern used to match the route.
 	 * @internal
 	 */
 	readonly pattern: RegExp
-	/**
-	 * The target ID for the route's templates
-	 */
-	readonly targetID?: string
+
 	/**
 	 * The raw route path
 	 */
 	readonly path: string
+
+	/**
+	 * The target ID for the route's templates
+	 */
+	readonly targetID?: string
+
+	/**
+	 * The name of the route
+	 */
+	readonly name: string
 
 	match(path: string): undefined | { [key: string]: string }
 	handlers: Handler<unknown, unknown>[]
@@ -37,6 +45,7 @@ export interface RouteOptions {
 	templates?: string[]
 	targetID?: string
 	preload?: boolean
+	name?: string
 }
 
 export type MatchResult =
@@ -58,6 +67,7 @@ export const createRoute = (
 		templates = [],
 		handlers = [],
 		interpolate = false,
+		name,
 	}: RouteOptions = {}
 ): Route => ({
 	programmaticTemplates: templates.length > 0,
@@ -66,6 +76,7 @@ export const createRoute = (
 	templates,
 	targetID,
 	handlers,
+	name: name || path,
 	path,
 	match(path: string) {
 		const m = this.pattern.exec(path)

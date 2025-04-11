@@ -1,15 +1,17 @@
+import { Route } from './route'
+
 export const buildContext: contextBuilder = (path, params, route) => {
 	return {
 		path,
-		route,
 		params,
+		route,
 	}
 }
 
 type contextBuilder = (
 	path: string,
 	params: Context['params'],
-	route: string
+	route?: Route
 ) => Context
 
 /**
@@ -18,6 +20,6 @@ type contextBuilder = (
  */
 export interface Context {
 	readonly path: string
-	readonly route: string
+	readonly route?: Route
 	readonly params: Record<string, string | undefined>
 }

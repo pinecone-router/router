@@ -3,7 +3,8 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+and this project adheres to
+[Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
@@ -34,6 +35,8 @@ And hopefully even make it less intimidating for contributors to do so aswell!
 - Added support for multiple scripts inside the template.
 - Added support for params in template urls (interpolation) for routes added
   [programmatically](./README.md#adding--removing-routes-with-javascript)
+- Added ability to name routes with the `x-route:name="..."` syntax.
+  See: [Named Routes](./README.md#named-routes)
 - Added [`Settings.preload`](./README.md#settings) to enable preloading all
   templates.
 - Added proper priority option to preloading requests, they are now of 'low'
@@ -71,6 +74,8 @@ And hopefully even make it less intimidating for contributors to do so aswell!
   - This change was made to separate template code from `x-route`, although it
     was handy, this change results in cleaner and more concise code.
 
+- `Context.route` is now a [Route object](./README.md#route-object) instead of
+  a `Route.path` string.
 - Changed [PineconeRouter.settings](./README.md#pineconerouter-object) from a
   [Settings object](./README.md#settings-object) to a function that
   returns the `Settings` object and takes `Partial<Settings>` object in order
