@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [6.2.5] - 2025-04-11
+
+### Fixed
+
+- Fixed query being read as part of the path on first page load.
+- Fixed empty path on init (fix [#67](https://github.com/pinecone-router/router/issues/67))
+
 ## [6.2.4] - 2025-03-20
 
 ### Fixed
@@ -435,7 +442,7 @@ It's mostly backward compatible but need a few tweaks:
 
 - Let go of multi-router support for simpler codebase.
 
-[unreleased]: https://github.com/pinecone-router/router/compare/6.2.4...HEAD
+[unreleased]: https://github.com/pinecone-router/router/compare/6.2.5...HEAD
 [0.0.3]: https://github.com/pinecone-router/router/compare/0.0.2...0.0.3
 [0.0.4]: https://github.com/pinecone-router/router/compare/0.0.3...0.0.4
 [0.0.5]: https://github.com/pinecone-router/router/compare/0.0.4...0.0.5
@@ -490,3 +497,4 @@ It's mostly backward compatible but need a few tweaks:
 [6.2.2]: https://github.com/pinecone-router/router/compare/6.2.1..6.2.2
 [6.2.3]: https://github.com/pinecone-router/router/compare/6.2.2..6.2.3
 [6.2.4]: https://github.com/pinecone-router/router/compare/6.2.3..6.2.4
+[6.2.5]: https://github.com/pinecone-router/router/compare/6.2.4..6.2.5

@@ -38,7 +38,7 @@ declare module 'alpinejs' {
 
 export default function (Alpine) {
 	const PineconeRouter = Alpine.reactive(<Window['PineconeRouter']>{
-		version: '6.2.4',
+		version: '6.2.5',
 		name: 'pinecone-router',
 
 		settings: <Settings>{
@@ -136,6 +136,10 @@ export default function (Alpine) {
 		 */
 		loadEnd: new Event('pinecone-end'),
 	})
+	const initial_path = PineconeRouter.settings.hash
+		? location.hash.substring(1)
+		: location.pathname
+	PineconeRouter.context.path = initial_path
 
 	window.PineconeRouter = PineconeRouter
 
@@ -565,11 +569,7 @@ export default function (Alpine) {
 		middleware('init')
 		// virtually navigate the path on the first page load
 		// this will register the path in history and sets the path variable
-		if (PineconeRouter.settings.hash == false) {
-			navigate(location.pathname + location.search, false, true)
-		} else {
-			navigate(location.hash.substring(1), false, true)
-		}
+		navigate(initial_path, false, true)
 	})
 
 	// handle navigation events not emitted by links, for example, back button.
