@@ -10,9 +10,7 @@ export declare const fetchError: (error: string, url: string) => void;
  * @param urls Template urls
  * @returns void
  */
-export declare const make: (Alpine: Alpine, template: ElementWithXAttributes<HTMLTemplateElement>, expression: string, // the expression on the x-template directive
-targetEl?: HTMLElement, // the target element where the template will
-urls?: string[]) => void;
+export declare const make: (Alpine: Alpine, template: ElementWithXAttributes<HTMLTemplateElement>, expression: string, targetEl?: HTMLElement, urls?: string[]) => void;
 export declare const hide: (template: ElementWithXAttributes<HTMLTemplateElement>) => void;
 export declare const show: (Alpine: Alpine, template: ElementWithXAttributes<HTMLTemplateElement>, expression: string, urls?: Array<string>, targetEl?: HTMLElement) => Promise<void>;
 /**
@@ -21,7 +19,7 @@ export declare const show: (Alpine: Alpine, template: ElementWithXAttributes<HTM
  * @param params Object containing params to inject into URLs.
  * @returns Array of interpolated URLs.
  */
-export declare const interpolate: (urls: string[], params: Context["params"]) => string[];
+export declare const interpolate: (urls: string[], params: Context['params']) => string[];
 /**
  * Load a template from a url and cache its content.
  * @param url Template URL.
