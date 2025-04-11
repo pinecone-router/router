@@ -36,3 +36,12 @@ run dist build
 ```sh
 bun run dist
 ```
+
+Run example:
+
+```
+bun run example
+```
+
+this will run a vite server with the example site, which uses the imports
+the router from `./src` so it updates with changes automatically.
