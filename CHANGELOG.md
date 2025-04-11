@@ -8,7 +8,7 @@ and this project adheres to
 
 ## [Unreleased]
 
-## [7.0.0] - 2025-04-02
+## [7.0.0] - 2025-04-11
 
 This is release contains a major overhaul to the codebase, code structure and
 quality improvements, and better Tyepscript support.
