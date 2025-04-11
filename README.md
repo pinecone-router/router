@@ -53,12 +53,14 @@ A small, easy to use, and feature-packed router for Alpine.js.
 - :smile: Easy and familiar syntax well integrated with Alpine.js.
 - :gear: [Handler functions](#x-handler) allow you to run functions on for each
   route.
-- :beginner:&nbsp;&nbsp;[Inline](#inline-templates) and [external](#x-template) templates to display content.
+- :beginner:&nbsp;&nbsp;[Inline](#inline-templates) and [external](#x-template)
+  templates to display content.
 - :sparkles: 3 Magic helpers to easily access
   router data.
 - &nbsp;<img src="https://skillicons.dev/icons?i=ts" width="14px" />
   &nbsp;Full Typescript support.
-- :link: Automatic [click handling](#bypass-click-handling) and [loading events](#events--loading).
+- :link: Automatic [click handling](#bypass-click-handling) and
+  [loading events](#events--loading).
 - :hash: [Hash routing](#settings) support.
 
 **Demo**: [Pinecone example](https://pinecone-example.vercel.app/),
@@ -77,7 +79,8 @@ This projects follow the [Semantic Versioning](https://semver.org/) guidelines.
 
 ### CDN
 
-Include the following `<script>` tag in the `<head>` of your document, **before Alpine.js**:
+Include the following `<script>` tag in the `<head>` of your document,
+**before Alpine.js**:
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/pinecone-router@7.0.0-beta.6/dist/router.min.js"></script>
@@ -218,7 +221,7 @@ the same way `x-if` does: after the appropriate `template` tags.
 - **`.interpolate`**: Enable named route params in template urls.
 
 ```html
-<!-- you can preload templates without having to wait for the route to be matched-->
+<!-- you can preload templates -->
 <template x-route="notfound" x-template.preload="/404.html"></template>
 
 <!-- you can specify an element to render into -->
@@ -440,8 +443,10 @@ function router() {
 
 - **`.global`**: define global handlers that will be run for every route, it is
   bound to the data of the element it is defined on
-  so it's best to add to the router component element (`<div x-data="router" x-handler.global="[]">`), or any element with a access
-  to the handlers you're using (doesn't have to be on the same element as x-data)
+  so it's best to add to the router component element
+  (`<div x-data="router" x-handler.global="[]">`), or any element with a access
+  to the handlers you're using (doesn't have to be on the same element
+  as x-data)
   - These global handlers always run before route specific handlers.
 
 > [!NOTE]
@@ -554,7 +559,9 @@ export type RoutesMap = Map<string, Route> & {
 ```
 
 > [!NOTE]
-> Read more: [Settings](#settings-object), [NavigationHistory](#navigationhistory-object), [Route](#route-object), [Context](#context-object),
+> Read more: [Settings](#settings-object),
+> [NavigationHistory](#navigationhistory-object), [Route](#route-object),
+> [Context](#context-object),
 > [RouteOptions](#route-object)
 
 ## Context object
@@ -563,7 +570,8 @@ Contains information about the current route. This is available at all times:
 
 - Using the magic helper: `$router.context` in Alpine components
 - From Javascript using `window.PineconeRouter.context`
-- Every [`handler`](#x-handler) method takes the `context` object as the first argument which you should use instead of the above.
+- Every [`handler`](#x-handler) method takes the `context` object as the
+  first argument which you should use instead of the above.
 
 Reference:
 
@@ -583,7 +591,8 @@ Read more: [Route object](#route-object)
 
 ## Settings:
 
-PineconeRouter can be configured using [`PineconeRouter.settings`](#pineconerouter-object).
+PineconeRouter can be configured using
+[`PineconeRouter.settings`](#pineconerouter-object).
 
 In Alpine:
 
@@ -720,7 +729,9 @@ The way it works is by recording all paths visited, excluding:
   handler that redirects you to` /profile/new`, it will not add `/profile/old`
   to the history, only /profile/new.
 
-If you click a link after using `back()`, meaning the `history.index` is not `history.entries.length-1`, it will remove all elements from `entries` starting
+If you click a link after using `back()`, meaning the `history.index`
+is not `history.entries.length-1`, it will remove all elements
+from `entries` starting
 from the `history.index` to the end, then appends the current path.
 
 ### NavigationHistory object
@@ -795,7 +806,9 @@ You can create a new `template` element using `x-route="notfound"`
 with`x-template` and or `x-handler` to add templates and replace the defaul
 handler.
 
-You can also update the `notfound` route [programmatically](#adding-a-template), using [`PineconeRouter.add`](#pineconerouter-object), to which `notfound` is the only expection that wont throw an error due to an exisitng route.
+You can also update the `notfound` route [programmatically](#adding-a-template),
+using [`PineconeRouter.add`](#pineconerouter-object), to which `notfound` is
+the only expection that wont throw an error due to an exisitng route.
 
 ### Named routes
 
@@ -842,7 +855,8 @@ This means if you set the `basePath` to `/parent`, you can now just write:
 
 ### Bypass click handling
 
-By default Pinecone Router intercept all clicks on anchor elements with [valid attribues](./src/links.ts).
+By default Pinecone Router intercept all clicks on anchor elements with
+[valid attribues](./src/links.ts).
 
 Adding a `native` / `data-native` attribute to a link will prevent Pinecone
 Router from handling it:
@@ -936,7 +950,8 @@ You must add a local targetID in options or set a global one in
 
 > [!NOTE]
 > A targetID is required, whether globally through settings or on a
-> per rotue basis when creating a route using `add('/path', {templates: [...], targetID: 'app'})` > **Removing a route**:
+> per rotue basis when creating a route using
+> `add('/path', {templates: [...], targetID: 'app'})` > **Removing a route**:
 
 #### Removing a route
 
@@ -974,7 +989,8 @@ Click handling intially method from
 [@KevinBatdorf](https://twitter.com/KevinBatdorf) for many ideas and early
 feedback!
 
-[Let’s code a client side router for your frameworkless SPA](https://medium.com/swlh/lets-code-a-client-side-router-for-your-no-framework-spa-19da93105e10) teaching client-side routing basic concepts.
+[Let’s code a client side router for your frameworkless SPA](https://medium.com/swlh/lets-code-a-client-side-router-for-your-no-framework-spa-19da93105e10)
+teaching client-side routing basic concepts.
 
 [@shaun/alpinejs-router](https://github.com/shaunlee/alpinejs-router/) for
 being a reference of how things can be done differently.
