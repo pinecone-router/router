@@ -63,7 +63,7 @@ A small, easy to use, and feature-packed router for Alpine.js.
   [loading events](#events--loading).
 - :hash: [Hash routing](#settings) support.
 
-**Demo**: [Pinecone example](https://pinecone-example.vercel.app/),
+**Demo**: [Pinecone example](https://pinecone-router.pages.dev/),
 [(source code)](./example/).
 
 ## Installation
@@ -110,7 +110,7 @@ Alpine.start()
 
 ## Usage
 
-### [Demo & Usage Example](https://pinecone-example.vercel.app/)
+### [Demo & Usage Example](https://pinecone-router.pages.dev/)
 
 ## `x-route`
 
