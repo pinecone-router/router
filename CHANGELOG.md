@@ -298,7 +298,7 @@ And hopefully even make it less intimidating for contributors to do so as well!
 
 ### Added
 
-- Added `PineconeRouter.settins.interceptLinks` option, true by default but
+- Added `PineconeRouter.settings.interceptLinks` option, true by default but
   can be set to false to disable automatic handling of links by the router.
 - Added `x-link` attribute to handle links when `interceptLinks` setting is
   set to false.
@@ -520,7 +520,7 @@ It's mostly backward compatible but need a few tweaks:
 
 ### Changed
 
-- Switched to typescript.
+- Switched to Typescript.
 - Better route matching taken from preact-router.
 - Multiple handlers syntax, no longer comma separated but array instead.
 
