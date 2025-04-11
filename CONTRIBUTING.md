@@ -28,7 +28,7 @@ bun i
 run test in watch mode:
 
 ```sh
-but test --watch
+bun test --watch
 ```
 
 run dist build
