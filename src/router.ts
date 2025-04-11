@@ -174,7 +174,7 @@ export const createPineconeRouter = (
 				// only call History.pushState() to update the URL
 				this.history.index = index
 				this.history.pushState(path, settings.hash)
-			} else if (path != this.context.path) {
+			} else if (firstLoad || path != this.context.path) {
 				// if this was non-history navigation, and  path has changed,
 				//  push the path to the NavigationHistory
 				this.history.push(path, !fromPopState && !firstLoad, settings.hash)
