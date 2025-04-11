@@ -63,7 +63,8 @@ export interface PineconeRouter {
 
 export const createPineconeRouter = (
 	name: string,
-	version: string
+	version: string,
+	initial_path: string
 ): PineconeRouter => {
 	const notfound = createRoute('notfound', {
 		handlers: [
@@ -74,7 +75,7 @@ export const createPineconeRouter = (
 
 	const routes = new Map([['notfound', notfound]]) as RoutesMap
 
-	const context = buildContext('', {})
+	const context = buildContext(initial_path, {})
 	let controller: AbortController | null = null
 	let loading = false
 

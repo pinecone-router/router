@@ -50,6 +50,7 @@
 						<a href="/prog-template">Adding templates using js</a>
 						<a href="/interpolated-templates">Interpolated templates</a>
 						<a href="/param-changes/foo">Handling Param Changes</a>
+						<a href="/passing-data">Passing Data</a>
 					</div>
 				</template>
 
@@ -64,6 +65,12 @@
 					x-route="/hello/:name?"
 					x-handler="hello"
 					x-template.preload="/views/hello.html"
+				></template>
+
+				<template
+					x-route="/passing-data"
+					x-template.preload="/views/passing-data.html"
+					x-data="{test: 'It works!'}"
 				></template>
 
 				<!-- x-handler example -->
@@ -203,13 +210,15 @@
 
 			document.addEventListener('alpine:init', () => {
 				window.PineconeRouter.settings({
-					preload: true,
+					preload: false,
 					targetID: 'app',
 					// hash: true,
 				});
 				window.PineconeRouter.add('/prog-template', {
 					templates: ['/views/body.html', '/views/footer.html'],
 				});
+				// #67
+				console.log('path:', window.PineconeRouter.context.path);
 			});
 
 			// add loading bar

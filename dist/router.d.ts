@@ -39,5 +39,5 @@ export interface PineconeRouter {
      */
     navigate: (path: string, fromPopState?: boolean, firstLoad?: boolean, index?: number) => Promise<void>;
 }
-export declare const createPineconeRouter: (name: string, version: string) => PineconeRouter;
+export declare const createPineconeRouter: (name: string, version: string, initial_path: string) => PineconeRouter;
 //# sourceMappingURL=router.d.ts.map

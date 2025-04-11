@@ -11,7 +11,13 @@ import { settings } from './settings'
 import { name, version } from '../package.json'
 
 export const PineconeRouterPlugin: PluginCallback = function (Alpine: Alpine) {
-	const Router = Alpine.reactive(createPineconeRouter(name, version))
+	const initial_path = settings.hash
+		? location.hash.substring(1)
+		: location.pathname
+
+	const Router = Alpine.reactive(
+		createPineconeRouter(name, version, initial_path)
+	)
 
 	window.PineconeRouter = Router
 
@@ -19,11 +25,7 @@ export const PineconeRouterPlugin: PluginCallback = function (Alpine: Alpine) {
 	document.addEventListener('alpine:initialized', () => {
 		// virtually navigate to the path on the first page load
 		// this will register the path in history and sets the path variable
-		if (settings.hash == false) {
-			Router.navigate(location.pathname + location.search, false, true)
-		} else {
-			Router.navigate(location.hash.substring(1), false, true)
-		}
+		Router.navigate(initial_path, false, true)
 	})
 
 	// handle navigation events not emitted by links, for example, back button.
