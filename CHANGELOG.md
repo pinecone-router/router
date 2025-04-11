@@ -151,7 +151,8 @@ And hopefully even make it less intimidating for contributors to do so as well!
 - Fixed browser back and forth navigation not always always work
   ([#16](https://github.com/pinecone-router/router/issues/16))
 - Fixed query being used as part of the path on initial load.
-- Fixed Context.path being empty on init (fixes [#67](https://github.com/pinecone-router/router/issues/67)).
+- Fixed Context.path being empty on init
+  (fixes [#67](https://github.com/pinecone-router/router/issues/67)).
 
 ## [6.2.5] - 2025-04-11
 
