@@ -153,6 +153,13 @@ And hopefully even make it less intimidating for contributors to do so as well!
 - Fixed query being used as part of the path on initial load.
 - Fixed Context.path being empty on init (fixes [#67](https://github.com/pinecone-router/router/issues/67)).
 
+## [6.2.5] - 2025-04-11
+
+### Fixed
+
+- Fixed query being read as part of the path on first page load.
+- Fixed empty path on init (fix [#67](https://github.com/pinecone-router/router/issues/67))
+
 ## [6.2.4] - 2025-03-20
 
 ### Fixed
@@ -662,4 +669,5 @@ It's mostly backward compatible but need a few tweaks:
 [6.2.2]: https://github.com/pinecone-router/router/compare/6.2.1..6.2.2
 [6.2.3]: https://github.com/pinecone-router/router/compare/6.2.2..6.2.3
 [6.2.4]: https://github.com/pinecone-router/router/compare/6.2.3..6.2.4
-[7.0.0]: https://github.com/pinecone-router/router/compare/6.2.4..7.0.0
+[6.2.5]: https://github.com/pinecone-router/router/compare/6.2.4..6.2.5
+[7.0.0]: https://github.com/pinecone-router/router/compare/6.2.5..7.0.0
