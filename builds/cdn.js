@@ -1,5 +1,5 @@
-import magic from '../src/index.js'
+import plugin from '../src/index.js'
 
 document.addEventListener('alpine:init', () => {
-  window.Alpine.plugin(magic)
+	window.Alpine.plugin(plugin)
 })

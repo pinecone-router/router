@@ -1,30 +1,48 @@
 {
-  // Change this to match your project
-  "include": [
-    "src/**/*"
+  "files": [
+    "src/types.ts"
   ],
   "compilerOptions": {
-    // Tells TypeScript to read JS files, as
-    // normally they are ignored as source files
-    "allowJs": true,
     // Generate d.ts files
     "declaration": true,
+    // go to js file when using IDE functions like
+    // "Go to Definition" in VSCode
+    "declarationMap": true,
     // This compiler run should
     // only output d.ts files
     "emitDeclarationOnly": true,
     // Types should go into this directory.
-    // Removing this would place the .d.ts files
+    // Removing this would place the .d.ts filesdeclarationMap
     // next to the .js files
     "outDir": "dist",
-    "skipLibCheck": true,
-    // go to js file when using IDE functions like
-    // "Go to Definition" in VSCode
-    "declarationMap": true,
+    "rootDir": "src",
+    "noImplicitAny": true,
+    // Enable latest features
     "lib": [
-      "DOM",
-      "ES6",
-      "ES5",
-      "es2018.promise"
-    ]
-  }
+      "ESNext",
+      "dom"
+    ],
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleDetection": "force",
+    "jsx": "react-jsx",
+    "allowJs": true,
+    // Bundler mode
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    // "verbatimModuleSyntax": true,
+    // Best practices
+    "strict": true,
+    "skipLibCheck": true,
+    "noFallthroughCasesInSwitch": true,
+    // Some stricter flags
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "allowSyntheticDefaultImports": true,
+    "noImplicitThis": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "forceConsistentCasingInFileNames": true
+  },
 }

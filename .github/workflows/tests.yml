@@ -5,12 +5,11 @@ on:
 
 jobs:
   tests:
-
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [15.x]
+        node-version: [23.x]
 
     steps:
       - name: Checkout repository
@@ -22,10 +21,10 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: bun i
 
       - name: Build files
-        run: yarn build
+        run: bun run dist
 
       - name: Run test suite
-        run: yarn test
+        run: bun test

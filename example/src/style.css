@@ -1,0 +1,63 @@
+@import 'tailwindcss';
+
+#main {
+	@apply text-center p-6 max-w-sm mx-auto bg-secondary-1 rounded-3xl shadow-lg;
+}
+
+.links {
+	@apply flex flex-col space-y-3 p-3 [&>*]:bg-secondary-2 [&>*]:p-2 font-bold text-brand [&>*]:rounded-3xl;
+}
+
+body {
+	@apply bg-brand p-3;
+}
+
+#title {
+	@apply font-bold text-lg mb-6;
+}
+
+.back-forward-button {
+	@apply text-gray-400 font-bold;
+}
+
+.back-forward-button:not([disabled]) {
+	@apply text-brand;
+}
+
+.logo-link {
+	@apply inline;
+}
+
+.logo {
+	@apply mx-auto w-44;
+}
+
+.doc-link {
+	@apply rounded-3xl bg-brand text-white p-2 mt-3 text-sm tracking-tighter;
+}
+
+.source-link {
+	@apply flex rounded-3xl items-center bg-brand text-white p-2 mt-3 text-sm tracking-tighter;
+}
+
+.footer-container {
+	@apply flex flex-col max-w-full;
+}
+
+.footer-row {
+	@apply flex gap-3 justify-center;
+}
+
+.footer-row-spaced {
+	@apply flex space-x-3 justify-center;
+}
+
+.input {
+	@apply p-3 rounded-3xl font-bold text-center border-2 border-brand;
+}
+
+@theme {
+	--color-brand: #0b2822;
+	--color-secondary-1: #d7f4ee;
+	--color-secondary-2: #5fd3bc;
+}

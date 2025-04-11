@@ -1,17 +1,11 @@
+export declare const modifierValue: (modifiers: string[], key: string, fallback?: string) => string | undefined;
 /**
- * check if a path match with this route
- * taken from preact-router
- * https://github.com/preactjs/preact-router
- * @param path {string}
- * @param routePath {string}
- * @returns {false|object}
+ *
+ * @param path
+ * @param basePath
+ * @returns
  */
-export declare function match(url: string, routePath: string): false | object;
-/**
- * Call a function on all middlewares loaded, if any.
- * @param {string} func middleware function to call.
- * @param {any} args arguments to pass to the function.
- * @returns {boolean} false if the middleware function return false, i.e. it want to stop execution of the function and return.
- */
-export declare function middleware(func: string, ...args: any): string | undefined;
+export declare const addBasePath: (path: string, basePath: string) => string;
+export declare const isArrayExpression: (expression: string) => boolean;
+export declare const getTargetELement: (targetId?: string, globalTargetId?: string) => HTMLElement | undefined;
 //# sourceMappingURL=utils.d.ts.map

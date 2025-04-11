@@ -1,0 +1,50 @@
+{
+  "search.exclude": {
+    "**/dist/**/*": true,
+    "**/example/router.**.*": true,
+    "**/example/public/views/**.*": false,
+    "**/builds/**/*": true,
+    "**/node_modules/**/*": true,
+    "**/.github": true,
+  },
+  // "restoreTerminals.terminals": [
+  //   {
+  //     "splitTerminals": [
+  //       {
+  //         "name": "dev builds",
+  //         "commands": [
+  //           "bun dev",
+  //         ]
+  //       },
+  //       {
+  //         "name": "example vite dev",
+  //         "commands": [
+  //           "cd example",
+  //           "bun dev"
+  //         ]
+  //       },
+  //       {
+  //         "name": "example tailwind",
+  //         "commands": [
+  //           "cd example",
+  //           "bun tw"
+  //         ]
+  //       }
+  //     ]
+  //   },
+  //   {
+  //     "splitTerminals": [
+  //       {
+  //         "name": "test",
+  //         "commands": [
+  //           "bun test --watch",
+  //         ],
+  //       },
+  //       {
+  //         "name": "shell",
+  //         "commands": []
+  //       }
+  //     ]
+  //   }
+  // ]
+}

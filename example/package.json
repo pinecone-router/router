@@ -1,0 +1,23 @@
+{
+	"name": "pinecone-router-example",
+	"version": "0.0.0",
+	"type": "module",
+	"scripts": {
+		"dev": "vite",
+		"tw": "bun x @tailwindcss/cli -i ./src/style.css -o ./src/output.css --watch",
+		"build": "vite build",
+		"serve": "vite preview"
+	},
+	"devDependencies": {
+		"@tailwindcss/cli": "^4.0.15",
+		"@types/nprogress": "^0.2.3",
+		"vite": "^6.2.3"
+	},
+	"dependencies": {
+		"@alpinejs/persist": "^3.14.9",
+		"@types/alpinejs": "^3.13.11",
+		"@types/alpinejs__persist": "^3.13.4",
+		"alpinejs": "^3.14.9",
+		"nprogress": "^0.2.0"
+	}
+}
