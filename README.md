@@ -293,7 +293,7 @@ matched.
 ```
 
 > [!IMPORTANT]
-> Templates does _not_ re-render when the path changes on the same route.
+> Templates does _not_ re-render when the path/params changes on the same route.
 > `init()` will run only once until the user visits another route then comes
 > back.
 
