@@ -23,7 +23,7 @@ but only now did I really give it the thought to make such a decision.
 I continue to support Pinecone Router within my capacities, and this refactor
 will let me have easier time finding the issues as they come up, and implement
 more features if needed.
-And hopefully even make it less intimidating for contributors to do so aswell!
+And hopefully even make it less intimidating for contributors to do so as well!
 
 ### Added
 
