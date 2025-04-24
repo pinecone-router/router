@@ -2,7 +2,6 @@ import { type ElementWithXAttributes, type Alpine } from 'alpinejs'
 
 import { type Context } from './context'
 import { addBasePath } from './utils'
-import { settings } from './settings'
 
 const inMakeProgress = new Set()
 const cache = new Map<string, string>()
@@ -64,7 +63,6 @@ export const make = (
 		) as ElementWithXAttributes<HTMLElement>
 
 		Alpine.addScopeToNode(clones[i], {}, template)
-		// Alpine.initTree(clones[i])
 	}
 
 	Alpine.mutateDom(() => {
@@ -79,7 +77,6 @@ export const make = (
 	template._x_PineconeRouter_template = clones
 	// keep track of the currently rendered template urls
 	template._x_PineconeRouter_templateUrls = urls
-
 	template._x_PineconeRouter_undoTemplate = () => {
 		// remove clone elements safely
 		Alpine.mutateDom(() => {
@@ -88,9 +85,7 @@ export const make = (
 				clone.remove()
 			})
 		})
-
 		delete template._x_PineconeRouter_template
-		delete template._x_PineconeRouter_templateUrls
 	}
 
 	Alpine.nextTick(() => inMakeProgress.delete(unique_id))
@@ -115,6 +110,7 @@ export const show = async (
 	// if the template is rendered but the template url parameters have changed
 	// hide the content and remove the content inside the template
 	// this will trigger the template to be loaded again with new urls bellow.
+
 	if (
 		template._x_PineconeRouter_templateUrls != undefined &&
 		template._x_PineconeRouter_templateUrls != urls
@@ -171,7 +167,7 @@ export const loadUrl = async (
 	url: string,
 	priority: RequestPriority = 'high'
 ): Promise<string> => {
-	url = addBasePath(url, settings.basePath)
+	url = addBasePath(url)
 	// Return from cache if available
 	if (cache.has(url)) return cache.get(url)!
 

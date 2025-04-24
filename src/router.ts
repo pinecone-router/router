@@ -103,8 +103,10 @@ export const createPineconeRouter = (
 		add: function (path, options) {
 			// check if the route was registered already
 			// but allow updating the notfound route
+			// this will make sure basePath is not added to routes when
+			// using hash routing as well.
 			if (path != 'notfound') {
-				path = addBasePath(path, settings.basePath)
+				if (!settings.hash) path = addBasePath(path)
 				if (this.routes.has(path)) {
 					throw new Error(ROUTE_EXISTS(path))
 				}
@@ -127,12 +129,14 @@ export const createPineconeRouter = (
 			if (controller) {
 				controller.abort()
 			}
+
 			// create a new abort controller for this navigation
 			controller = new AbortController()
 
 			this.loading = true
 
-			path = addBasePath(path || '/', settings.basePath)
+			path = path || '/'
+			if (!settings.hash) path = addBasePath(path)
 
 			let route = this.routes.get('notfound')
 			let params = {}
@@ -173,11 +177,11 @@ export const createPineconeRouter = (
 				// if called from history.to(), do not push to the NavigationHistory.
 				// only call History.pushState() to update the URL
 				this.history.index = index
-				this.history.pushState(path, settings.hash)
+				this.history.pushState(path)
 			} else if (firstLoad || path != this.context.path) {
 				// if this was non-history navigation, and  path has changed,
 				//  push the path to the NavigationHistory
-				this.history.push(path, !fromPopState && !firstLoad, settings.hash)
+				this.history.push(path, !fromPopState && !firstLoad)
 			}
 
 			// update the global context, trigger Alpine effect, and render templates.

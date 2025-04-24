@@ -9,7 +9,6 @@ export interface Settings {
 
 	/**
 	 * The base path of the site, for example /blog.
-	 * No effect with hash routing.
 	 * @default ``
 	 */
 	basePath: string

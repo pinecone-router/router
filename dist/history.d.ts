@@ -41,18 +41,16 @@ export interface NavigationHistory {
      * @param {boolean} pushState Whether or not to call History.pushState.
      *        Will be set to false if it's the first load or if it's called from
      *        a popstate event.
-     * @param {boolean} [hash] Whether or not we're using hash routing
      * @returns void
      */
-    push: (path: string, pushState: boolean, hash?: boolean) => void;
+    push: (path: string, pushState: boolean) => void;
     /**
-     * Call History.pushState
+     * Call History.pushState or History.replaceState.
      * @internal
      * @param path The path to add to the history
-     * @param hash Whether or not we're using hash routing
      * @returns void
      */
-    pushState: (path: string, hash?: boolean) => void;
+    pushState: (path: string) => void;
     /**
      * The router instance
      * @internal

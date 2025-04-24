@@ -1,4 +1,5 @@
 import { type PineconeRouter } from './router'
+import { settings } from './settings'
 
 export interface NavigationHistory {
 	/**
@@ -49,19 +50,17 @@ export interface NavigationHistory {
 	 * @param {boolean} pushState Whether or not to call History.pushState.
 	 *        Will be set to false if it's the first load or if it's called from
 	 *        a popstate event.
-	 * @param {boolean} [hash] Whether or not we're using hash routing
 	 * @returns void
 	 */
-	push: (path: string, pushState: boolean, hash?: boolean) => void
+	push: (path: string, pushState: boolean) => void
 
 	/**
-	 * Call History.pushState
+	 * Call History.pushState or History.replaceState.
 	 * @internal
 	 * @param path The path to add to the history
-	 * @param hash Whether or not we're using hash routing
 	 * @returns void
 	 */
-	pushState: (path: string, hash?: boolean) => void
+	pushState: (path: string) => void
 
 	/**
 	 * The router instance
@@ -103,7 +102,7 @@ export const createNavigationHistory = (): NavigationHistory => {
 			}
 		},
 
-		push: function (path: string, pushState: boolean, hash?: boolean): void {
+		push: function (path: string, pushState: boolean): void {
 			// only update history if navigating to a different path
 			if (this.index < this.entries.length - 1) {
 				// trim navigation history if we're not at the end
@@ -113,13 +112,14 @@ export const createNavigationHistory = (): NavigationHistory => {
 			this.entries.push(path)
 			this.index = this.entries.length - 1
 
-			if (pushState) this.pushState(path, hash)
+			if (pushState) this.pushState(path)
 		},
 
-		pushState: function (path: string, hash?: boolean): void {
-			// add hash to path if using hash routing
-			const fullPath = hash && !path.startsWith('#') ? '#' + path : path
-			history.pushState({ path: fullPath }, '', fullPath)
+		pushState: function (path: string): void {
+			const fullPath =
+				settings.hash && !path.startsWith('#') ? '#' + path : path
+			const state = { path: fullPath }
+			history.pushState(state, '', fullPath)
 		},
 
 		setRouter(router: PineconeRouter): void {

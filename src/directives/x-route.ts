@@ -12,7 +12,7 @@ export interface RouteTemplate
 
 const RouteDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 	Alpine.directive('route', (el, { expression, value }, { cleanup }) => {
-		let path = addBasePath(expression, settings.basePath)
+		let path = settings.hash ? expression : addBasePath(expression)
 
 		assertTemplate(el)
 

@@ -1,4 +1,5 @@
 import { TARGET_ID_NOT_FOUND } from './errors'
+import { settings } from './settings'
 
 export const modifierValue = (
 	modifiers: string[],
@@ -23,14 +24,12 @@ export const modifierValue = (
 /**
  *
  * @param path
- * @param basePath
- * @returns
  */
-export const addBasePath = (path: string, basePath: string) => {
+export const addBasePath = (path: string): string => {
 	if (path == 'notfound') return path
 
-	if (!path.startsWith(basePath)) {
-		path = basePath + path
+	if (!path.startsWith(settings.basePath)) {
+		path = settings.basePath + path
 	}
 
 	return path

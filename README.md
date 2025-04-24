@@ -7,10 +7,10 @@
 
 [![npm](https://img.shields.io/npm/dm/pinecone-router?label=npm&logo=npm&labelColor=%23d7f4ee&color=%230b2822&style=flat&logoColor=%230b2822)](https://npmjs.com/package/pinecone-router)
 ![jsDelivr hits (npm)](https://img.shields.io/jsdelivr/npm/hm/pinecone-router?style=flat&logo=jsdelivr&logoColor=%230b2822&label=jsdelivr&labelColor=d7f4ee&color=%230b2822)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router@7.0.2?labelColor=%23d7f4ee&style=flat&color=%230b2822&&logo=bun&logoColor=%230b2822)](https://bundlephobia.com/result?p=pinecone-router@7.0.2)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router@7.0.3?labelColor=%23d7f4ee&style=flat&color=%230b2822&&logo=bun&logoColor=%230b2822)](https://bundlephobia.com/result?p=pinecone-router@7.0.3)
 <br>
 [![Changelog](https://img.shields.io/badge/changelog-0b2822?style=flat)](./CHANGELOG.md)
-[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?labelColor=%23d7f4ee&color=%230b2822&label=version&style=flat&sort=semver&logo=semver&logoColor=%230b2822)](https://github.com/pinecone-router/router/tree/7.0.2)
+[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?labelColor=%23d7f4ee&color=%230b2822&label=version&style=flat&sort=semver&logo=semver&logoColor=%230b2822)](https://github.com/pinecone-router/router/tree/7.0.3)
 [![Sponsor](https://img.shields.io/badge/sponsor-0b2822?logo=githubsponsors&style=flat)](https://ko-fi.com/rehhouari)
 
 </div>
@@ -83,7 +83,7 @@ Include the following `<script>` tag in the `<head>` of your document,
 **before Alpine.js**:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/pinecone-router@7.0.2/dist/router.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pinecone-router@7.0.3/dist/router.min.js"></script>
 ```
 
 ### NPM
@@ -102,7 +102,7 @@ Alpine.start()
 ### Browser Module
 
 ```javascript
-import PineconeRouter from 'https://cdn.jsdelivr.net/npm/pinecone-router@7.0.2/dist/router.esm.js'
+import PineconeRouter from 'https://cdn.jsdelivr.net/npm/pinecone-router@7.0.3/dist/router.esm.js'
 import Alpine from 'https://cdn.jsdelivr.net/npm/alpinejs@3.14.9/dist/module.esm.js'
 Alpine.plugin(PineconeRouter)
 Alpine.start()
@@ -627,7 +627,6 @@ export interface Settings {
 
 	/**
 	 * The base path of the site, for example /blog.
-	 * No effect when using hash routing.
 	 * @default `/`
 	 */
 	basePath: string
@@ -852,6 +851,11 @@ This means if you set the `basePath` to `/parent`, you can now just write:
 - `x-template="/views/home.html"` rather than
   `x-template="/parent/views/home.html"`.
 - `$router.navigate('/about')` rather than `$router.navigate('/parent/about')`
+
+> [!NOTE]
+> When using hash routing, basePath will only be added to templates urls.
+> Which makes sense because hash routing don't care about the pathname
+> only the hash.
 
 ### Bypass click handling
 

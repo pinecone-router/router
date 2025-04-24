@@ -15,8 +15,8 @@ declare global {
 declare module 'alpinejs' {
 	interface XAttributes {
 		_x_PineconeRouter_undoTemplate: () => void
-		_x_PineconeRouter_template: HTMLElement[]
-		_x_PineconeRouter_templateUrls: string[]
+		_x_PineconeRouter_template?: HTMLElement[]
+		_x_PineconeRouter_templateUrls?: string[]
 		_x_PineconeRouter_route: string
 	}
 

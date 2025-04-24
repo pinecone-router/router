@@ -8,6 +8,19 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [7.0.3] - 2025-04-24
+
+### Fixed
+
+- Fixed interpolating templates not clearing when navigating to a different
+  route
+- Fixed hash routing not working with github pages
+
+### Added
+
+- Settings.basePath now works with hash routing, by adding the basePath to
+  template urls automatically.
+
 ## [7.0.2] - 2025-04-11
 
 ### Fixed
@@ -49,7 +62,7 @@ For a more concise upgrade guide, [look here](./upgrade_to_v7.md)
 - Added support for multiple scripts inside the template.
 - Added support for params in template urls (interpolation) for routes added
   [programmatically](./README.md#adding--removing-routes-with-javascript)
-- Added ability to name routes with the `x-route:name="..."` syntax.
+- Added ability to name routes with the `x-route:name="...."` syntax.
   See: [Named Routes](./README.md#named-routes)
 - Added [`Settings.preload`](./README.md#settings) to enable preloading all
   templates.
@@ -173,7 +186,8 @@ For a more concise upgrade guide, [look here](./upgrade_to_v7.md)
 ### Fixed
 
 - Fixed query being read as part of the path on first page load.
-- Fixed empty path on init (fix [#67](https://github.com/pinecone-router/router/issues/67))
+- Fixed empty path on init
+  (fix [#67](https://github.com/pinecone-router/router/issues/67))
 
 ## [6.2.4] - 2025-03-20
 
@@ -386,11 +400,13 @@ For a more concise upgrade guide, [look here](./upgrade_to_v7.md)
 ### Fixed
 
 - Fixed template not rendering when preloading another one.
-- x-template.target no longer need the target to be cleared manually if the other routes do not use it.
+- x-template.target no longer need the target to be cleared manually if the
+  other routes do not use it.
 
 ### Changed
 
-- Changed template rendering method, borrowed from [shaunlee/alpinejs-router](https://github.com/shaunlee/alpinejs-router).
+- Changed template rendering method, borrowed from
+  [shaunlee/alpinejs-router](https://github.com/shaunlee/alpinejs-router).
 - Changed link handling method, use preact-router's method instead of page.js
 - There should be no difference for you as it's an internal change.
 
@@ -398,7 +414,8 @@ For a more concise upgrade guide, [look here](./upgrade_to_v7.md)
 
 ### Fixed
 
-- Fixed handlers not having access to `this` context when the handler is in an Alpine component.
+- Fixed handlers not having access to `this` context when the handler is in
+  an Alpine component.
 
 ## [4.0.2] - 2023-12-23
 
@@ -417,16 +434,24 @@ For a more concise upgrade guide, [look here](./upgrade_to_v7.md)
 ### Added
 
 - Added `x-template` directive replacing the views middleware.
-- Added events: `pinecone-start` & `pinecone-end` that dispatch to `document` on template loading, and `fetch-error` on failure.
-- Added `cleanup()` for when the route element is removed from the page, it now removes the route as well.
-- Added `cleanup()` for `x-handler` and `x-template`, now the handlers and tempate are deleted when the attributes are removed.
-- Added `PineconeRouter.settings.templateTargetId` when set all external templates will use render to this element
+- Added events: `pinecone-start` & `pinecone-end` that dispatch to `document`
+  on template loading, and `fetch-error` on failure.
+- Added `cleanup()` for when the route element is removed from the page, it
+  now removes the route as well.
+- Added `cleanup()` for `x-handler` and `x-template`, now the handlers and
+  tempate are deleted when the attributes are removed.
+- Added `PineconeRouter.settings.templateTargetId` when set all external
+  templates will use render to this element
 
 ### Changed
 
 - `PineconeRouter.currentContext` is now `PineconeRouter.context`
-- Handlers are now **awaited** if they're async, so operations such as fetching will prevent rendering templates and execution of subsequent handlers until current handler is done.
-- If a link is a clicked to navigate to a new page while there are handlers active, they will be automatically canceled, the current one will finish running but any ones after will not.
+- Handlers are now **awaited** if they're async, so operations such as fetching
+  will prevent rendering templates and execution of subsequent handlers until
+  current handler is done.
+- If a link is a clicked to navigate to a new page while there are handlers
+  active, they will be automatically canceled, the current one will finish
+  running but any ones after will not.
 
 ## [3.1.2] - 2023-11-26
 
@@ -444,7 +469,8 @@ For a more concise upgrade guide, [look here](./upgrade_to_v7.md)
 
 ### Fixed
 
-- hash routing: fix automatically adding path to hash ([discussion#18](18#discussioncomment-5722802))
+- hash routing: fix automatically adding path to hash
+  ([discussion#18](18#discussioncomment-5722802))
 
 ## [3.0.1] - 2023-04-06
 
@@ -456,7 +482,8 @@ For a more concise upgrade guide, [look here](./upgrade_to_v7.md)
 
 ### Removed
 
-- Removed `viewCache` property, since I removed caching functionality in Views Middleware v3.0.0
+- Removed `viewCache` property, since I removed caching functionality in
+  Views Middleware v3.0.0
 
 ## [2.1.3] - 2022-12-04
 
@@ -496,7 +523,8 @@ It's mostly backward compatible but need a few tweaks:
 ### Fix
 
 - Fix Settings.middlewares type
-- Change `PineconeRouter.name` from `Pinecone Router` to `pinecone-router`. (Non-breaking).
+- Change `PineconeRouter.name` from `Pinecone Router` to `pinecone-router`.
+  (Non-breaking).
 
 ## [1.0.2] - 2021-05-31
 
@@ -541,8 +569,10 @@ It's mostly backward compatible but need a few tweaks:
 
 ### Removed
 
-- Remove all events since loading ones cant be accurate and init one is useless until someone ask for it.
-- Remove option to turn off intercepting links since it don't work. may be back with javascript config.
+- Remove all events since loading ones cant be accurate and init one is useless
+  until someone ask for it.
+- Remove option to turn off intercepting links since it don't work. may be back
+  with javascript config.
 - Attribute settings like `x-hash`, `x-base`, `x-slash`.
 
 ## [0.1.1] - 2021-05-02
@@ -621,7 +651,8 @@ It's mostly backward compatible but need a few tweaks:
 
 ### Changed
 
-- Handle routes before rendering pages or views, to allow them being used for validation etc.
+- Handle routes before rendering pages or views, to allow them being used for
+  validation etc.
 
 ## [0.0.3] - 2021-04-23
 
@@ -633,58 +664,59 @@ It's mostly backward compatible but need a few tweaks:
 [0.0.3]: https://github.com/pinecone-router/router/compare/0.0.2...0.0.3
 [0.0.4]: https://github.com/pinecone-router/router/compare/0.0.3...0.0.4
 [0.0.5]: https://github.com/pinecone-router/router/compare/0.0.4...0.0.5
-[0.0.6]: https://github.com/pinecone-router/router/compare/0.0.5..0.0.6
-[0.0.7]: https://github.com/pinecone-router/router/compare/0.0.6..0.0.7
-[0.0.8]: https://github.com/pinecone-router/router/compare/0.0.7..0.0.8
-[0.0.9]: https://github.com/pinecone-router/router/compare/0.0.8..0.0.9
-[0.1.0]: https://github.com/pinecone-router/router/compare/0.0.9..0.1.0
-[0.1.1]: https://github.com/pinecone-router/router/compare/0.1.0..0.1.1
-[0.1.2]: https://github.com/pinecone-router/router/compare/0.1.1..0.1.2
-[0.3.0]: https://github.com/pinecone-router/router/compare/0.1.2..0.3.0
-[0.3.1]: https://github.com/pinecone-router/router/compare/0.3.0..0.3.1
-[1.0.0]: https://github.com/pinecone-router/router/compare/0.3.1..1.0.0
-[1.0.1]: https://github.com/pinecone-router/router/compare/1.0.0..1.0.1
-[1.0.2]: https://github.com/pinecone-router/router/compare/1.0.1..1.0.2
-[1.0.3]: https://github.com/pinecone-router/router/compare/1.0.2..1.0.3
-[1.0.3]: https://github.com/pinecone-router/router/compare/1.0.2..1.0.3
-[1.0.4]: https://github.com/pinecone-router/router/compare/1.0.3..1.0.4
-[2.0.0]: https://github.com/pinecone-router/router/compare/1.0.4..2.0.0
-[2.1.2]: https://github.com/pinecone-router/router/compare/2.0.0..2.1.2
-[2.1.3]: https://github.com/pinecone-router/router/compare/2.1.2..2.1.3
-[3.0.0]: https://github.com/pinecone-router/router/compare/2.1.3..3.0.0
-[3.0.1]: https://github.com/pinecone-router/router/compare/3.0.0..3.0.1
-[3.1.0]: https://github.com/pinecone-router/router/compare/3.0.1..3.1.0
-[3.1.1]: https://github.com/pinecone-router/router/compare/3.1.0..3.1.1
-[3.1.2]: https://github.com/pinecone-router/router/compare/3.1.1..3.1.2
-[4.0.0]: https://github.com/pinecone-router/router/compare/3.1.2..4.0.0
-[4.0.1]: https://github.com/pinecone-router/router/compare/4.0.0..4.0.1
-[4.0.2]: https://github.com/pinecone-router/router/compare/4.0.1..4.0.2
-[4.0.3]: https://github.com/pinecone-router/router/compare/4.0.2..4.0.3
-[4.1.0]: https://github.com/pinecone-router/router/compare/4.0.3..4.1.0
-[4.1.1]: https://github.com/pinecone-router/router/compare/4.1.0..4.1.1
-[4.2.0]: https://github.com/pinecone-router/router/compare/4.1.1..4.2.0
-[4.3.0]: https://github.com/pinecone-router/router/compare/4.2.0..4.3.0
-[4.3.1]: https://github.com/pinecone-router/router/compare/4.3.0..4.3.1
-[4.3.1]: https://github.com/pinecone-router/router/compare/4.3.0..4.3.1
-[4.3.2]: https://github.com/pinecone-router/router/compare/4.3.1..4.3.2
-[4.4.0]: https://github.com/pinecone-router/router/compare/4.3.2..4.4.0
-[4.4.1]: https://github.com/pinecone-router/router/compare/4.4.0..4.4.1
-[5.0.0]: https://github.com/pinecone-router/router/compare/4.4.1..5.0.0
-[5.1.0]: https://github.com/pinecone-router/router/compare/5.0.0..5.1.0
-[5.2.0]: https://github.com/pinecone-router/router/compare/5.1.0..5.2.0
-[5.2.1]: https://github.com/pinecone-router/router/compare/5.2.0..5.2.1
-[5.2.2]: https://github.com/pinecone-router/router/compare/5.2.1..5.2.2
-[5.3.0]: https://github.com/pinecone-router/router/compare/5.2.2..5.3.0
-[5.4.0]: https://github.com/pinecone-router/router/compare/5.3.0..5.4.0
-[5.5.0]: https://github.com/pinecone-router/router/compare/5.4.0..5.5.0
-[6.0.0]: https://github.com/pinecone-router/router/compare/5.5.0..6.0.0
-[6.1.0]: https://github.com/pinecone-router/router/compare/6.0.0..6.1.0
-[6.2.0]: https://github.com/pinecone-router/router/compare/6.1.0..6.2.0
-[6.2.1]: https://github.com/pinecone-router/router/compare/6.2.0..6.2.1
-[6.2.2]: https://github.com/pinecone-router/router/compare/6.2.1..6.2.2
-[6.2.3]: https://github.com/pinecone-router/router/compare/6.2.2..6.2.3
-[6.2.4]: https://github.com/pinecone-router/router/compare/6.2.3..6.2.4
-[6.2.5]: https://github.com/pinecone-router/router/compare/6.2.4..6.2.5
-[7.0.0]: https://github.com/pinecone-router/router/compare/6.2.5..7.0.0
-[7.0.1]: https://github.com/pinecone-router/router/compare/7.0.0..7.0.1
+[0.0.6]: https://github.com/pinecone-router/router/compare/0.0.5...0.0.6
+[0.0.7]: https://github.com/pinecone-router/router/compare/0.0.6...0.0.7
+[0.0.8]: https://github.com/pinecone-router/router/compare/0.0.7...0.0.8
+[0.0.9]: https://github.com/pinecone-router/router/compare/0.0.8...0.0.9
+[0.1.0]: https://github.com/pinecone-router/router/compare/0.0.9...0.1.0
+[0.1.1]: https://github.com/pinecone-router/router/compare/0.1.0...0.1.1
+[0.1.2]: https://github.com/pinecone-router/router/compare/0.1.1...0.1.2
+[0.3.0]: https://github.com/pinecone-router/router/compare/0.1.2...0.3.0
+[0.3.1]: https://github.com/pinecone-router/router/compare/0.3.0...0.3.1
+[1.0.0]: https://github.com/pinecone-router/router/compare/0.3.1...1.0.0
+[1.0.1]: https://github.com/pinecone-router/router/compare/1.0.0...1.0.1
+[1.0.2]: https://github.com/pinecone-router/router/compare/1.0.1...1.0.2
+[1.0.3]: https://github.com/pinecone-router/router/compare/1.0.2...1.0.3
+[1.0.3]: https://github.com/pinecone-router/router/compare/1.0.2...1.0.3
+[1.0.4]: https://github.com/pinecone-router/router/compare/1.0.3...1.0.4
+[2.0.0]: https://github.com/pinecone-router/router/compare/1.0.4...2.0.0
+[2.1.2]: https://github.com/pinecone-router/router/compare/2.0.0...2.1.2
+[2.1.3]: https://github.com/pinecone-router/router/compare/2.1.2...2.1.3
+[3.0.0]: https://github.com/pinecone-router/router/compare/2.1.3...3.0.0
+[3.0.1]: https://github.com/pinecone-router/router/compare/3.0.0...3.0.1
+[3.1.0]: https://github.com/pinecone-router/router/compare/3.0.1...3.1.0
+[3.1.1]: https://github.com/pinecone-router/router/compare/3.1.0...3.1.1
+[3.1.2]: https://github.com/pinecone-router/router/compare/3.1.1...3.1.2
+[4.0.0]: https://github.com/pinecone-router/router/compare/3.1.2...4.0.0
+[4.0.1]: https://github.com/pinecone-router/router/compare/4.0.0...4.0.1
+[4.0.2]: https://github.com/pinecone-router/router/compare/4.0.1...4.0.2
+[4.0.3]: https://github.com/pinecone-router/router/compare/4.0.2...4.0.3
+[4.1.0]: https://github.com/pinecone-router/router/compare/4.0.3...4.1.0
+[4.1.1]: https://github.com/pinecone-router/router/compare/4.1.0...4.1.1
+[4.2.0]: https://github.com/pinecone-router/router/compare/4.1.1...4.2.0
+[4.3.0]: https://github.com/pinecone-router/router/compare/4.2.0...4.3.0
+[4.3.1]: https://github.com/pinecone-router/router/compare/4.3.0...4.3.1
+[4.3.1]: https://github.com/pinecone-router/router/compare/4.3.0...4.3.1
+[4.3.2]: https://github.com/pinecone-router/router/compare/4.3.1...4.3.2
+[4.4.0]: https://github.com/pinecone-router/router/compare/4.3.2...4.4.0
+[4.4.1]: https://github.com/pinecone-router/router/compare/4.4.0...4.4.1
+[5.0.0]: https://github.com/pinecone-router/router/compare/4.4.1...5.0.0
+[5.1.0]: https://github.com/pinecone-router/router/compare/5.0.0...5.1.0
+[5.2.0]: https://github.com/pinecone-router/router/compare/5.1.0...5.2.0
+[5.2.1]: https://github.com/pinecone-router/router/compare/5.2.0...5.2.1
+[5.2.2]: https://github.com/pinecone-router/router/compare/5.2.1...5.2.2
+[5.3.0]: https://github.com/pinecone-router/router/compare/5.2.2...5.3.0
+[5.4.0]: https://github.com/pinecone-router/router/compare/5.3.0...5.4.0
+[5.5.0]: https://github.com/pinecone-router/router/compare/5.4.0...5.5.0
+[6.0.0]: https://github.com/pinecone-router/router/compare/5.5.0...6.0.0
+[6.1.0]: https://github.com/pinecone-router/router/compare/6.0.0...6.1.0
+[6.2.0]: https://github.com/pinecone-router/router/compare/6.1.0...6.2.0
+[6.2.1]: https://github.com/pinecone-router/router/compare/6.2.0...6.2.1
+[6.2.2]: https://github.com/pinecone-router/router/compare/6.2.1...6.2.2
+[6.2.3]: https://github.com/pinecone-router/router/compare/6.2.2...6.2.3
+[6.2.4]: https://github.com/pinecone-router/router/compare/6.2.3...6.2.4
+[6.2.5]: https://github.com/pinecone-router/router/compare/6.2.4...6.2.5
+[7.0.0]: https://github.com/pinecone-router/router/compare/6.2.5...7.0.0
+[7.0.1]: https://github.com/pinecone-router/router/compare/7.0.0...7.0.1
 [7.0.2]: https://github.com/pinecone-router/router/compare/7.0.1...7.0.2
+[7.0.2]: https://github.com/pinecone-router/router/compare/7.0.2...7.0.3
