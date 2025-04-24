@@ -30,7 +30,6 @@ export const PineconeRouterPlugin: PluginCallback = function (Alpine: Alpine) {
 
 	// handle navigation events not emitted by links, for example, back button.
 	window.addEventListener('popstate', () => {
-		console.log('test')
 		Router.navigate(
 			settings.hash
 				? window.location.hash.substring(1)
