@@ -1,9 +1,10 @@
 import { describe, expect, test } from 'bun:test'
 import Alpine from 'alpinejs'
+import { version } from '../package.json'
 
 import { createPineconeRouter } from './router'
 
-const router = createPineconeRouter('pinecone-router', '7.0.3')
+const router = createPineconeRouter('pinecone-router', version, '/')
 var output = ''
 
 // setup routes
@@ -100,7 +101,7 @@ describe('Router', () => {
 	})
 })
 test('Settings.basePath', async () => {
-	const router = createPineconeRouter('pinecone-router', '7.0.3')
+	const router = createPineconeRouter('pinecone-router', version, '/')
 	// Test basePath setting
 	router.settings({ basePath: '/test' })
 

@@ -213,6 +213,7 @@
 					preload: false,
 					targetID: 'app',
 					// hash: true,
+					fetchOptions: { headers: { 'X-Pinecone': 'true' } },
 				});
 				window.PineconeRouter.add('/prog-template', {
 					templates: ['/views/body.html', '/views/footer.html'],

@@ -37,6 +37,12 @@ export interface Settings {
 	 * @default false
 	 * */
 	preload: boolean
+
+	/**
+	 * The options object to be passed to fetch requests (second argument)
+	 * excluding `priority` which is set by the router.
+	 */
+	fetchOptions: RequestInit
 }
 
 export let settings: Settings = {
@@ -46,6 +52,7 @@ export let settings: Settings = {
 	handleClicks: true,
 	targetID: undefined,
 	preload: false,
+	fetchOptions: {},
 }
 
 export const updateSettings = (value?: Partial<Settings>): Settings => {

@@ -2,6 +2,7 @@ import { type ElementWithXAttributes, type Alpine } from 'alpinejs'
 
 import { type Context } from './context'
 import { addBasePath } from './utils'
+import { settings } from './settings'
 
 const inMakeProgress = new Set()
 const cache = new Map<string, string>()
@@ -174,7 +175,7 @@ export const loadUrl = async (
 	// Return existing promise if already loading
 	if (loading.has(url)) return loading.get(url)!
 
-	const fetchPromise = fetch(url, { priority })
+	const fetchPromise = fetch(url, { ...settings.fetchOptions, priority })
 		.then((r) => {
 			if (!r.ok) {
 				fetchError(r.statusText, url)
