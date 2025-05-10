@@ -32,7 +32,7 @@ export interface Settings {
      * */
     preload: boolean;
     /**
-     * The options object to be passed to fetch requests
+     * The options object to be passed to fetch requests (second argument)
      * excluding `priority` which is set by the router.
      */
     fetchOptions: RequestInit;
