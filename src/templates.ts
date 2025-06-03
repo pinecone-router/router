@@ -16,7 +16,8 @@ export const fetchError = (error: string, url: string) => {
 }
 
 /**
- * Creates a unique instance of a template with the given expression and target element.
+ * Creates a unique instance of a template with the given expression and target
+ * element.
  * @param Alpine Alpine.js instance
  * @param template The template element to be processed.
  * @param expression The expression on the x-template directive.

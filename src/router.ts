@@ -124,7 +124,7 @@ export const createPineconeRouter = (
 			this.routes.delete(path)
 		},
 
-		navigate: async function (path, fromPopState?, firstLoad?, index?) {
+		navigate: async function (fullpath, fromPopState?, firstLoad?, index?) {
 			// cancel any ongoing handlers
 			if (controller) {
 				controller.abort()
@@ -135,8 +135,7 @@ export const createPineconeRouter = (
 
 			this.loading = true
 
-			path = path || '/'
-			if (!settings.hash) path = addBasePath(path)
+			let path = addBasePath(fullpath.split('?')[0] || '/')
 
 			let route = this.routes.get('notfound')
 			let params = {}
@@ -177,11 +176,11 @@ export const createPineconeRouter = (
 				// if called from history.to(), do not push to the NavigationHistory.
 				// only call History.pushState() to update the URL
 				this.history.index = index
-				this.history.pushState(path)
-			} else if (firstLoad || path != this.context.path) {
+				this.history.pushState(fullpath)
+			} else if (firstLoad || fullpath != this.context.path) {
 				// if this was non-history navigation, and  path has changed,
 				//  push the path to the NavigationHistory
-				this.history.push(path, !fromPopState && !firstLoad)
+				this.history.push(fullpath, !fromPopState && !firstLoad)
 			}
 
 			// update the global context, trigger Alpine effect, and render templates.

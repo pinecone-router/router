@@ -26,7 +26,7 @@ export const modifierValue = (
  * @param path
  */
 export const addBasePath = (path: string): string => {
-	if (path == 'notfound') return path
+	if (path == 'notfound' || settings.hash) return path
 
 	if (!path.startsWith(settings.basePath)) {
 		path = settings.basePath + path

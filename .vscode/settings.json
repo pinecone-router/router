@@ -7,6 +7,8 @@
     "**/node_modules/**/*": true,
     "**/.github": true,
   },
+  "keep-a-changelog.defaultAuthor": "pinecone-router",
+  "keep-a-changelog.defaultRepository": "router",
   // "restoreTerminals.terminals": [
   //   {
   //     "splitTerminals": [

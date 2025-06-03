@@ -8,6 +8,13 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [7.1.1] - 2025-06-03
+
+### Fixed
+
+- Fixed context.path includes query params after navigate() is called
+  [#73](https://github.com/pinecone-router/router/issues/73)
+
 ## [7.1.0] - 2025-05-10
 
 ### Added
@@ -668,7 +675,7 @@ It's mostly backward compatible but need a few tweaks:
 
 - Let go of multi-router support for simpler codebase.
 
-[unreleased]: https://github.com/pinecone-router/router/compare/7.1.0...HEAD
+[unreleased]: https://github.com/pinecone-router/router/compare/7.1.1...HEAD
 [0.0.3]: https://github.com/pinecone-router/router/compare/0.0.2...0.0.3
 [0.0.4]: https://github.com/pinecone-router/router/compare/0.0.3...0.0.4
 [0.0.5]: https://github.com/pinecone-router/router/compare/0.0.4...0.0.5
@@ -729,3 +736,4 @@ It's mostly backward compatible but need a few tweaks:
 [7.0.2]: https://github.com/pinecone-router/router/compare/7.0.1...7.0.2
 [7.0.2]: https://github.com/pinecone-router/router/compare/7.0.2...7.0.3
 [7.1.0]: https://github.com/pinecone-router/router/compare/7.0.3...7.1.0
+[7.1.1]: https://github.com/pinecone-router/router/compare/7.1.0...7.1.1

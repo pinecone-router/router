@@ -60,7 +60,8 @@
 					x-template.preload="/views/404.html"
 				></template>
 
-				<!-- Hello World page: his will load when the page is visited then cached in memory until page is reloaded-->
+				<!-- Hello World page: his will load when the page is visited then
+         cached in memory until page is reloaded-->
 				<template
 					x-route="/hello/:name?"
 					x-handler="hello"
@@ -184,7 +185,8 @@
 							'https://jsonplaceholder.typicode.com/posts',
 							{ signal: controller.signal }
 						);
-						return await response.json(); // pass the response to the next handler
+						// pass the response to the next handler
+						return await response.json();
 					} catch (err) {
 						// safely ignore aborts, but handle fetch errors
 						if (err.name != 'AbortError') {
