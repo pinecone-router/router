@@ -2,7 +2,8 @@ import { type ElementWithXAttributes, type Alpine } from 'alpinejs';
 import { type Context } from './context';
 export declare const fetchError: (error: string, url: string) => void;
 /**
- * Creates a unique instance of a template with the given expression and target element.
+ * Creates a unique instance of a template with the given expression and target
+ * element.
  * @param Alpine Alpine.js instance
  * @param template The template element to be processed.
  * @param expression The expression on the x-template directive.
