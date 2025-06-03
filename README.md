@@ -7,10 +7,10 @@
 
 [![npm](https://img.shields.io/npm/dm/pinecone-router?label=npm&logo=npm&labelColor=%23d7f4ee&color=%230b2822&style=flat&logoColor=%230b2822)](https://npmjs.com/package/pinecone-router)
 ![jsDelivr hits (npm)](https://img.shields.io/jsdelivr/npm/hm/pinecone-router?style=flat&logo=jsdelivr&logoColor=%230b2822&label=jsdelivr&labelColor=d7f4ee&color=%230b2822)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router@7.1.0?labelColor=%23d7f4ee&style=flat&color=%230b2822&&logo=bun&logoColor=%230b2822)](https://bundlephobia.com/result?p=pinecone-router@7.1.0)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router@7.1.2?labelColor=%23d7f4ee&style=flat&color=%230b2822&&logo=bun&logoColor=%230b2822)](https://bundlephobia.com/result?p=pinecone-router@7.1.2)
 <br>
 [![Changelog](https://img.shields.io/badge/changelog-0b2822?style=flat)](./CHANGELOG.md)
-[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?labelColor=%23d7f4ee&color=%230b2822&label=version&style=flat&sort=semver&logo=semver&logoColor=%230b2822)](https://github.com/pinecone-router/router/tree/7.1.0)
+[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?labelColor=%23d7f4ee&color=%230b2822&label=version&style=flat&sort=semver&logo=semver&logoColor=%230b2822)](https://github.com/pinecone-router/router/tree/7.1.2)
 [![Sponsor](https://img.shields.io/badge/sponsor-0b2822?logo=githubsponsors&style=flat)](https://ko-fi.com/rehhouari)
 
 </div>
@@ -83,7 +83,7 @@ Include the following `<script>` tag in the `<head>` of your document,
 **before Alpine.js**:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/pinecone-router@7.1.0/dist/router.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pinecone-router@7.1.2/dist/router.min.js"></script>
 ```
 
 ### NPM
@@ -102,7 +102,7 @@ Alpine.start()
 ### Browser Module
 
 ```javascript
-import PineconeRouter from 'https://cdn.jsdelivr.net/npm/pinecone-router@7.1.0/dist/router.esm.js'
+import PineconeRouter from 'https://cdn.jsdelivr.net/npm/pinecone-router@7.1.2/dist/router.esm.js'
 import Alpine from 'https://cdn.jsdelivr.net/npm/alpinejs@3.14.9/dist/module.esm.js'
 Alpine.plugin(PineconeRouter)
 Alpine.start()
@@ -655,7 +655,7 @@ export interface Settings {
 	 * @default false
 	 * */
 	preload: boolean
-	
+
 	/**
 	 * The options object to be passed to fetch requests (second argument)
 	 * excluding `priority` which is set by the router.
@@ -945,8 +945,8 @@ You must add a local targetID in options or set a global one in
 		window.PineconeRouter.settings({
 			targetID: 'app',
 			fetchOptions: {
-				headers: { 'X-Pinecone': 'true' }
-			}
+				headers: { 'X-Pinecone': 'true' },
+			},
 		})
 		window.PineconeRouter.add('/route', {
 			templates: ['/header.html', '/body.html'],
@@ -967,7 +967,6 @@ You must add a local targetID in options or set a global one in
 > A targetID is required, whether globally through settings or on a
 > per rotue basis when creating a route using
 > `add('/path', {templates: [...], targetID: 'app'})` > **Removing a route**:
-
 
 #### Removing a route
 

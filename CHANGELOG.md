@@ -8,7 +8,7 @@ and this project adheres to
 
 ## [Unreleased]
 
-## [7.1.1] - 2025-06-03
+## [7.1.2] - 2025-06-03
 
 ### Fixed
 
@@ -736,4 +736,4 @@ It's mostly backward compatible but need a few tweaks:
 [7.0.2]: https://github.com/pinecone-router/router/compare/7.0.1...7.0.2
 [7.0.2]: https://github.com/pinecone-router/router/compare/7.0.2...7.0.3
 [7.1.0]: https://github.com/pinecone-router/router/compare/7.0.3...7.1.0
-[7.1.1]: https://github.com/pinecone-router/router/compare/7.1.0...7.1.1
+[7.1.2]: https://github.com/pinecone-router/router/compare/7.1.0...7.1.2
