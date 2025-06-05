@@ -8,12 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
-## [7.1.3] - 2025-06-
+## [7.1.3] - 2025-06-05
 
 ### Fixed
 
 - Fixed basePath not added to history path
-([#76](https://github.com/pinecone-router/router/issues/76))
+  ([#76](https://github.com/pinecone-router/router/issues/76))
 
 ## [7.1.2] - 2025-06-03
 
