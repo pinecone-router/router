@@ -8,6 +8,13 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [7.1.3] - 2025-06-
+
+### Fixed
+
+- Fixed basePath not added to history path
+([#76](https://github.com/pinecone-router/router/issues/76))
+
 ## [7.1.2] - 2025-06-03
 
 ### Fixed
@@ -675,7 +682,7 @@ It's mostly backward compatible but need a few tweaks:
 
 - Let go of multi-router support for simpler codebase.
 
-[unreleased]: https://github.com/pinecone-router/router/compare/7.1.2...HEAD
+[unreleased]: https://github.com/pinecone-router/router/compare/7.1.3...HEAD
 [0.0.3]: https://github.com/pinecone-router/router/compare/0.0.2...0.0.3
 [0.0.4]: https://github.com/pinecone-router/router/compare/0.0.3...0.0.4
 [0.0.5]: https://github.com/pinecone-router/router/compare/0.0.4...0.0.5
@@ -737,3 +744,4 @@ It's mostly backward compatible but need a few tweaks:
 [7.0.2]: https://github.com/pinecone-router/router/compare/7.0.2...7.0.3
 [7.1.0]: https://github.com/pinecone-router/router/compare/7.0.3...7.1.0
 [7.1.2]: https://github.com/pinecone-router/router/compare/7.1.0...7.1.2
+[7.1.3]: https://github.com/pinecone-router/router/compare/7.1.2...7.1.3
