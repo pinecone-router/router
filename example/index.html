@@ -214,7 +214,8 @@
 				window.PineconeRouter.settings({
 					preload: false,
 					targetID: 'app',
-					// hash: true,
+					basePath: '/base/',
+					hash: true,
 					fetchOptions: { headers: { 'X-Pinecone': 'true' } },
 				});
 				window.PineconeRouter.add('/prog-template', {
