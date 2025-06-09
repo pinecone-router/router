@@ -27,7 +27,7 @@ A small, easy to use, and feature-packed router for Alpine.js.
     <input @enter="$router.navigate('/'+$el.value)"></input>
   </template>
 
-  <template x-route="/:name" x-handler="handle" x-template>
+  <template x-route="/:name" x-handler="handler" x-template>
     <h1>Hello <span x-text="$params.name"></span>!</h1>
     <button @click="$history.back()">Go Back</button>
   </template>
