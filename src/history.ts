@@ -116,6 +116,8 @@ export const createNavigationHistory = (): NavigationHistory => {
 		},
 
 		pushState: function (path: string): void {
+			if (!settings.pushState) return
+
 			const fullPath =
 				settings.hash && !path.startsWith('#') ? '#' + path : path
 			const state = { path: fullPath }

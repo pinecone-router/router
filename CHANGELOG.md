@@ -8,6 +8,16 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [7.2.0] - 2025-06-09
+
+### Added
+
+- Added [`Settings.pushState`](./README.md#settings-object) boolean property
+  to allow disabling of browser
+  history updates. ie. no changes to the URL when navigating.
+  Built-in [NavigationHistory](./README.md#navigation-history) can be used
+  in this case.
+
 ## [7.1.3] - 2025-06-05
 
 ### Fixed
@@ -682,7 +692,7 @@ It's mostly backward compatible but need a few tweaks:
 
 - Let go of multi-router support for simpler codebase.
 
-[unreleased]: https://github.com/pinecone-router/router/compare/7.1.3...HEAD
+[unreleased]: https://github.com/pinecone-router/router/compare/7.2.0...HEAD
 [0.0.3]: https://github.com/pinecone-router/router/compare/0.0.2...0.0.3
 [0.0.4]: https://github.com/pinecone-router/router/compare/0.0.3...0.0.4
 [0.0.5]: https://github.com/pinecone-router/router/compare/0.0.4...0.0.5
@@ -745,3 +755,4 @@ It's mostly backward compatible but need a few tweaks:
 [7.1.0]: https://github.com/pinecone-router/router/compare/7.0.3...7.1.0
 [7.1.2]: https://github.com/pinecone-router/router/compare/7.1.0...7.1.2
 [7.1.3]: https://github.com/pinecone-router/router/compare/7.1.2...7.1.3
+[7.2.0]: https://github.com/pinecone-router/router/compare/7.1.3...7.2.0

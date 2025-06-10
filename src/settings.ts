@@ -43,6 +43,13 @@ export interface Settings {
 	 * excluding `priority` which is set by the router.
 	 */
 	fetchOptions: RequestInit
+
+	/**
+	 * Set to false to disable calling history.pushState().
+	 * This means that the url wont change when navigating.
+	 * @default true
+	 */
+	pushState: boolean
 }
 
 export let settings: Settings = {
@@ -53,6 +60,7 @@ export let settings: Settings = {
 	targetID: undefined,
 	preload: false,
 	fetchOptions: {},
+	pushState: true,
 }
 
 export const updateSettings = (value?: Partial<Settings>): Settings => {

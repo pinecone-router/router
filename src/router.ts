@@ -134,9 +134,9 @@ export const createPineconeRouter = (
 			controller = new AbortController()
 
 			this.loading = true
-      fullpath = addBasePath(fullpath)
+			fullpath = addBasePath(fullpath)
 			const path = fullpath.split('?')[0] || '/'
-    
+
 			let route = this.routes.get('notfound')
 			let params = {}
 
