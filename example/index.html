@@ -217,6 +217,7 @@
 					basePath: '/base/',
 					hash: true,
 					fetchOptions: { headers: { 'X-Pinecone': 'true' } },
+					pushState: true,
 				});
 				window.PineconeRouter.add('/prog-template', {
 					templates: ['/views/body.html', '/views/footer.html'],
