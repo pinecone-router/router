@@ -3,7 +3,7 @@ import createRoute, { type Route, type RouteOptions } from './route'
 import { settings, updateSettings, type Settings } from './settings'
 import { interpolate, load, preload } from './templates'
 import { buildContext, type Context } from './context'
-import { addBasePath } from './utils'
+import { addBasePath, reloadScripts } from './utils'
 import { handle } from './handler'
 import {
 	TARGET_ID_NOT_SPECIFIED,
@@ -193,7 +193,10 @@ export const createPineconeRouter = (
 					? interpolate(route.templates, params)
 					: route.templates
 
-				load(urls, target).finally(() => (this.loading = false))
+				load(urls, target).finally(() => {
+					reloadScripts(target)
+					this.loading = false
+				})
 			}
 
 			// end loading if there are no templates

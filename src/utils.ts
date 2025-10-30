@@ -51,3 +51,19 @@ export const getTargetELement = (
 
 	return targetEl ?? undefined
 }
+
+/**
+ * Clone scripts to make them run
+ * @param container: DocumentFragment | HTMLElement the element which contains
+ * the scripts
+ */
+export const reloadScripts = (container: DocumentFragment | HTMLElement) => {
+	container.querySelectorAll('script').forEach((oldScript) => {
+		const newScript = document.createElement('script')
+		Array.from(oldScript.attributes).forEach((attr) =>
+			newScript.setAttribute(attr.name, attr.value)
+		)
+		newScript.textContent = oldScript.textContent
+		oldScript.parentNode?.replaceChild(newScript, oldScript)
+	})
+}

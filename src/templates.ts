@@ -1,7 +1,7 @@
 import { type ElementWithXAttributes, type Alpine } from 'alpinejs'
 
 import { type Context } from './context'
-import { addBasePath } from './utils'
+import { addBasePath, reloadScripts } from './utils'
 import { settings } from './settings'
 
 const inMakeProgress = new Set()
@@ -47,15 +47,7 @@ export const make = (
 	// pre-allocates the array with the children size
 	const clones: HTMLElement[] = Array(contentNode.childElementCount)
 
-	// clone scripts to make them run
-	contentNode.querySelectorAll('script').forEach((oldScript) => {
-		const newScript = document.createElement('script')
-		Array.from(oldScript.attributes).forEach((attr) =>
-			newScript.setAttribute(attr.name, attr.value)
-		)
-		newScript.textContent = oldScript.textContent
-		oldScript.parentNode?.replaceChild(newScript, oldScript)
-	})
+	reloadScripts(contentNode)
 
 	// clone all children and add the x-data scope
 	const children = Array.from(contentNode.children)
