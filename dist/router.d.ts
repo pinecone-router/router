@@ -38,6 +38,15 @@ export interface PineconeRouter {
      * @returns {Promise<void>}
      */
     navigate: (path: string, fromPopState?: boolean, firstLoad?: boolean, index?: number) => Promise<void>;
+    /**
+     * Match a path against the registered routes
+     * @param path the path to check
+     * @returns { route: Route; params: Context['params'] }
+     */
+    match(path: string): {
+        route: Route;
+        params: Context['params'];
+    };
 }
 export declare const createPineconeRouter: (name: string, version: string, initial_path: string) => PineconeRouter;
 //# sourceMappingURL=router.d.ts.map
