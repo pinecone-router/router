@@ -546,6 +546,13 @@ export interface PineconeRouter {
 		firstLoad?: boolean,
 		index?: number
 	) => Promise<void>
+
+	/**
+	 * Match a path against the registered routes
+	 * @param path the path to check
+	 * @returns { route: Route; params: Context['params'] }
+	 */
+	match(path: string): { route: Route; params: Context['params'] }
 }
 ```
 

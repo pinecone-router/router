@@ -59,6 +59,12 @@ export interface PineconeRouter {
 		firstLoad?: boolean,
 		index?: number
 	) => Promise<void>
+	/**
+	 * Match a path against the registered routes
+	 * @param path the path to check
+	 * @returns { route: Route; params: Context['params'] }
+	 */
+	match(path: string): { route: Route; params: Context['params'] }
 }
 
 export const createPineconeRouter = (
@@ -137,17 +143,7 @@ export const createPineconeRouter = (
 			fullpath = addBasePath(fullpath)
 			const path = fullpath.split('?')[0] || '/'
 
-			let route = this.routes.get('notfound')
-			let params = {}
-
-			for (let [_, r] of this.routes) {
-				const res = r.match(path)
-				if (res) {
-					params = res
-					route = r
-					break
-				}
-			}
+			let { route, params } = this.match(path)
 
 			// create a new local context object.
 			// this is to prevent editing the global context, which triggers
@@ -202,6 +198,20 @@ export const createPineconeRouter = (
 
 			// end loading if there are no templates
 			if (!route.templates.length) this.loading = false
+		},
+
+		match: function (path: string) {
+			let route = this.routes.get('notfound')
+			let params = {}
+			for (let [_, r] of this.routes) {
+				const res = r.match(path)
+				if (res) {
+					params = res
+					route = r
+					break
+				}
+			}
+			return { route, params }
 		},
 	}
 
