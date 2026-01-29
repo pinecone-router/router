@@ -25,7 +25,16 @@ install dependencies
 bun i
 ```
 
-run test in watch mode:
+Run example:
+
+```
+bun run example
+```
+
+this will run a vite server with the example site, which uses the imports
+the router from `./src` so it updates with your changes automatically.
+
+run tests in watch mode:
 
 ```sh
 bun test --watch
@@ -37,11 +46,3 @@ run dist build
 bun run dist
 ```
 
-Run example:
-
-```
-bun run example
-```
-
-this will run a vite server with the example site, which uses the imports
-the router from `./src` so it updates with changes automatically.
