@@ -43,7 +43,7 @@ describe('Router', () => {
 		expect(router.history.entries).toEqual([])
 		expect(router.history.index).toBe(0)
 
-		router.navigate('/')
+		router.navigate('/', false, true)
 		expect(router.history.entries).toEqual(['/'])
 		expect(router.history.index).toBe(0)
 
