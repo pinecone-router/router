@@ -194,7 +194,6 @@ export const createPineconeRouter = (
 					: route.templates
 
 				load(urls, target).finally(() => {
-					reloadScripts(target)
 					this.loading = false
 				})
 			}

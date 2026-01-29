@@ -55,8 +55,14 @@ export const make = (
 		clones[i] = children[i].cloneNode(
 			true
 		) as ElementWithXAttributes<HTMLElement>
-
-		Alpine.addScopeToNode(clones[i], {}, template)
+		// add the Alpine data scope of the target element if one is specified
+		// otherwise it will take the scope of the template element
+		// ie. where x-template is set.
+		if (targetEl) {
+			Alpine.addScopeToNode(clones[i], {}, targetEl)
+		} else {
+			Alpine.addScopeToNode(clones[i], {}, template)
+		}
 	}
 
 	Alpine.mutateDom(() => {
@@ -220,7 +226,7 @@ export const runPreloads = (): void => {
 }
 
 /**
- * Load templates from urls and puts the content the el.innerHTML.
+ * Load templates from urls into a target element.
  * @param urls array of urls to load.
  * @param el target element where to put the content of the urls.
  * @param priority Request priority ('high' | 'low'), default: 'high'.
@@ -232,5 +238,24 @@ export const load = (
 	priority: RequestPriority = 'high'
 ): Promise<void> =>
 	Promise.all(urls.map((url) => loadUrl(url, priority))).then((htmlArray) => {
-		el.innerHTML = htmlArray.join('')
+		const htmlString = htmlArray.join('')
+
+		// we are putting the content inside a template element,
+		// this is for templates defined with x-template
+		if (el instanceof HTMLTemplateElement) {
+			el.innerHTML = htmlString
+			return
+		}
+
+		// for programmatic templates we essentially simulating the way it is done
+		// with x-template by creating a temporary template element
+		// and running the make function on it. which is done with show() for
+		// templates defined with x-template
+		const template = document.createElement('template')
+		template.innerHTML = htmlString.trim()
+
+		make(window.Alpine, template, '', el, urls)
+
+		// it might be useful to a
+		template.remove()
 	})

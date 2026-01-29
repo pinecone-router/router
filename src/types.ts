@@ -1,12 +1,14 @@
 import { NavigationHistory } from './history'
 import { PineconeRouter } from './router'
 import { Context } from './context'
+import { Alpine } from 'alpinejs'
 
 /// Extend Window interface
 
 declare global {
 	interface Window {
 		PineconeRouter: PineconeRouter
+		Alpine: Alpine
 	}
 }
 

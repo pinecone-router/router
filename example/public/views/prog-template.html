@@ -1,0 +1,13 @@
+<div x-data="ProgrammaticRoutes">
+	<h3 x-text="title"></h3>
+	<p x-text="something"></p>
+</div>
+
+<script>
+	Alpine.data('ProgrammaticRoutes', function () {
+		return {
+			title: 'Programmatic Templates',
+			description: 'Lorem ipsum dolor sit amet.',
+		};
+	});
+</script>

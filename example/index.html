@@ -130,7 +130,10 @@
 					x-template.preload="/views/param-changes.html"
 				></template>
 
-				<div id="app"></div>
+				<div
+					id="app"
+					x-data="{something: 'When a target element is specified, the template will use its data scope.'}"
+				></div>
 				<div id="alt"></div>
 				<!-- footer -->
 				<div class="footer-container">
@@ -220,7 +223,7 @@
 					pushState: true,
 				});
 				window.PineconeRouter.add('/prog-template', {
-					templates: ['/views/body.html', '/views/footer.html'],
+					templates: ['/views/prog-template.html', '/views/footer.html'],
 				});
 				// #67
 				console.log('path:', window.PineconeRouter.context.path);
