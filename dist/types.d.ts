@@ -1,9 +1,11 @@
 import { NavigationHistory } from './history';
 import { PineconeRouter } from './router';
 import { Context } from './context';
+import { Alpine } from 'alpinejs';
 declare global {
     interface Window {
         PineconeRouter: PineconeRouter;
+        Alpine: Alpine;
     }
 }
 declare module 'alpinejs' {

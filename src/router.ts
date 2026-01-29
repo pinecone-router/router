@@ -3,7 +3,7 @@ import createRoute, { type Route, type RouteOptions } from './route'
 import { settings, updateSettings, type Settings } from './settings'
 import { interpolate, load, preload } from './templates'
 import { buildContext, type Context } from './context'
-import { addBasePath, reloadScripts } from './utils'
+import { addBasePath } from './utils'
 import { handle } from './handler'
 import {
 	TARGET_ID_NOT_SPECIFIED,

@@ -46,7 +46,7 @@ export declare const preload: (urls: string[], el?: HTMLElement) => void;
  */
 export declare const runPreloads: () => void;
 /**
- * Load templates from urls and puts the content the el.innerHTML.
+ * Load templates from urls into a target element.
  * @param urls array of urls to load.
  * @param el target element where to put the content of the urls.
  * @param priority Request priority ('high' | 'low'), default: 'high'.
