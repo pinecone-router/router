@@ -8,6 +8,15 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [7.3.1] - 2026-01-29
+
+### Fixed
+
+- Fixed embedded scripts not working correctly in programmatic templates(#83)
+- Templates with a specified target element now have access to the Alpine data
+  scope of that element rather than the scope of the template element.
+- Programmatic templates now access to the data scope of their target element.
+
 ## [7.3.0] - 2025-10-30
 
 ### Added
@@ -769,3 +778,4 @@ It's mostly backward compatible but need a few tweaks:
 [7.1.3]: https://github.com/pinecone-router/router/compare/7.1.2...7.1.3
 [7.2.0]: https://github.com/pinecone-router/router/compare/7.1.3...7.2.0
 [7.3.0]: https://github.com/pinecone-router/router/compare/7.2.0...7.3.0
+[7.3.1]: https://github.com/pinecone-router/router/compare/7.3.0...7.3.1
