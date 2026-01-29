@@ -12,7 +12,7 @@ and this project adheres to
 
 ### Fixed
 
-- Fixed embedded scripts not working correctly in programmatic templates(#83)
+- Fixed embedded scripts not working correctly in programmatic templates(#81)
 - Templates with a specified target element now have access to the Alpine data
   scope of that element rather than the scope of the template element.
 - Programmatic templates now access to the data scope of their target element.
