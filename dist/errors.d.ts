@@ -3,7 +3,7 @@ import { type RouteTemplate } from './directives/x-route';
 /**
  * Centralized error messages
  */
-export declare const INVALID_EXPRESSION_TYPE: (value: unknown) => string, TARGET_ID_NOT_FOUND: (id: string) => string, ROUTE_EXISTS: (path: string) => string, DIRECTIVE_REQUIRES_TEMPLATE = "Directives can only be used on template elements.", DIRECTIVE_REQUIRES_ROUTE: (directive: string) => string, TARGET_ID_NOT_SPECIFIED = "targetID must be specified for programmatically added templates", ROUTE_NOT_FOUND: (path: string) => string;
+export declare const INVALID_EXPRESSION_TYPE: (value: unknown) => string, TARGET_ID_NOT_FOUND: (id: string) => string, ROUTE_EXISTS: (path: string) => string, DIRECTIVE_REQUIRES_TEMPLATE = "Directives can only be used on template elements.", DIRECTIVE_REQUIRES_ROUTE: (directive: string) => string, ROUTE_NOT_FOUND: (path: string) => string;
 /**
  * Assert functions
  */

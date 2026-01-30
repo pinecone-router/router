@@ -14,8 +14,6 @@ export const INVALID_EXPRESSION_TYPE = (value: unknown) =>
 		'Directives can only be used on template elements.',
 	DIRECTIVE_REQUIRES_ROUTE = (directive: string) =>
 		`x-${directive} must be used on the same template as x-route`,
-	TARGET_ID_NOT_SPECIFIED =
-		'targetID must be specified for programmatically added templates',
 	ROUTE_NOT_FOUND = (path: string) => `Path: ${path} was not found`
 
 /**

@@ -1,18 +1,6 @@
+import { ElementWithXAttributes } from 'alpinejs'
 import type { Handler } from './handler'
 export interface Route {
-	/**
-	 * Set to true automatically when creating a route programmatically.
-	 * @internal
-	 */
-	readonly programmaticTemplates: boolean
-
-	/**
-	 * Set to true when the route is added programmatically and defined as having
-	 * params in the template urls
-	 * @internal
-	 */
-	readonly interpolate: boolean
-
 	/**
 	 * The regex pattern used to match the route.
 	 * @internal
@@ -25,14 +13,15 @@ export interface Route {
 	readonly path: string
 
 	/**
-	 * The target ID for the route's templates
-	 */
-	readonly targetID?: string
-
-	/**
 	 * The name of the route
 	 */
 	readonly name: string
+
+	/**
+	 * The template element of the route, set by x-template directive.
+	 * @internal
+	 */
+	_template_element?: ElementWithXAttributes<HTMLTemplateElement>
 
 	match(path: string): undefined | { [key: string]: string }
 	handlers: Handler<unknown, unknown>[]
@@ -62,21 +51,12 @@ export type MatchResult =
  */
 export const createRoute = (
 	path: string,
-	{
-		targetID,
-		templates = [],
-		handlers = [],
-		interpolate = false,
-		name,
-	}: RouteOptions = {}
+	{ templates = [], handlers = [], name }: RouteOptions = {}
 ): Route => ({
-	programmaticTemplates: templates.length > 0,
 	pattern: parse(path),
-	interpolate,
-	templates,
-	targetID,
-	handlers,
 	name: name || path,
+	templates,
+	handlers,
 	path,
 	match(path: string) {
 		const m = this.pattern.exec(path)

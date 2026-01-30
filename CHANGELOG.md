@@ -8,6 +8,33 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [7.4.0] - 2026-01-30
+
+### Changed
+
+- Programmatically added routes will have their templates added as actual
+  template elements at the end of the body. Now they also use the `x-template`
+  directive, streamlining all template logic there.
+  This should have no impact on existing sites unless you use flexbox on the
+  entire body...
+- Programmatic templates no longer throws an error when a targetID is not set
+  through options or globally, as they will just be rendered next to their
+  created template element ie. at the bottom of the body tag.
+- removing a route with a template now removes the template.
+
+### Fixed
+
+- Programmatically added templates will now correctly remove when switching to
+  a different route.
+- Preload modifier/option now take precedence over global setting.
+- Proper clean up for different cases when directives are removes.
+
+### Removed
+
+- Removed properties related to programmatic templates in the
+  [Route Object](./README.md##route-object), these were exposed but were
+  internal so there are no breaking changes in this regard.
+
 ## [7.3.1] - 2026-01-29
 
 ### Fixed
@@ -713,7 +740,7 @@ It's mostly backward compatible but need a few tweaks:
 
 - Let go of multi-router support for simpler codebase.
 
-[unreleased]: https://github.com/pinecone-router/router/compare/7.3.0...HEAD
+[unreleased]: https://github.com/pinecone-router/router/compare/7.4.0...HEAD
 [0.0.3]: https://github.com/pinecone-router/router/compare/0.0.2...0.0.3
 [0.0.4]: https://github.com/pinecone-router/router/compare/0.0.3...0.0.4
 [0.0.5]: https://github.com/pinecone-router/router/compare/0.0.4...0.0.5
@@ -779,3 +806,4 @@ It's mostly backward compatible but need a few tweaks:
 [7.2.0]: https://github.com/pinecone-router/router/compare/7.1.3...7.2.0
 [7.3.0]: https://github.com/pinecone-router/router/compare/7.2.0...7.3.0
 [7.3.1]: https://github.com/pinecone-router/router/compare/7.3.0...7.3.1
+[7.4.0]: https://github.com/pinecone-router/router/compare/7.3.1...7.4.0

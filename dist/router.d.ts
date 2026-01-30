@@ -24,8 +24,10 @@ export interface PineconeRouter {
      * Remove a route
      *
      * @param {string} path the route to remove
+     *
+     * @returns {boolean} true if the route was removed, false otherwise
      */
-    remove: (path: string) => void;
+    remove: (path: string) => boolean;
     /**
      *  Navigate to the specified path
      *

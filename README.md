@@ -7,10 +7,10 @@
 
 [![npm](https://img.shields.io/npm/dm/pinecone-router?label=npm&logo=npm&labelColor=%23d7f4ee&color=%230b2822&style=flat&logoColor=%230b2822)](https://npmjs.com/package/pinecone-router)
 ![jsDelivr hits (npm)](https://img.shields.io/jsdelivr/npm/hm/pinecone-router?style=flat&logo=jsdelivr&logoColor=%230b2822&label=jsdelivr&labelColor=d7f4ee&color=%230b2822)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router@7.3.1?labelColor=%23d7f4ee&style=flat&color=%230b2822&&logo=bun&logoColor=%230b2822)](https://bundlephobia.com/result?p=pinecone-router@7.3.1)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router@7.4.0?labelColor=%23d7f4ee&style=flat&color=%230b2822&&logo=bun&logoColor=%230b2822)](https://bundlephobia.com/result?p=pinecone-router@7.4.0)
 <br>
 [![Changelog](https://img.shields.io/badge/changelog-0b2822?style=flat)](./CHANGELOG.md)
-[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?labelColor=%23d7f4ee&color=%230b2822&label=version&style=flat&sort=semver&logo=semver&logoColor=%230b2822)](https://github.com/pinecone-router/router/tree/7.3.1)
+[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?labelColor=%23d7f4ee&color=%230b2822&label=version&style=flat&sort=semver&logo=semver&logoColor=%230b2822)](https://github.com/pinecone-router/router/tree/7.4.0)
 [![Sponsor](https://img.shields.io/badge/sponsor-0b2822?logo=githubsponsors&style=flat)](https://ko-fi.com/rehhouari)
 
 </div>
@@ -83,7 +83,7 @@ Include the following `<script>` tag in the `<head>` of your document,
 **before Alpine.js**:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/pinecone-router@7.3.1/dist/router.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pinecone-router@7.4.0/dist/router.min.js"></script>
 ```
 
 ### NPM
@@ -102,7 +102,7 @@ Alpine.start()
 ### Browser Module
 
 ```javascript
-import PineconeRouter from 'https://cdn.jsdelivr.net/npm/pinecone-router@7.3.1/dist/router.esm.js'
+import PineconeRouter from 'https://cdn.jsdelivr.net/npm/pinecone-router@7.4.0/dist/router.esm.js'
 import Alpine from 'https://cdn.jsdelivr.net/npm/alpinejs@3.14.9/dist/module.esm.js'
 Alpine.plugin(PineconeRouter)
 Alpine.start()
@@ -685,19 +685,6 @@ Read more: [Base Path](#base-path)
 ```ts
 export interface Route {
 	/**
-	 * Set to true automatically when creating a route programmatically.
-	 * @internal
-	 */
-	readonly programmaticTemplates: boolean
-
-	/**
-	 * Set to true when the route is added programmatically and defined as having
-	 * params in the template urls
-	 * @internal
-	 */
-	readonly interpolate: boolean
-
-	/**
 	 * The regex pattern used to match the route.
 	 * @internal
 	 */
@@ -707,11 +694,6 @@ export interface Route {
 	 * The raw route path
 	 */
 	readonly path: string
-
-	/**
-	 * The target ID for the route's templates
-	 */
-	readonly targetID?: string
 
 	/**
 	 * The name of the route
@@ -958,9 +940,7 @@ You must add a local targetID in options or set a global one in
 	document.addEventListener('alpine:init', () => {
 		window.PineconeRouter.settings({
 			targetID: 'app',
-			fetchOptions: {
-				headers: { 'X-Pinecone': 'true' },
-			},
+			fetchOptions: {},
 		})
 		window.PineconeRouter.add('/route', {
 			templates: ['/header.html', '/body.html'],
@@ -972,15 +952,17 @@ You must add a local targetID in options or set a global one in
 </script>
 ```
 
-> [!IMPORTANT]
-> The template added through this method won't be cleared automatically until
-> you access another route with a template that has the same target, so make
-> sure all your routes have the same target if you use this method.
+> [!NOTE]
+> As of version 7.4.0, the templates added through this method will be added
+> automatically as template elements with an x-template directive and appended
+> to the end of thebody tag. this means they will function the same way as those
+> added in the declarative way. ie. they will be hidden automatically
+> when switching to another route.
 
 > [!NOTE]
-> A targetID is required, whether globally through settings or on a
-> per rotue basis when creating a route using
-> `add('/path', {templates: [...], targetID: 'app'})` > **Removing a route**:
+> if no targetID is provided through settings or route options, the template
+> will be rendered at the bottom of the body tag, after the created template
+> tag
 
 #### Removing a route
 

@@ -1,4 +1,3 @@
-import { type PineconeRouter } from './router';
 export interface NavigationHistory {
     /**
      * The current history index
@@ -34,34 +33,6 @@ export interface NavigationHistory {
      * @returns void
      */
     to: (index: number) => void;
-    /**
-     * Push a new path to the history at the current index.
-     * @internal
-     * @param {string} path The path to add to the history
-     * @param {boolean} pushState Whether or not to call History.pushState.
-     *        Will be set to false if it's the first load or if it's called from
-     *        a popstate event.
-     * @returns void
-     */
-    push: (path: string, pushState: boolean) => void;
-    /**
-     * Call History.pushState or History.replaceState.
-     * @internal
-     * @param path The path to add to the history
-     * @returns void
-     */
-    pushState: (path: string) => void;
-    /**
-     * The router instance
-     * @internal
-     */
-    router?: PineconeRouter;
-    /**
-     * Set the router instance
-     * @internal
-     * @param router The router instance to set
-     */
-    setRouter: (router: PineconeRouter) => void;
 }
 export declare const createNavigationHistory: () => NavigationHistory;
 //# sourceMappingURL=history.d.ts.map

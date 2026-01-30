@@ -24,8 +24,9 @@ const RouteDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 		el._x_PineconeRouter_route = path
 
 		cleanup(() => {
-			Router.routes.delete(path)
-			delete el._x_PineconeRouter_route
+			el.removeAttribute('x-template')
+			el.removeAttribute('x-handler')
+			Router.remove(path)
 		})
 	}).before('handler')
 }

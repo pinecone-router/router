@@ -23,6 +23,8 @@ const TemplateDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 
 			// only process the expression if it is not empty
 			// this allows inline templates to be used without an expression
+			const route = Router.routes.get(path)!
+			route._template_element = el
 			if (expression != '') {
 				if (!isArrayExpression(expression)) {
 					expression = `['${expression}']`
@@ -39,7 +41,6 @@ const TemplateDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 					preload(urls, el)
 				}
 
-				const route = Router.routes.get(path)!
 				route.templates = urls
 			}
 
@@ -59,7 +60,8 @@ const TemplateDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 			const effectRunner = effect(() => callback(urls))
 
 			cleanup(() => {
-				el._x_PineconeRouter_undoTemplate && el._x_PineconeRouter_undoTemplate()
+				el._x_PineconeRouter_undoTemplate?.()
+				route.templates = []
 				Alpine.release(effectRunner)
 			})
 		}

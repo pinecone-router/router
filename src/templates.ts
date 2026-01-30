@@ -7,7 +7,7 @@ import { settings } from './settings'
 const inMakeProgress = new Set()
 const cache = new Map<string, string>()
 const loading = new Map<string, Promise<string>>()
-const preloads = new Set<{ urls: string[]; el?: HTMLElement }>()
+const preloads = new Map<string[], HTMLElement | undefined>()
 
 export const fetchError = (error: string, url: string) => {
 	document.dispatchEvent(
@@ -93,10 +93,8 @@ export const make = (
 
 // Hide content of a template element
 export const hide = (template: ElementWithXAttributes<HTMLTemplateElement>) => {
-	if (template._x_PineconeRouter_undoTemplate) {
-		template._x_PineconeRouter_undoTemplate()
-		delete template._x_PineconeRouter_undoTemplate
-	}
+	template._x_PineconeRouter_undoTemplate?.()
+	delete template._x_PineconeRouter_undoTemplate
 }
 
 export const show = async (
@@ -205,7 +203,7 @@ export const loadUrl = async (
  * @returns void
  */
 export const preload = (urls: string[], el?: HTMLElement): void => {
-	preloads.add({ urls, el })
+	preloads.set(urls, el)
 }
 
 /**
@@ -215,13 +213,13 @@ export const preload = (urls: string[], el?: HTMLElement): void => {
  * @returns void
  */
 export const runPreloads = (): void => {
-	for (const item of preloads) {
-		if (item.el) {
-			load(item.urls, item.el, 'low')
+	for (const [urls, el] of preloads) {
+		if (el) {
+			load(urls, el, 'low')
 		} else {
-			item.urls.map((url: string) => loadUrl(url, 'low'))
+			urls.map((url: string) => loadUrl(url, 'low'))
 		}
-		preloads.delete(item)
+		preloads.delete(urls)
 	}
 }
 
@@ -238,24 +236,5 @@ export const load = (
 	priority: RequestPriority = 'high'
 ): Promise<void> =>
 	Promise.all(urls.map((url) => loadUrl(url, priority))).then((htmlArray) => {
-		const htmlString = htmlArray.join('')
-
-		// we are putting the content inside a template element,
-		// this is for templates defined with x-template
-		if (el instanceof HTMLTemplateElement) {
-			el.innerHTML = htmlString
-			return
-		}
-
-		// for programmatic templates we essentially simulating the way it is done
-		// with x-template by creating a temporary template element
-		// and running the make function on it. which is done with show() for
-		// templates defined with x-template
-		const template = document.createElement('template')
-		template.innerHTML = htmlString.trim()
-
-		make(window.Alpine, template, '', el, urls)
-
-		// it might be useful to a
-		template.remove()
+		el.innerHTML = htmlArray.join('')
 	})

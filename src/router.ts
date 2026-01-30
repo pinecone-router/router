@@ -1,15 +1,11 @@
 import { createNavigationHistory, type NavigationHistory } from './history'
 import createRoute, { type Route, type RouteOptions } from './route'
 import { settings, updateSettings, type Settings } from './settings'
-import { interpolate, load, preload } from './templates'
 import { buildContext, type Context } from './context'
 import { addBasePath } from './utils'
 import { handle } from './handler'
-import {
-	TARGET_ID_NOT_SPECIFIED,
-	ROUTE_NOT_FOUND,
-	ROUTE_EXISTS,
-} from './errors'
+import { ROUTE_NOT_FOUND, ROUTE_EXISTS } from './errors'
+import { ElementWithXAttributes } from 'alpinejs'
 
 // Create a custom type that guarantees the notfound route exists
 export type RoutesMap = Map<string, Route> & {
@@ -39,8 +35,10 @@ export interface PineconeRouter {
 	 * Remove a route
 	 *
 	 * @param {string} path the route to remove
+	 *
+	 * @returns {boolean} true if the route was removed, false otherwise
 	 */
-	remove: (path: string) => void
+	remove: (path: string) => boolean
 
 	/**
 	 *  Navigate to the specified path
@@ -118,16 +116,40 @@ export const createPineconeRouter = (
 				}
 			}
 
-			// preload if specified globally or in the route options
-			if (options.templates && (settings.preload || options.preload)) {
-				preload(options.templates)
+			// if the route was added programmatically, create a template element to
+			// use the x-template directive. this makes the latter the sole handler
+			// of template logic which simplifies things.
+			let template: ElementWithXAttributes<HTMLTemplateElement> | undefined
+			if (options.templates?.length) {
+				template = document.createElement('template')
+				template._x_PineconeRouter_route = path
+				let attr = 'x-template'
+				if (options.targetID) attr += ` .target.${options.targetID}`
+				if (options.interpolate) attr += ' .interpolate'
+				if (options.preload) attr += ' .preload'
+				template.setAttribute('x-template', JSON.stringify(options.templates))
+				document.body.appendChild(template)
 			}
 
-			this.routes.set(path, createRoute(path, options))
+			this.routes.set(
+				path,
+				createRoute(path, {
+					...options,
+					preload: options.preload || settings.preload,
+				})
+			)
 		},
 
 		remove: function (path) {
-			this.routes.delete(path)
+			const route = this.routes.get(path)
+			// remove template element when removing the route
+			if (route?._template_element) {
+				const t = route._template_element
+				t._x_PineconeRouter_undoTemplate?.()
+				t.remove()
+				route._template_element = undefined
+			}
+			return this.routes.delete(path)
 		},
 
 		navigate: async function (fullpath, fromPopState?, firstLoad?, index?) {
@@ -181,22 +203,6 @@ export const createPineconeRouter = (
 
 			// update the global context, trigger Alpine effect, and render templates.
 			this.context = context
-
-			// show templates added programmatically
-			if (route.programmaticTemplates) {
-				let target = document.getElementById(
-					route.targetID ?? settings.targetID ?? ''
-				)
-
-				if (!target) throw new Error(TARGET_ID_NOT_SPECIFIED)
-				const urls = route.interpolate
-					? interpolate(route.templates, params)
-					: route.templates
-
-				load(urls, target).finally(() => {
-					this.loading = false
-				})
-			}
 
 			// end loading if there are no templates
 			if (!route.templates.length) this.loading = false
