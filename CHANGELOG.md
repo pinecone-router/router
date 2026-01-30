@@ -8,6 +8,12 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [7.4.1] - 2026-01-30
+
+### Fixed
+
+- Scope of template is no longer dismissed when a target element is specified.
+
 ## [7.4.0] - 2026-01-30
 
 ### Changed
@@ -740,7 +746,7 @@ It's mostly backward compatible but need a few tweaks:
 
 - Let go of multi-router support for simpler codebase.
 
-[unreleased]: https://github.com/pinecone-router/router/compare/7.4.0...HEAD
+[unreleased]: https://github.com/pinecone-router/router/compare/7.4.1...HEAD
 [0.0.3]: https://github.com/pinecone-router/router/compare/0.0.2...0.0.3
 [0.0.4]: https://github.com/pinecone-router/router/compare/0.0.3...0.0.4
 [0.0.5]: https://github.com/pinecone-router/router/compare/0.0.4...0.0.5
@@ -807,3 +813,4 @@ It's mostly backward compatible but need a few tweaks:
 [7.3.0]: https://github.com/pinecone-router/router/compare/7.2.0...7.3.0
 [7.3.1]: https://github.com/pinecone-router/router/compare/7.3.0...7.3.1
 [7.4.0]: https://github.com/pinecone-router/router/compare/7.3.1...7.4.0
+[7.4.1]: https://github.com/pinecone-router/router/compare/7.4.0...7.4.1

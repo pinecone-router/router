@@ -55,14 +55,13 @@ export const make = (
 		clones[i] = children[i].cloneNode(
 			true
 		) as ElementWithXAttributes<HTMLElement>
-		// add the Alpine data scope of the target element if one is specified
-		// otherwise it will take the scope of the template element
-		// ie. where x-template is set.
-		if (targetEl) {
-			Alpine.addScopeToNode(clones[i], {}, targetEl)
-		} else {
-			Alpine.addScopeToNode(clones[i], {}, template)
-		}
+
+		Alpine.addScopeToNode(clones[i], {}, template)
+
+		// add the Alpine data scope of the target element if one is specified.
+		// the scope of the template element will overshadow it.
+		if (targetEl)
+			Alpine.addScopeToNode(clones[i], Alpine.$data(clones[i]), targetEl)
 	}
 
 	Alpine.mutateDom(() => {
