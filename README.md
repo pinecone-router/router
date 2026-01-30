@@ -357,7 +357,7 @@ The expression will have the Alpine.js data stack of the template element and
 that of the target element if set.
 
 ```html
-<script x-run:on="$router.context.route = '/profile'">
+<script x-run:on="$router.context.route == '/profile'">
 ```
 
 The above example makes the script only run on the '/profile` route even if
