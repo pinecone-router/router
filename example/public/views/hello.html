@@ -27,9 +27,8 @@
 </script>
 <script type="module">
 	import confetti from 'https://cdn.skypack.dev/canvas-confetti';
-	window.addEventListener('typed', () => {
+	document.querySelector('[x-data="hello"]').addEventListener('typed', () => {
 		const inputElement = document.getElementById('input-bar');
-
 		confetti({
 			particleCount: 2,
 			ticks: 100,
