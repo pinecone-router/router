@@ -7,10 +7,10 @@
 
 [![npm](https://img.shields.io/npm/dm/pinecone-router?label=npm&logo=npm&labelColor=%23d7f4ee&color=%230b2822&style=flat&logoColor=%230b2822)](https://npmjs.com/package/pinecone-router)
 ![jsDelivr hits (npm)](https://img.shields.io/jsdelivr/npm/hm/pinecone-router?style=flat&logo=jsdelivr&logoColor=%230b2822&label=jsdelivr&labelColor=d7f4ee&color=%230b2822)
-[![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router@7.4.1?labelColor=%23d7f4ee&style=flat&color=%230b2822&&logo=bun&logoColor=%230b2822)](https://bundlephobia.com/result?p=pinecone-router@7.4.1)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/pinecone-router@7.5.0?labelColor=%23d7f4ee&style=flat&color=%230b2822&&logo=bun&logoColor=%230b2822)](https://bundlephobia.com/result?p=pinecone-router@7.5.0)
 <br>
 [![Changelog](https://img.shields.io/badge/changelog-0b2822?style=flat)](./CHANGELOG.md)
-[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?labelColor=%23d7f4ee&color=%230b2822&label=version&style=flat&sort=semver&logo=semver&logoColor=%230b2822)](https://github.com/pinecone-router/router/tree/7.4.1)
+[![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/pinecone-router/router?labelColor=%23d7f4ee&color=%230b2822&label=version&style=flat&sort=semver&logo=semver&logoColor=%230b2822)](https://github.com/pinecone-router/router/tree/7.5.0)
 [![Sponsor](https://img.shields.io/badge/sponsor-0b2822?logo=githubsponsors&style=flat)](https://ko-fi.com/rehhouari)
 
 </div>
@@ -83,7 +83,7 @@ Include the following `<script>` tag in the `<head>` of your document,
 **before Alpine.js**:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/pinecone-router@7.4.1/dist/router.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pinecone-router@7.5.0/dist/router.min.js"></script>
 ```
 
 ### NPM
@@ -102,7 +102,7 @@ Alpine.start()
 ### Browser Module
 
 ```javascript
-import PineconeRouter from 'https://cdn.jsdelivr.net/npm/pinecone-router@7.4.1/dist/router.esm.js'
+import PineconeRouter from 'https://cdn.jsdelivr.net/npm/pinecone-router@7.5.0/dist/router.esm.js'
 import Alpine from 'https://cdn.jsdelivr.net/npm/alpinejs@3.14.9/dist/module.esm.js'
 Alpine.plugin(PineconeRouter)
 Alpine.start()
@@ -322,6 +322,59 @@ matched.
 	}))
 </script>
 ```
+
+#### `x-run` directive
+
+Embedded scripts can be made to run conditionally and/or only once through the
+`x-run` directive.
+
+##### `x-run.once`
+
+This will run the script only once per route, even if the route is visited
+again.
+
+This could be helpful for library initialization etc.
+
+```html
+<script x-run.once>
+```
+
+> [!NOTE]
+> This on a per-route basis, if you would like to run a script only once, even
+> if it's included in multiple routes, add an id to that script:
+
+```html
+<script x-run.once id="uniqueid">
+```
+
+The above script would run once even if it's included in multiple routes or if
+the route is visited again.
+
+##### `x-run:on="condition"`
+
+This will make the script only run when the condition evaluates to true.
+The expression will have the Alpine.js data stack of the template element and
+that of the target element if set.
+
+```html
+<script x-run:on="$router.context.route = '/profile'">
+```
+
+The above example makes the script only run on the '/profile` route even if
+the template where the script resides is included on multiple other routes.
+
+> [!NOTE]
+> This check is done during template rendering. Thus changing the condition
+> after will not have an effect until the user navigates to another page and
+> comes back
+
+**Combining both**:
+
+```html
+<script x-run.once:on="condition">
+```
+
+This will check the condition and run it only once if it evaluates to true.
 
 ## `x-handler`
 
@@ -953,10 +1006,10 @@ You must add a local targetID in options or set a global one in
 ```
 
 > [!NOTE]
-> As of version 7.4.1, the templates added through this method will be added
+> As of version 7.4.0, the templates added through this method will be added
 > automatically as template elements with an x-template directive and appended
-> to the end of thebody tag. this means they will function the same way as those
-> added in the declarative way. ie. they will be hidden automatically
+> to the end of the body tag. this means they will function the same way as
+> those added in the declarative way. ie. they will be hidden automatically
 > when switching to another route.
 
 > [!NOTE]
@@ -1000,7 +1053,7 @@ Click handling intially method from
 [@KevinBatdorf](https://twitter.com/KevinBatdorf) for many ideas and early
 feedback!
 
-[Let’s code a client side router for your frameworkless SPA](https://medium.com/swlh/lets-code-a-client-side-router-for-your-no-framework-spa-19da93105e10)
+[Let's code a client side router for your frameworkless SPA](https://medium.com/swlh/lets-code-a-client-side-router-for-your-no-framework-spa-19da93105e10)
 teaching client-side routing basic concepts.
 
 [@shaun/alpinejs-router](https://github.com/shaunlee/alpinejs-router/) for

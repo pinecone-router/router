@@ -51,7 +51,7 @@ const TemplateDirective = (Alpine: Alpine, Router: PineconeRouter) => {
 					if (urls && interpolated) {
 						urls = interpolate(urls, Router.context.params)
 					}
-					show(Alpine, el, expression, urls, targetEl).then(() => {
+					show(Alpine, el, path, urls, targetEl).then(() => {
 						Router.loading = false
 					})
 				} else hide(el)

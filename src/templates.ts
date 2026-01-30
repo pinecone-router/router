@@ -1,7 +1,7 @@
 import { type ElementWithXAttributes, type Alpine } from 'alpinejs'
 
 import { type Context } from './context'
-import { addBasePath, reloadScripts } from './utils'
+import { addBasePath, reloadScript } from './utils'
 import { settings } from './settings'
 
 const inMakeProgress = new Set()
@@ -28,26 +28,19 @@ export const fetchError = (error: string, url: string) => {
 export const make = (
 	Alpine: Alpine,
 	template: ElementWithXAttributes<HTMLTemplateElement>,
-	expression: string, // the expression on the x-template directive
+	routePath: string,
 	targetEl?: HTMLElement, // the target element where the template will
 	//  be rendered
 	urls?: string[] // template urls
 ) => {
-	// having a unique id ensures the same template can be used multiple times
-	// inside the same page.
-	// this is for when routes share a template.
-	// with this, adding an id to the template element will make it unique.
-	const unique_id = template.id + expression
-
-	if (inMakeProgress.has(unique_id)) return
-	inMakeProgress.add(unique_id)
+	// prevent concurrent makes for the same routePath
+	if (inMakeProgress.has(routePath)) return
+	inMakeProgress.add(routePath)
 
 	const contentNode = template.content
 
 	// pre-allocates the array with the children size
 	const clones: HTMLElement[] = Array(contentNode.childElementCount)
-
-	reloadScripts(contentNode)
 
 	// clone all children and add the x-data scope
 	const children = Array.from(contentNode.children)
@@ -62,6 +55,17 @@ export const make = (
 		// the scope of the template element will overshadow it.
 		if (targetEl)
 			Alpine.addScopeToNode(clones[i], Alpine.$data(clones[i]), targetEl)
+
+		if (clones[i].tagName === 'SCRIPT') {
+			const newScript = reloadScript(
+				clones[i] as ElementWithXAttributes<HTMLScriptElement>,
+				i,
+				routePath,
+				Alpine
+			)
+			if (newScript) clones[i] = newScript
+			else clones[i].remove()
+		}
 	}
 
 	Alpine.mutateDom(() => {
@@ -87,7 +91,7 @@ export const make = (
 		delete template._x_PineconeRouter_template
 	}
 
-	Alpine.nextTick(() => inMakeProgress.delete(unique_id))
+	Alpine.nextTick(() => inMakeProgress.delete(routePath))
 }
 
 // Hide content of a template element
@@ -99,7 +103,7 @@ export const hide = (template: ElementWithXAttributes<HTMLTemplateElement>) => {
 export const show = async (
 	Alpine: Alpine,
 	template: ElementWithXAttributes<HTMLTemplateElement>,
-	expression: string,
+	routePath: string,
 	urls?: Array<string>,
 	targetEl?: HTMLElement
 ) => {
@@ -125,7 +129,7 @@ export const show = async (
 
 	// case: template not rendered, but template content exists.
 	if (template.content.childElementCount) {
-		make(Alpine, template, expression, targetEl, urls)
+		make(Alpine, template, routePath, targetEl, urls)
 		return
 	}
 
@@ -133,7 +137,7 @@ export const show = async (
 	if (urls) {
 		// if templates are not loaded, load them
 		return load(urls, template).then(() =>
-			make(Alpine, template, expression, targetEl, urls)
+			make(Alpine, template, routePath, targetEl, urls)
 		)
 	}
 }

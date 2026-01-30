@@ -8,11 +8,22 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [7.5.0] - 2026-01-31
+
+### Added
+
+- Added `x-run` directive to conditionally execute embedded scripts in
+  templates. See
+  [README](./README.md#x-run-directive).
+
+  Thanks to @boustanihani for the suggestion (#84)
+
 ## [7.4.1] - 2026-01-30
 
 ### Fixed
 
 - Scope of template is no longer dismissed when a target element is specified.
+  (issue introduced in [7.3.1])
 
 ## [7.4.0] - 2026-01-30
 
@@ -21,8 +32,7 @@ and this project adheres to
 - Programmatically added routes will have their templates added as actual
   template elements at the end of the body. Now they also use the `x-template`
   directive, streamlining all template logic there.
-  This should have no impact on existing sites unless you use flexbox on the
-  entire body...
+  This should have no impact on existing sites.
 - Programmatic templates no longer throws an error when a targetID is not set
   through options or globally, as they will just be rendered next to their
   created template element ie. at the bottom of the body tag.
@@ -45,7 +55,7 @@ and this project adheres to
 
 ### Fixed
 
-- Fixed embedded scripts not working correctly in programmatic templates(#81)
+- Fixed embedded scripts not working correctly in programmatic templates (#81)
 - Templates with a specified target element now have access to the Alpine data
   scope of that element rather than the scope of the template element.
 - Programmatic templates now access to the data scope of their target element.
@@ -746,7 +756,7 @@ It's mostly backward compatible but need a few tweaks:
 
 - Let go of multi-router support for simpler codebase.
 
-[unreleased]: https://github.com/pinecone-router/router/compare/7.4.1...HEAD
+[unreleased]: https://github.com/pinecone-router/router/compare/7.5.0...HEAD
 [0.0.3]: https://github.com/pinecone-router/router/compare/0.0.2...0.0.3
 [0.0.4]: https://github.com/pinecone-router/router/compare/0.0.3...0.0.4
 [0.0.5]: https://github.com/pinecone-router/router/compare/0.0.4...0.0.5
@@ -814,3 +824,4 @@ It's mostly backward compatible but need a few tweaks:
 [7.3.1]: https://github.com/pinecone-router/router/compare/7.3.0...7.3.1
 [7.4.0]: https://github.com/pinecone-router/router/compare/7.3.1...7.4.0
 [7.4.1]: https://github.com/pinecone-router/router/compare/7.4.0...7.4.1
+[7.5.0]: https://github.com/pinecone-router/router/compare/7.4.1...7.5.0

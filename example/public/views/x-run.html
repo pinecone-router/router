@@ -1,0 +1,48 @@
+<p id="x-run" >
+	<button class="doc-link" @click="run = !run">Toggle Run</button>
+	<span x-text="run"></span>
+	<ul class="text-start list-disc my-4">
+		<li>
+			You can use the <code>x-run</code> attribute to conditionally run scripts when
+			a route is loaded.
+		</li>
+		<li>
+			<code>x-run.once</code> will ensure the script only runs once, even if
+			the route is revisited.
+		</li>
+		<li>
+			<code>x-run:on="expression"</code> will run the script only when the
+			expression evaluates to true.
+		</li>
+		<li>
+			You can also combine both modifiers like so:
+			<code>x-run.once:on="expression"</code>
+		</li>
+
+		<br />
+
+		<p>Check the console to see the results.</p>
+	</ul>
+</p>
+
+<script x-run.once>
+	console.log('this will run only once, even if you revisit the route.');
+</script>
+
+<script x-run:on="run">
+	console.log('this will only run if "run" is set to true.');
+</script>
+
+<style>
+	li {
+		margin-inline-start: 1rem;
+	}
+	code {
+		background-color: #0b2822;
+		color: #d7f4ee;
+
+		padding: 0.2rem 0.4rem;
+		border-radius: 0.25rem;
+		font-size: 0.875rem;
+	}
+</style>

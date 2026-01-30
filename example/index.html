@@ -52,6 +52,7 @@
 						<a href="/param-changes/foo">Handling Param Changes</a>
 						<a href="/passing-data">Passing Data</a>
 						<a href="/counter">Alpine.effect() Counter</a>
+						<a href="/x-run">x-run directive</a>
 					</div>
 				</template>
 
@@ -137,9 +138,11 @@
 					x-template="/views/counter.html"
 				></template>
 
+				<template x-route="/x-run" x-template="/views/x-run.html"></template>
+
 				<div
 					id="app"
-					x-data="{test: 'it does not work!', something: 'When a target element is specified, the template will include its data scope.'}"
+					x-data="{test: 'it does not work!', run: false, something: 'When a target element is specified, the template will include its data scope.'}"
 				></div>
 				<div id="alt"></div>
 

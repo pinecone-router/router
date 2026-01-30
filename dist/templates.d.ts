@@ -11,11 +11,10 @@ export declare const fetchError: (error: string, url: string) => void;
  * @param urls Template urls
  * @returns void
  */
-export declare const make: (Alpine: Alpine, template: ElementWithXAttributes<HTMLTemplateElement>, expression: string, // the expression on the x-template directive
-targetEl?: HTMLElement, // the target element where the template will
+export declare const make: (Alpine: Alpine, template: ElementWithXAttributes<HTMLTemplateElement>, routePath: string, targetEl?: HTMLElement, // the target element where the template will
 urls?: string[]) => void;
 export declare const hide: (template: ElementWithXAttributes<HTMLTemplateElement>) => void;
-export declare const show: (Alpine: Alpine, template: ElementWithXAttributes<HTMLTemplateElement>, expression: string, urls?: Array<string>, targetEl?: HTMLElement) => Promise<void>;
+export declare const show: (Alpine: Alpine, template: ElementWithXAttributes<HTMLTemplateElement>, routePath: string, urls?: Array<string>, targetEl?: HTMLElement) => Promise<void>;
 /**
  * Interpolates params in URLs.
  * @param urls Array of template URLs.

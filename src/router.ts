@@ -184,10 +184,6 @@ export const createPineconeRouter = (
 					this.loading = false
 					return
 				}
-
-				if (!route.templates) {
-					this.loading = false
-				}
 			}
 
 			if (index != undefined) {
@@ -201,11 +197,11 @@ export const createPineconeRouter = (
 				this.history.push(fullpath, !fromPopState && !firstLoad)
 			}
 
+			// end loading if there are no templates
+			if (!route.templates) this.loading = false
+
 			// update the global context, trigger Alpine effect, and render templates.
 			this.context = context
-
-			// end loading if there are no templates
-			if (!route.templates.length) this.loading = false
 		},
 
 		match: function (path: string) {

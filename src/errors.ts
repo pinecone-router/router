@@ -27,7 +27,7 @@ export const INVALID_EXPRESSION_TYPE = (value: unknown) =>
 export function assertTemplate(
 	value: ElementWithXAttributes<HTMLElement>
 ): asserts value is ElementWithXAttributes<HTMLTemplateElement> {
-	if (value.tagName.toLowerCase() !== 'template') {
+	if (value.tagName !== 'TEMPLATE') {
 		throw new TypeError(DIRECTIVE_REQUIRES_TEMPLATE)
 	}
 }
