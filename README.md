@@ -361,7 +361,7 @@ Each handler function receives two arguments:
 	<!-- Or an anonymous/arrow function -->
 	<template
 		x-route="/home"
-		x-handler="[(ctx) => ctx.redirect('/'), thisWontRun]"
+		x-handler="[(ctx) => $router.navigate('/'), thisWontRun]"
 	></template>
 
 	<!-- Or even an array of multiple function names/anonymous functions! -->

@@ -123,6 +123,7 @@
 				<template
 					x-route="/interpolated-templates/:name"
 					x-template.interpolate="['/views/interpolated-templates/:name.html']"
+					x-handler="interpolatedTemplates"
 				></template>
 
 				<!-- Using x-effect to handle param changes params -->
@@ -217,6 +218,12 @@
 				thisWontRun(ctx, ctrl) {
 					// this will not run because the previous handler redirected
 					console.log('this wont run');
+				},
+
+				interpolatedTemplates(ctx) {
+					if (!['foo', 'bar', 'baz'].includes(ctx.params.name)) {
+						return this.$router.navigate('/notfound');
+					}
 				},
 			};
 
