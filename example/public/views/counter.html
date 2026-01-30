@@ -1,0 +1,45 @@
+<div class="text-start mt-4">
+	<p>
+		This is a simple counter without using an Alpine component. It is taken from
+		the
+		<a
+			class="underline"
+			target="_blank"
+			href="https://alpinejs.dev/advanced/reactivity#alpine-effect"
+			>Alpine.js docs for reactivity</a
+		>. The effect will run once initially and then every time the count changes.
+		The effect will not be duplicated on route changes.
+	</p>
+	<p>
+		The other way to do would be through x-effect, See
+		<a class="underline" target="_blank" href="/param-changes/foo"
+			>Handling Param Changes</a
+		>.
+	</p>
+
+	<p>
+		The script must either be a module, or wrapped in an IIFE duplicate
+		variables in the global scope.
+	</p>
+	<div class="text-center my-4">
+		<button id="counter-button" class="doc-link">Increment</button>
+
+		Count: <span id="counter-span"></span>
+	</div>
+</div>
+
+<script type="module">
+	let button = document.getElementById('counter-button');
+	let span = document.getElementById('counter-span');
+
+	let data = Alpine.reactive({ count: 1 });
+
+	Alpine.effect(() => {
+		console.log('Count is now:', data.count);
+		span.textContent = data.count;
+	});
+
+	button.addEventListener('click', () => {
+		data.count = data.count + 1;
+	});
+</script>

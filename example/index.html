@@ -51,6 +51,7 @@
 						<a href="/interpolated-templates">Interpolated templates</a>
 						<a href="/param-changes/foo">Handling Param Changes</a>
 						<a href="/passing-data">Passing Data</a>
+						<a href="/counter">Alpine.effect() Counter</a>
 					</div>
 				</template>
 
@@ -130,11 +131,17 @@
 					x-template.preload="/views/param-changes.html"
 				></template>
 
+				<template
+					x-route="/counter"
+					x-template="/views/counter.html"
+				></template>
+
 				<div
 					id="app"
 					x-data="{test: 'it does not work!', something: 'When a target element is specified, the template will include its data scope.'}"
 				></div>
 				<div id="alt"></div>
+
 				<!-- footer -->
 				<div class="footer-container">
 					<div class="footer-row">
