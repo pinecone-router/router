@@ -40,8 +40,8 @@ and this project adheres to
 
 ### Fixed
 
-- Programmatically added templates will now correctly remove when switching to
-  a different route.
+- **Programmatically added templates will now correctly remove when switching to
+  a different route.**
 - Preload modifier/option now take precedence over global setting.
 - Proper clean up for different cases when directives are removes.
 
