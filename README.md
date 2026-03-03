@@ -51,7 +51,7 @@ A small, easy to use, and feature-packed router for Alpine.js.
 ## Features:
 
 - :smile: Easy and familiar syntax well integrated with Alpine.js.
-- :gear: [Handler functions](#x-handler) allow you to run functions on for each
+- :gear: [Handlers](#x-handler) allowing you to run functions on each
   route.
 - :beginner:&nbsp;&nbsp;[Inline](#inline-templates) and [external](#x-template)
   templates to display content.
@@ -59,7 +59,7 @@ A small, easy to use, and feature-packed router for Alpine.js.
   router data.
 - &nbsp;<img src="https://skillicons.dev/icons?i=ts" width="14px" />
   &nbsp;Full Typescript support.
-- :link: Automatic [click handling](#bypass-click-handling) and
+- :link: Automatic [link handling](#bypass-click-handling) and
   [loading events](#events--loading).
 - :hash: [Hash routing](#settings) support.
 
